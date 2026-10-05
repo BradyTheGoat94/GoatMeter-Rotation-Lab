@@ -18,6 +18,10 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Punishment",800,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready; current Global guidance prioritizes Punishment")}),
                 new RotationRule("Judgment",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened the Judgment damage window")}),
+                new RotationRule("Annihilate",775,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"TemplarAnnihilateWindow",Reason:"current Global Annihilate requires an observed Stun or Knockdown target"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Annihilate",Reason:"validated 20s base cooldown is ready; level-12 -10s specialization excluded")
+                }),
                 new RotationRule("Empyrean Lord's Punishment",650,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s base cooldown is ready")}),
                 new RotationRule("Decisive Strike",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDecisiveStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
                 new RotationRule("Desperate Strike",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDesperateStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
