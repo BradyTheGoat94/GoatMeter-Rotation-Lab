@@ -397,6 +397,20 @@ var spiritmasterBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Spir
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterBurstWindow"}},spiritmasterProvisional);
 True(spiritmasterBurst.Next?.Skill=="Elemental Fusion"&&!spiritmasterBurst.Next.Actionable,"observed Spiritmaster burst signal follows expanded priority with Elemental Fusion");
+var spiritmasterFusionObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Observed Spirit Action",t}},
+    new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Four Elements"},new HashSet<string>());
+var spiritmasterFusionSignals=PassiveRotationSignalDeriver.Derive(spiritmasterFusionObservation,AionClass.Spiritmaster,t.AddSeconds(1));
+True(spiritmasterFusionSignals.Contains("SpiritmasterBurstWindow"),
+    "observed Four Elements state opens Spiritmaster Elemental Fusion window");
+var spiritmasterFusion=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Four Elements"},new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=spiritmasterFusionSignals},spiritmasterProvisional);
+True(spiritmasterFusion.Next?.Skill=="Elemental Fusion"&&!spiritmasterFusion.Next.Actionable,
+    "observed Four Elements prioritizes Elemental Fusion over sustained Spiritmaster actions");
+var spiritmasterNoFusion=spiritmasterFusionObservation with {Buffs=new HashSet<string>()};
+True(!PassiveRotationSignalDeriver.Derive(spiritmasterNoFusion,AionClass.Spiritmaster,t.AddSeconds(1)).Contains("SpiritmasterBurstWindow"),
+    "Spiritmaster Fusion state fails closed without observed Four Elements");
 var spiritmasterAncient=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterAncientWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
