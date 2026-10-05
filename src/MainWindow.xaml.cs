@@ -116,6 +116,7 @@ public partial class MainWindow : Window
                 AionClass.Assassin=>RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),
                 AionClass.Gladiator=>RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),
                 AionClass.Ranger=>RotationProfileCatalog.CreateProvisionalRangerSingleTarget(),
+                AionClass.Sorcerer=>RotationProfileCatalog.CreateProvisionalSorcererSingleTarget(),
                 _=>rotationProfiles.First(p=>p.ClassName==observedClass)
             };
             var targetHp=s.Target?.Percent??100;
