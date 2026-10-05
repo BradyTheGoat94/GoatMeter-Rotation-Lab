@@ -131,7 +131,7 @@ public partial class MainWindow : Window
             // A confirmed local skill observation proves combat activity without
             // guessing any hidden game state. It may unlock only generic sustained
             // damage/filler rules; proc, chain, buff and burst rules stay gated.
-            bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used<=TimeSpan.FromSeconds(8));
+            bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used>=TimeSpan.Zero && now-used<=TimeSpan.FromSeconds(8));
             if(observedCombatAction)
             {
                 signals.Add("AssassinFillerWindow");
