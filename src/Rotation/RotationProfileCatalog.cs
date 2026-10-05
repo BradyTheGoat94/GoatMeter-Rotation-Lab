@@ -36,11 +36,13 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Heart Gore",700,new[]
                 {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit can enable Heart Gore")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit can enable Heart Gore"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Heart Gore",Reason:"validated 5s base cooldown is ready; specialization resets are not assumed")
                 }),
                 new RotationRule("Insignia Explosion",600,new[]
                 {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Insignia Explosion",Reason:"validated 10s base cooldown is ready; specialization reductions are not assumed")
                 }),
                 new RotationRule("Shadowstrike",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside a proven burst/rear-access window")}),
                 new RotationRule("Breaking Slice",590,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBreakingSliceWindow",Reason:"complete the current Global Quick Slice chain after its observed opener")}),
