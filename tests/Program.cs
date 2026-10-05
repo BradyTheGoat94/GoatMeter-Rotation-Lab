@@ -206,6 +206,25 @@ var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Temp
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(templarFillerOnly.Next?.Skill=="Pummel","confirmed combat activity uses Pummel as priority filler without inventing a fixed combo");
+var templarViciousObservation=new PassiveRotationObservation(77,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Vicious Strike",t}},new HashSet<string>(),new HashSet<string>());
+var templarDecisiveSignals=PassiveRotationSignalDeriver.Derive(templarViciousObservation,AionClass.Templar,t.AddSeconds(2.9));
+True(templarDecisiveSignals.Contains("TemplarDecisiveStrikeWindow"),"observed Vicious Strike opens Decisive Strike chain window");
+True(!PassiveRotationSignalDeriver.Derive(templarViciousObservation,AionClass.Templar,t.AddSeconds(3.1)).Contains("TemplarDecisiveStrikeWindow"),"Templar main-chain continuation expires after 3s");
+var templarDecisive=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=templarDecisiveSignals},templarProvisional);
+True(templarDecisive.Next?.Skill=="Decisive Strike","observed Templar main chain advances to Decisive Strike");
+var templarDesperateObservation=new PassiveRotationObservation(77,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Decisive Strike",t}},new HashSet<string>(),new HashSet<string>());
+var templarDesperateSignals=PassiveRotationSignalDeriver.Derive(templarDesperateObservation,AionClass.Templar,t.AddSeconds(2));
+True(templarDesperateSignals.Contains("TemplarDesperateStrikeWindow"),"observed Decisive Strike opens Desperate Strike chain window");
+var templarThreatObservation=new PassiveRotationObservation(77,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Desperate Strike",t}},new HashSet<string>(),new HashSet<string>());
+var templarThreatSignals=PassiveRotationSignalDeriver.Derive(templarThreatObservation,AionClass.Templar,t.AddSeconds(2));
+True(templarThreatSignals.Contains("TemplarThreateningBlowWindow"),"observed Desperate Strike opens Threatening Blow chain window");
+var templarThreat=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=templarThreatSignals},templarProvisional);
+True(templarThreat.Next?.Skill=="Threatening Blow","observed Templar main chain finishes at Threatening Blow");
 judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"Doom Shield",SourceClass:"Templar"));
 var doomWindow=judgmentTracker.Snapshot();
 True(doomWindow.JudgmentTrigger=="Shield Smite"&&!doomWindow.JudgmentWindowActive(t.AddSeconds(4)),
