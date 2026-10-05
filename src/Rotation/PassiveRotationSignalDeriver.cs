@@ -85,6 +85,11 @@ public static class PassiveRotationSignalDeriver
                 signals.Add("SpiritmasterAncientWindow");
             if(observed.UsedRecently("Summon: Ancient Spirit",now,8))
                 signals.Add("SpiritmasterCorrodeWindow");
+
+            // Elemental Fusion is enabled by the four-element state. Consume only a
+            // passively observed state name; never infer stacks from generic combat.
+            if(observed.Buffs.Contains("Four Elements"))
+                signals.Add("SpiritmasterBurstWindow");
         }
         return signals;
     }
