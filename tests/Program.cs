@@ -251,6 +251,10 @@ var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
 True(sorcererBurst.Next?.Skill=="Hellfire"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal follows expanded priority with Hellfire first");
+var sorcererFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererFiller.Next?.Skill=="Blaze"&&!sorcererFiller.Next.Actionable,"confirmed combat activity uses observed Global Blaze as Sorcerer sustained priority");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
