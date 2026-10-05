@@ -254,7 +254,7 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.CooldownReady,"Heat Wave Blow",Reason:"validated 10s Global base cooldown is ready")
                 }),
                 new RotationRule("Wave Blow",650,new[]{
-                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterWaveBlowWindow",Reason:"current Global Wave Blow requires an observed stunned target"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterWaveBlowWindow",Reason:"current Global Wave Blow consumes the observed Stun opportunity and then applies Knockdown"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Wave Blow",Reason:"validated 20s current-Global base cooldown is ready; incapacitation-immunity specialization behavior excluded")
                 }),
                 new RotationRule("Impactful Crush",625,new[]{
