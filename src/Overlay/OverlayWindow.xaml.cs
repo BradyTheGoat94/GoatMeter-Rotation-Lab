@@ -26,9 +26,9 @@ public partial class OverlayWindow : Window
     public OverlayWindow() { InitializeComponent(); CategoryPicker.ItemsSource=new[]{"Damage","Healing","Damage Taken","Deaths","Buffs","Debuffs","Interrupts","Dispels"}; CategoryPicker.SelectedIndex=0; FightHistory.ItemsSource=new[]{new HistoryChoice("Saved fights ▾",null)}; FightHistory.SelectedIndex=0; ApplyTheme(currentTheme); ApplyOverlayStyle(currentStyle); LoadPreferences(); }
     public void RenderRotation(RotationDecision decision)
     {
-        RotationNextSkill.Text=decision.Next?.Skill??"No recommendation";
+        RotationNextSkill.Text=decision.Next?.Skill??"Waiting for observed state";
         RotationConfidence.Text=decision.Next is null?"—":$"{decision.Next.Confidence:P0} confidence";
-        RotationStateText.Text=decision.Next?.Actionable==true?"VERIFIED":"INFORMATIONAL";
+        RotationStateText.Text=decision.Next is null?"PASSIVE • WAITING":decision.Next.Actionable?"VERIFIED":"INFORMATIONAL";
         RotationReason.Text=decision.Next is null?decision.Diagnostic:string.Join(" • ",decision.Next.Reasons.Take(2));
         RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join("  →  ",decision.Alternatives.Select(x=>x.Skill));
         RotationDiagnostic.Text=string.IsNullOrWhiteSpace(decision.ReadinessContext)?decision.Diagnostic:$"{decision.ReadinessContext} • {decision.Diagnostic}";
