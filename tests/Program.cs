@@ -315,6 +315,14 @@ var assassinTracker=new PassiveRotationStateTracker();
 assassinTracker.Observe(new(t,CombatKind.PlayerName,88,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
 assassinTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"AssassinTester",99,"Dummy","Observed Crit",100,
     SourceClass:"Assassin",DamageFlags:DamageFlags.Critical));
+var cloneObservation=new PassiveRotationObservation(88,AionClass.Assassin,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Illusive Clone",t}},new HashSet<string>(),new HashSet<string>());
+var cloneSignals=PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.Assassin,t.AddSeconds(19.9));
+True(cloneSignals.Contains("AssassinBurstWindow"),"observed Illusive Clone opens bounded Assassin burst window");
+True(!PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.Assassin,t.AddSeconds(20.1)).Contains("AssassinBurstWindow"),"Assassin Illusive Clone burst window expires after 20s");
+var cloneDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=cloneSignals},assassinProvisional);
+True(cloneDecision.Next?.Skill=="Shadowstrike","observed Illusive Clone exposes Assassin burst recommendation");
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
 var identityTracker=new PassiveRotationStateTracker();
@@ -484,7 +492,7 @@ var clericChainObservation=new PassiveRotationObservation(88,AionClass.Cleric,
 True(PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(9.9)).Contains("ClericCondemnationWindow"),"observed Chain of Torment opens bounded Cleric Condemnation window");
 True(!PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(10.1)).Contains("ClericCondemnationWindow"),"Cleric Condemnation window expires with base Chain of Torment duration");
 var clericCondemnation=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Condemnation",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericCondemnationWindow","ClericFillerWindow"}},clericProvisional);
 True(clericCondemnation.Next?.Skill=="Condemnation"&&!clericCondemnation.Next.Actionable,"observed Chain of Torment prioritizes Condemnation over Cleric filler");
 var clericEarthObservation=new PassiveRotationObservation(88,AionClass.Cleric,
@@ -494,7 +502,7 @@ var clericEarthSignals=PassiveRotationSignalDeriver.Derive(clericEarthObservatio
 True(clericEarthSignals.Contains("ClericCondemnationWindow")&&clericEarthSignals.Contains("ClericEarthPunishmentWindow"),
     "observed Chain of Torment plus Earth Punishment exposes the Cleric high-value Condemnation window");
 var clericEarth=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Earth Punishment"},0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Condemnation",0}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Earth Punishment"},0,100,1,false,true,.95)
     {Signals=clericEarthSignals},clericProvisional);
 True(clericEarth.Next?.Skill=="Condemnation"&&!clericEarth.Next.Actionable,
     "observed Cleric Earth Punishment window keeps Condemnation above sustained filler without assuming reset specialty");
