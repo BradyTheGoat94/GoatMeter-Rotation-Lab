@@ -496,13 +496,13 @@ True(!PassiveRotationSignalDeriver.Derive(rangerNoPrecisionObservation,AionClass
 var rangerMarkObservation=new PassiveRotationObservation(77,AionClass.Ranger,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Marking Shot",t}},new HashSet<string>(),new HashSet<string>());
 var rangerMarkSignals=PassiveRotationSignalDeriver.Derive(rangerMarkObservation,AionClass.Ranger,t.AddSeconds(9.9));
-True(rangerMarkSignals.Contains("RangerDeadshotWindow"),"observed current-Global Marking Shot reconstructs base Precision through 10s");
-True(!PassiveRotationSignalDeriver.Derive(rangerMarkObservation,AionClass.Ranger,t.AddSeconds(10.1)).Contains("RangerDeadshotWindow"),
-    "reconstructed Ranger Precision expires after base 10s and does not assume +5s specialization");
+True(!rangerMarkSignals.Contains("RangerDeadshotWindow"),
+    "observed Marking Shot alone does not invent Precision without passive buff evidence");
 var rangerMarkDeadshot=rotationEngine.Evaluate(new RotationState(t.AddSeconds(9.9),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Deadshot",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
     {Signals=rangerMarkSignals},rangerProvisional);
-True(rangerMarkDeadshot.Next?.Skill=="Deadshot","reconstructed current-Global Precision safely enables ready Deadshot");
+True(rangerMarkDeadshot.Next?.Skill!="Deadshot",
+    "Marking Shot alone fails closed instead of enabling Deadshot without observed Precision");
 var rangerMarkTracker=new PassiveRotationStateTracker();
 rangerMarkTracker.Observe(new(t,CombatKind.PlayerName,77,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true));
 rangerMarkTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"RangerTester",Skill:"Marking Shot",SourceClass:"Ranger"));
