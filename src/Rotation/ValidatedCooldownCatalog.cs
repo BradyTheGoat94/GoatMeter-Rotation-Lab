@@ -20,6 +20,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
+        new(AionClass.Assassin,"Shadowstrike",20,"Global 0.0.4387.0","current Global client extraction; 10s Critical Damage buff, positional safety remains player-controlled"),
         new(AionClass.Sorcerer,"Firestorm",5,"1.0.21.0","Global client skill data; specialty Hellfire reduction excluded"),
         new(AionClass.Sorcerer,"Bittercold Wind",15,"1.0.21.0","Global client skill data; base cooldown only"),
         new(AionClass.Sorcerer,"Blaze",5,"1.0.21.0","Global client skill data; Wish reduction specialty excluded"),
