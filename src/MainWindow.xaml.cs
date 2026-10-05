@@ -117,7 +117,11 @@ public partial class MainWindow : Window
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                 cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25);
-            overlay.RenderRotation(rotationEngine.Evaluate(state,profile));
+            var decision=rotationEngine.Evaluate(state,profile);
+            var readiness=cooldowns.Count==0
+                ?"Cooldown readiness: insufficient validated observations"
+                :"Cooldown readiness: "+string.Join(" • ",cooldowns.OrderBy(x=>x.Key).Select(x=>$"{x.Key} {(x.Value<=0?"READY":$"{x.Value:0.0}s")}"));
+            overlay.RenderRotation(decision with {ReadinessContext=readiness});
         }
         lock(diagnosticsGate)
         {
