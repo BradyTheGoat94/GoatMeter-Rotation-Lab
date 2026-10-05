@@ -221,6 +221,14 @@ var gladiatorFinisher=rotationEngine.Evaluate(new RotationState(t,AionClass.Glad
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFinisherWindow"}},gladiatorProvisional);
 True(gladiatorFinisher.Next?.Skill=="Seismic Crash"&&!gladiatorFinisher.Next.Actionable,"observed Gladiator finisher signal yields informational Seismic Crash");
+var gladiatorSmashing=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorSmashingWindow","GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorSmashing.Next?.Skill=="Smashing Blow","observed Rending Blow chain advances to Smashing Blow ahead of sustained filler");
+var gladiatorRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorRuptureWindow","GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorRupture.Next?.Skill=="Rupture Strike","observed Keen Strike chain advances to the current Global Rupture Strike name");
 var rangerProvisional=RotationProfileCatalog.CreateProvisionalRangerSingleTarget();
 True(rangerProvisional.Validation==ProfileValidation.Provisional,"Ranger fixture remains provisional");
 var rangerUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
