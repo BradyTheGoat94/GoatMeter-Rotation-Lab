@@ -74,6 +74,27 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. High-value finishers are represented only behind passive chain signals; until the live decoder proves those signals, the profile intentionally emits no recommendation.");
     }
 
+    public static RotationProfile CreateProvisionalRangerSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Ranger,
+            "global-ranger-provisional",
+            RotationMode.SingleTarget,
+            ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Rupture Arrow",500,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerRuptureWindow",Reason:"passively observed Ranger state supports Rupture Arrow")
+                }),
+                new RotationRule("Destruction Trap",300,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerTrapWindow",Reason:"passively observed Ranger state supports Destruction Trap")
+                })
+            },
+            "PROVISIONAL Global Season 1 single-target fixture. Rupture Arrow and Destruction Trap remain gated on passive state signals; no recommendation is emitted until those states are proven.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
