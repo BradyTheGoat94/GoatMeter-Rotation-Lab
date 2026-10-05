@@ -167,7 +167,8 @@ public static class RotationProfileCatalog
                 new RotationRule("Earth Punishment",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"establish Earth Punishment before the Condemnation damage loop")}),
                 new RotationRule("Condemnation",825,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"target has the observed Chain of Torment prerequisite"),
-                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentWindow",Reason:"observed Earth Punishment state supports the high-value Condemnation damage window")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentWindow",Reason:"observed Earth Punishment state supports the high-value Condemnation damage window"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Condemnation",Reason:"validated 3s Global base cooldown must still be ready in the Earth Punishment window")
                 }),
                 new RotationRule("Condemnation",750,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"Chain of Torment prerequisite is observed; do not infer specialty-dependent reset state"),
