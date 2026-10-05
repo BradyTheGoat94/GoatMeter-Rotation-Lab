@@ -55,6 +55,10 @@ public static class PassiveRotationSignalDeriver
             // Current Global evidence makes Deadshot the immediate high-value payoff.
             if(observed.Buffs.Contains("Precision"))
                 signals.Add("RangerDeadshotWindow");
+            if(observed.UsedRecently("Snipe",now,3))
+                signals.Add("RangerRapidFireWindow");
+            if(observed.UsedRecently("Rapid Fire",now,3))
+                signals.Add("RangerSpiralArrowWindow");
         }
         if(observedClass==AionClass.Sorcerer && observed.UsedRecently("Ice Chain",now,3))
             signals.Add("SorcererColdWaveWindow");
