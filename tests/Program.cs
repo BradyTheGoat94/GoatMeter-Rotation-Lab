@@ -157,6 +157,14 @@ judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"D
 var doomWindow=judgmentTracker.Snapshot();
 True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),"Doom Shield opens observed 3s Judgment window");
 True(!doomWindow.JudgmentWindowActive(t.AddSeconds(7.1)),"Doom Shield Judgment window expires after 3s");
+var wardingTracker=new PassiveRotationStateTracker();
+wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+wardingTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Warding Strike",100,SourceClass:"Templar"));
+True(wardingTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Warding Strike opens observed 2s Judgment window");
+var rushTracker=new PassiveRotationStateTracker();
+rushTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+rushTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Shield Rush",100,SourceClass:"Templar"));
+True(rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Shield Rush opens observed 2s Judgment window");
 var judgmentState=new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow"}};
