@@ -48,6 +48,9 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Breaking Slice",now,3))signals.Add("AssassinSwiftSliceWindow");
             if(observed.UsedRecently("Savage Roar",now,3))signals.Add("AssassinSavageBackKickWindow");
             if(observed.UsedRecently("Savage Back Kick",now,3))signals.Add("AssassinSavageSmashWindow");
+            // Illusive Clone is a directly observed burst activation. Current Global
+            // guidance gives it a 20s burst duration; do not infer specialty effects.
+            if(observed.UsedRecently("Illusive Clone",now,20))signals.Add("AssassinBurstWindow");
         }
         if(observedClass==AionClass.Ranger)
         {
