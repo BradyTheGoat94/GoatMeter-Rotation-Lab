@@ -55,7 +55,6 @@ public sealed class PassiveRotationStateTracker
     {
         playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";
     }
-}
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
         new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase)
