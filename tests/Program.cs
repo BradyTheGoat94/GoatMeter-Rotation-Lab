@@ -239,6 +239,23 @@ var assassinSwift=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),Aion
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinSwiftSliceWindow","AssassinFillerWindow"}},assassinProvisional);
 True(assassinSwift.Next?.Skill=="Swift Slice","observed Breaking Slice prioritizes Swift Slice over Assassin filler");
+var assassinSavageObservation=new PassiveRotationObservation(77,AionClass.Assassin,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Savage Roar",t}},new HashSet<string>(),new HashSet<string>());
+var assassinSavageSignals=PassiveRotationSignalDeriver.Derive(assassinSavageObservation,AionClass.Assassin,t.AddSeconds(2.9));
+True(assassinSavageSignals.Contains("AssassinSavageBackKickWindow"),"observed Savage Roar opens Savage Back Kick chain window");
+True(!PassiveRotationSignalDeriver.Derive(assassinSavageObservation,AionClass.Assassin,t.AddSeconds(3.1)).Contains("AssassinSavageBackKickWindow"),"Savage Back Kick chain window expires after 3s");
+var assassinSavageKick=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinSavageBackKickWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinSavageKick.Next?.Skill=="Savage Back Kick","observed Savage Roar prioritizes Savage Back Kick over Assassin filler");
+var assassinSavageMiddle=new PassiveRotationObservation(77,AionClass.Assassin,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Savage Back Kick",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(assassinSavageMiddle,AionClass.Assassin,t.AddSeconds(2.9)).Contains("AssassinSavageSmashWindow"),"observed Savage Back Kick opens Savage Smash chain window");
+True(!PassiveRotationSignalDeriver.Derive(assassinSavageMiddle,AionClass.Assassin,t.AddSeconds(3.1)).Contains("AssassinSavageSmashWindow"),"Savage Smash chain window expires after 3s");
+var assassinSavageSmash=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinSavageSmashWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinSavageSmash.Next?.Skill=="Savage Smash","observed Savage Back Kick prioritizes Savage Smash over Assassin filler");
 var assassinUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),assassinProvisional);
 True(assassinUnknown.Next is null,"Assassin fails closed without passively proven crit or Insignia state");
