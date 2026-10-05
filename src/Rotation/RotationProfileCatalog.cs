@@ -135,6 +135,10 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
+                new RotationRule("Wish of Concentration",775,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"current Global self-buff grants +10% Attack and +100 Accuracy for 10s"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Wish of Concentration",Reason:"validated 60s Global base cooldown is ready; level-16 all-skill cooldown reduction specialization excluded")
+                }),
                 new RotationRule("Element Enhancement",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"establish the primary damage enhancement before the burst sequence")}),
                 new RotationRule("Delayed Explosion",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"apply delayed burst early in the damage sequence")}),
                 new RotationRule("Hellfire",650,new[]{
