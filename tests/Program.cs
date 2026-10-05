@@ -280,6 +280,10 @@ var clericProvisional=RotationProfileCatalog.CreateProvisionalClericSingleTarget
 var clericUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),clericProvisional);
 True(clericUnknown.Next is null,"Cleric fails closed without passively proven damage/heal state");
+var clericFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericFillerWindow"}},clericProvisional);
+True(clericFiller.Next?.Skill=="Judgment Thunder"&&!clericFiller.Next.Actionable,"confirmed combat activity uses observed Global Judgment Thunder as Cleric sustained priority");
 var chanterProvisional=RotationProfileCatalog.CreateProvisionalChanterSingleTarget();
 var chanterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),chanterProvisional);
