@@ -131,5 +131,12 @@ tracker.Observe(new(t.AddSeconds(4),CombatKind.BuffRemove,77,"Tester",77,"Tester
 True(!tracker.Snapshot().Buffs.Contains("Observed Buff"),"passive tracker removes observed buff");
 tracker.Observe(new(t.AddSeconds(5),CombatKind.Zone));
 True(tracker.Snapshot().PlayerId==0&&tracker.Snapshot().LastSkillUse.Count==0,"passive tracker clears across zone");
+var cooldownTracker=new PassiveRotationStateTracker();
+cooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+cooldownTracker.Observe(new(t,CombatKind.Damage,77,"Tester",99,"Dummy","Punishment",100,SourceClass:"Templar"));
+var knownCooldowns=ValidatedCooldownCatalog.Remaining(cooldownTracker.Snapshot(),AionClass.Templar,t.AddSeconds(12));
+Equal(knownCooldowns["Punishment"],18,"validated Punishment cooldown reconstruction");
+True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never guessed");
+True(ValidatedCooldownCatalog.Entries.All(x=>x.GlobalVersion=="1.0.21.0"),"cooldown evidence pinned to Global version");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
