@@ -222,6 +222,23 @@ var noJudgmentSignal=rotationEngine.Evaluate(judgmentState with {Signals=new Has
 True(noJudgmentSignal.Next is null,"Judgment remains ineligible without observed trigger signal");
 var assassinProvisional=RotationProfileCatalog.CreateProvisionalAssassinSingleTarget();
 True(assassinProvisional.Validation==ProfileValidation.Provisional,"Assassin fixture remains provisional");
+var assassinQuickObservation=new PassiveRotationObservation(77,AionClass.Assassin,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Quick Slice",t}},new HashSet<string>(),new HashSet<string>());
+var assassinQuickSignals=PassiveRotationSignalDeriver.Derive(assassinQuickObservation,AionClass.Assassin,t.AddSeconds(2.9));
+True(assassinQuickSignals.Contains("AssassinBreakingSliceWindow"),"observed Quick Slice opens Breaking Slice chain window");
+True(!PassiveRotationSignalDeriver.Derive(assassinQuickObservation,AionClass.Assassin,t.AddSeconds(3.1)).Contains("AssassinBreakingSliceWindow"),"Breaking Slice chain window expires after 3s");
+var assassinBreaking=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinBreakingSliceWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinBreaking.Next?.Skill=="Breaking Slice"&&!assassinBreaking.Next.Actionable,"observed Quick Slice prioritizes Breaking Slice over Assassin filler");
+var assassinMiddleObservation=new PassiveRotationObservation(77,AionClass.Assassin,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Breaking Slice",t}},new HashSet<string>(),new HashSet<string>());
+var assassinSwiftSignals=PassiveRotationSignalDeriver.Derive(assassinMiddleObservation,AionClass.Assassin,t.AddSeconds(2.9));
+True(assassinSwiftSignals.Contains("AssassinSwiftSliceWindow"),"observed Breaking Slice opens Swift Slice chain window");
+var assassinSwift=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinSwiftSliceWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinSwift.Next?.Skill=="Swift Slice","observed Breaking Slice prioritizes Swift Slice over Assassin filler");
 var assassinUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),assassinProvisional);
 True(assassinUnknown.Next is null,"Assassin fails closed without passively proven crit or Insignia state");
