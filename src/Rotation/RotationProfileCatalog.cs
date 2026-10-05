@@ -152,7 +152,11 @@ public static class RotationProfileCatalog
             new[]
             {
                 new RotationRule("Earth Punishment",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"establish Earth Punishment before the Condemnation damage loop")}),
-                new RotationRule("Condemnation",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"consume/reset Condemnation opportunity for primary single-target damage")}),
+                new RotationRule("Condemnation",825,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"target has the observed Chain of Torment prerequisite"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentWindow",Reason:"observed Earth Punishment state supports the high-value Condemnation damage window")
+                }),
+                new RotationRule("Condemnation",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"Chain of Torment prerequisite is observed; do not infer specialty-dependent reset state")}),
                 new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
                 new RotationRule("Divine Aura",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available")}),
                 new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
