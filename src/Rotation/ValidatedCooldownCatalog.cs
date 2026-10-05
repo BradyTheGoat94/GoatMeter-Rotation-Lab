@@ -23,6 +23,8 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Ranger,"Burst Arrow",20,"Global Season 1","current Global April balance; base cooldown reduced from 30s to 20s"),
         new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
+        new(AionClass.Cleric,"Divine Aura",30,"Global 1.0.21.0","current Global skill data; level-16 -10s cooldown specialization excluded"),
+        new(AionClass.Cleric,"Bolt",45,"Global 1.0.21.0","AION 2 Global skill 17060000; Earths Retribution/Discharge cooldown reduction excluded"),
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
         new(AionClass.Assassin,"Shadowstrike",20,"Global 0.0.4387.0","current Global client extraction; 10s Critical Damage buff, positional safety remains player-controlled"),
         new(AionClass.Sorcerer,"Firestorm",5,"1.0.21.0","Global client skill data; specialty Hellfire reduction excluded"),
