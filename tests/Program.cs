@@ -475,6 +475,19 @@ var spiritmasterFusion=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1)
     {Signals=spiritmasterFusionSignals},spiritmasterProvisional);
 True(spiritmasterFusion.Next?.Skill=="Elemental Fusion"&&!spiritmasterFusion.Next.Actionable,
     "observed Four Elements prioritizes Elemental Fusion over sustained Spiritmaster actions");
+var spiritmasterSummonObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Summon: Fire Spirit",t}},
+    new HashSet<string>(),new HashSet<string>());
+var spiritmasterControlSignals=PassiveRotationSignalDeriver.Derive(spiritmasterSummonObservation,AionClass.Spiritmaster,t.AddSeconds(2.9));
+True(spiritmasterControlSignals.Contains("SpiritmasterDimensionalControlWindow"),
+    "observed normal spirit summon opens bounded Dimensional Control window");
+True(!PassiveRotationSignalDeriver.Derive(spiritmasterSummonObservation,AionClass.Spiritmaster,t.AddSeconds(3.1)).Contains("SpiritmasterDimensionalControlWindow"),
+    "Spiritmaster Dimensional Control window expires after 3s");
+var spiritmasterControl=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=spiritmasterControlSignals},spiritmasterProvisional);
+True(spiritmasterControl.Next?.Skill=="Dimensional Control",
+    "observed post-summon Spiritmaster state prioritizes Dimensional Control over filler");
 var spiritmasterNoFusion=spiritmasterFusionObservation with {Buffs=new HashSet<string>()};
 True(!PassiveRotationSignalDeriver.Derive(spiritmasterNoFusion,AionClass.Spiritmaster,t.AddSeconds(1)).Contains("SpiritmasterBurstWindow"),
     "Spiritmaster Fusion state fails closed without observed Four Elements");
