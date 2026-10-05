@@ -5,6 +5,7 @@ using Aion2DPSPro.Capture;
 using Aion2DPSPro.Overlay;
 using Aion2DPSPro.Protocol;
 using Aion2DPSPro.Storage;
+using Aion2DPSPro.Rotation;
 
 namespace Aion2DPSPro;
 
@@ -20,6 +21,8 @@ public partial class MainWindow : Window
     string activeFlow="Waiting...",captureStatus="Starting capture...",lastDecoder="",lastEvent="",profileId="",validationPath="",historyError="";
     Task saveTail=Task.CompletedTask;
     readonly FightStore store=new();
+    readonly RotationEngine rotationEngine=new();
+    readonly IReadOnlyList<RotationProfile> rotationProfiles=RotationProfileCatalog.CreateUnvalidatedGlobalStubs();
     public MainWindow()
     {
         InitializeComponent();
@@ -96,6 +99,21 @@ public partial class MainWindow : Window
         Target.Text=s.Target is null?"No target":$"{s.Target.Name} {s.Target.Percent:0.0}% {s.Target.CurrentHp:N0}/{s.Target.MaxHp:N0}";
         Grid.ItemsSource=s.Players.Select((p,i)=>new {Rank=i+1,p.Name,Dps=p.Dps.ToString("N0"),Damage=p.Damage.ToString("N0"),Share=$"{p.Share:0.0}%"}).ToArray();
         overlay.Render(s);
+        // Lab-only passive bridge: derive only facts present in the meter snapshot.
+        // Unknown build/readiness/resource/movement state deliberately keeps all
+        // eight profiles fail-closed until stronger passive evidence is validated.
+        var self=s.Players.FirstOrDefault(p=>Enum.TryParse<AionClass>(p.ClassName,true,out _));
+        if(self is null || !Enum.TryParse<AionClass>(self.ClassName,true,out var observedClass))
+            overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
+        else
+        {
+            var profile=rotationProfiles.First(p=>p.ClassName==observedClass);
+            var targetHp=s.Target?.Percent??100;
+            var state=new RotationState(DateTime.UtcNow,observedClass,profile.BuildId,profile.Mode,
+                new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,targetHp,1,false,
+                s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25);
+            overlay.RenderRotation(rotationEngine.Evaluate(state,profile));
+        }
         lock(diagnosticsGate)
         {
             Status.Text=$"{captureStatus} | {capture.Health}"+(historyError.Length>0?$" | {historyError}":"");
