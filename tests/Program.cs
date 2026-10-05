@@ -453,9 +453,13 @@ var rangerPrecisionObservation=new PassiveRotationObservation(77,AionClass.Range
 var rangerPrecisionSignals=PassiveRotationSignalDeriver.Derive(rangerPrecisionObservation,AionClass.Ranger,t.AddSeconds(1));
 True(rangerPrecisionSignals.Contains("RangerDeadshotWindow"),"observed Precision buff opens Ranger Deadshot window");
 var rangerPrecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Deadshot",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
     {Signals=rangerPrecisionSignals},rangerProvisional);
 True(rangerPrecision.Next?.Skill=="Deadshot","observed Precision prioritizes Ranger Deadshot over sustained filler");
+var rangerDeadshotRecovering=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Deadshot",6}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    {Signals=rangerPrecisionSignals},rangerProvisional);
+True(rangerDeadshotRecovering.Next?.Skill!="Deadshot","observed Precision cannot recommend Deadshot while its validated Global cooldown is recovering");
 var rangerNoPrecisionObservation=rangerPrecisionObservation with { Buffs=new HashSet<string>() };
 True(!PassiveRotationSignalDeriver.Derive(rangerNoPrecisionObservation,AionClass.Ranger,t.AddSeconds(1)).Contains("RangerDeadshotWindow"),
     "Ranger Deadshot state fails closed without observed Precision");
