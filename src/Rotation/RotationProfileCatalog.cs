@@ -113,7 +113,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
                 new RotationRule("Flame Cage",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"refresh damage-over-time state when proven necessary")}),
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
-                new RotationRule("Blaze",350,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use the repeatedly observed Global sustained damage spell while stronger state actions are unavailable")}),
+                new RotationRule("Blaze",525,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
+                    new RotationCondition(RotationConditionKind.DebuffPresent,"Fire Mark",Reason:"current Global Blaze requires an observed Fire Mark target")
+                }),
                 new RotationRule("Ice Chain",325,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"continue with the repeatedly observed Global sustained spell without inferring hidden burst state")}),
                 new RotationRule("Flame Arrow",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"basic damage/MP filler while higher priorities are unavailable")})
             },
