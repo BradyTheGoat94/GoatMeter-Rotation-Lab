@@ -63,8 +63,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Overhead Slam",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the proven conditional Overhead Slam opportunity")}),
                 new RotationRule("Ruinous Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state")}),
                 new RotationRule("Rending Blow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"core sustained single-target damage after conditional attacks")}),
+                new RotationRule("Smashing Blow",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
                 new RotationRule("Seismic Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFinisherWindow",Reason:"passively observed chain state supports Seismic Crash")}),
-                new RotationRule("Rupture",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRuptureWindow",Reason:"passively observed chain state supports Rupture")}),
+                new RotationRule("Wrathful Strike",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorWrathfulWindow",Reason:"observed Keen Strike chain state supports the later Global chain attack")}),
+                new RotationRule("Rupture Strike",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRuptureWindow",Reason:"observed Keen Strike chain state supports Rupture Strike")}),
                 new RotationRule("Keen Strike",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"resource-building weave while higher-priority attacks are unavailable")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. High-value finishers are represented only behind passive chain signals; until the live decoder proves those signals, the profile intentionally emits no recommendation.");
