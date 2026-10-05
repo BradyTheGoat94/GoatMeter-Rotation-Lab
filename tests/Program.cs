@@ -810,6 +810,18 @@ var chanterWaveRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.
 True(chanterWaveRecovering.Next?.Skill!="Wave Blow","observed Stun cannot bypass Wave Blow's validated 20s cooldown");
 var chanterNoStunSignals=PassiveRotationSignalDeriver.Derive(chanterStunObservation with {Debuffs=new HashSet<string>()},AionClass.Chanter,t);
 True(!chanterNoStunSignals.Contains("ChanterWaveBlowWindow"),"Chanter Wave Blow fails closed without observed target Stun");
+var chanterImpactObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
+var chanterImpactSignals=PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(2.9));
+True(chanterImpactSignals.Contains("ChanterDarkCrushWindow"),"observed Impactful Crush opens evidence-backed Dark Crush window");
+True(!PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window expires after 3s");
+var chanterSpinningObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Spinning Strike",t}},new HashSet<string>(),new HashSet<string>());
+True(!PassiveRotationSignalDeriver.Derive(chanterSpinningObservation,AionClass.Chanter,t.AddSeconds(2)).Contains("ChanterDarkCrushWindow"),"Spinning Strike does not invent Dark Crush state without current Global corroboration");
+var chanterImpactDarkReady=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Dark Crush",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=chanterImpactSignals},chanterProvisional);
+True(chanterImpactDarkReady.Next?.Skill=="Dark Crush","observed Impactful Crush prioritizes ready Dark Crush");
 var chanterOnslaughtObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Onslaught",t}},new HashSet<string>(),new HashSet<string>());
 var chanterOnslaughtSignals=PassiveRotationSignalDeriver.Derive(chanterOnslaughtObservation,AionClass.Chanter,t.AddSeconds(2.9));
