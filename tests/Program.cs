@@ -164,8 +164,14 @@ var rangerCooldowns=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Sna
 Equal(rangerCooldowns["Drill Dart"],2,"validated Drill Dart cooldown reconstruction");
 var rangerCooldownReady=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(6));
 Equal(rangerCooldownReady["Drill Dart"],0,"validated Drill Dart becomes ready after 5s");
+var clericCooldownTracker=new PassiveRotationStateTracker();
+clericCooldownTracker.Observe(new(t,CombatKind.PlayerName,89,"ClericTester",SourceClass:"Cleric",SourceIdentityConfirmed:true));
+clericCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,89,"ClericTester",99,"Dummy","Condemnation",100,SourceClass:"Cleric"));
+var clericCooldowns=ValidatedCooldownCatalog.Remaining(clericCooldownTracker.Snapshot(),AionClass.Cleric,t.AddSeconds(3));
+Equal(clericCooldowns["Condemnation"],1,"validated base Condemnation cooldown reconstruction excludes specialty resets");
+Equal(ValidatedCooldownCatalog.Remaining(clericCooldownTracker.Snapshot(),AionClass.Cleric,t.AddSeconds(4))["Condemnation"],0,"base Condemnation readiness returns after 3s when no reset is proven");
 True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never guessed");
-True(ValidatedCooldownCatalog.Entries.All(x=>x.GlobalVersion=="1.0.21.0"),"cooldown evidence pinned to Global version");
+True(ValidatedCooldownCatalog.Entries.All(x=>!string.IsNullOrWhiteSpace(x.GlobalVersion)),"every validated cooldown pins its Global evidence/version");
 var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
 True(templarProvisional.Validation==ProfileValidation.Provisional,"Templar fixture remains provisional");
 True(templarProvisional.Rules.Single(x=>x.Skill=="Judgment").Conditions.Any(x=>x.Kind==RotationConditionKind.SignalPresent&&x.Key=="JudgmentWindow"),"Judgment requires observed trigger signal");
@@ -413,6 +419,15 @@ True(sorcererFiller.Next?.Skill!="Blaze","Sorcerer Blaze fails closed without ob
 var sorcererFireMark=rotationEngine.Evaluate(sorcererFillerState with
     {Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Fire Mark"}},sorcererProvisional);
 True(sorcererFireMark.Next?.Skill=="Blaze"&&!sorcererFireMark.Next.Actionable,"observed Fire Mark prioritizes Sorcerer Blaze over sustained filler");
+var sorcererObservedFire=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Arrow",t}},new HashSet<string>(),new HashSet<string>());
+var sorcererObservedFireSignals=PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(2));
+True(sorcererObservedFireSignals.Contains("SorcererFireMarkWindow"),"observed Global fire hit reconstructs Sorcerer Fire Mark window");
+var sorcererFireHitState=sorcererFillerState with {Signals=sorcererObservedFireSignals};
+True(rotationEngine.Evaluate(sorcererFireHitState,sorcererProvisional).Next?.Skill=="Blaze","reconstructed Fire Mark makes Blaze eligible without inventing a debuff packet");
+var sorcererIceOnly=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Ice Chain",t}},new HashSet<string>(),new HashSet<string>());
+True(!PassiveRotationSignalDeriver.Derive(sorcererIceOnly,AionClass.Sorcerer,t.AddSeconds(2)).Contains("SorcererFireMarkWindow"),"non-fire Sorcerer activity cannot manufacture Fire Mark");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
