@@ -176,6 +176,16 @@ var expiredGladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalO
 True(!expiredGladiatorSignals.Contains("GladiatorSmashingWindow")&&expiredGladiatorSignals.Contains("GladiatorFillerWindow"),"Gladiator chain signal expires before generic observed-combat window");
 var wrongClassSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Sorcerer,t.AddSeconds(2));
 True(!wrongClassSignals.Contains("GladiatorSmashingWindow"),"passive sequence signals remain isolated to the observed class");
+var chanterSignalObservation=new PassiveRotationObservation(88,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(2.9)).Contains("ChanterDarkCrushWindow"),"Impactful Crush opens observed Chanter Dark Crush window");
+True(!PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window expires after 3s");
+var spiritSignalObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Blessing",t},{"Summon: Ancient Spirit",t}},new HashSet<string>(),new HashSet<string>());
+var spiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,AionClass.Spiritmaster,t.AddSeconds(7.9));
+True(spiritSignals.Contains("SpiritmasterAncientWindow")&&spiritSignals.Contains("SpiritmasterCorrodeWindow"),"observed Spiritmaster opener actions open Ancient and Corrode windows");
+var expiredSpiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,AionClass.Spiritmaster,t.AddSeconds(8.1));
+True(!expiredSpiritSignals.Contains("SpiritmasterAncientWindow")&&!expiredSpiritSignals.Contains("SpiritmasterCorrodeWindow"),"Spiritmaster observed sequence windows expire after 8s");
 var wardingTracker=new PassiveRotationStateTracker();
 wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
 wardingTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Warding Strike",100,SourceClass:"Templar"));
