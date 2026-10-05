@@ -78,6 +78,10 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Sorcerer)
         {
+            // Current Global Wish of Concentration grants its self-buff for 10s.
+            // Build-dependent cooldown effects remain excluded.
+            if(observed.UsedRecently("Wish of Concentration",now,10))
+                signals.Add("SorcererBurstWindow");
             if(observed.UsedRecently("Ice Chain",now,3))
                 signals.Add("SorcererColdWaveWindow");
 
