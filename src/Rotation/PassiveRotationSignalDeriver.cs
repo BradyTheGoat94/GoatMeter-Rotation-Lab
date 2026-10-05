@@ -30,6 +30,7 @@ public static class PassiveRotationSignalDeriver
         {
             if(observed.UsedRecently("Rending Blow",now,3))signals.Add("GladiatorSmashingWindow");
             if(observed.UsedRecently("Keen Strike",now,3))signals.Add("GladiatorRuptureWindow");
+            if(observed.UsedRecently("Rupture Strike",now,3))signals.Add("GladiatorWrathfulWindow");
         }
         if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
             signals.Add("ChanterDarkCrushWindow");
