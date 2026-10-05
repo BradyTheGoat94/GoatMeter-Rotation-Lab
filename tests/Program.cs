@@ -554,6 +554,18 @@ Equal(ValidatedCooldownCatalog.Remaining(sorcererWishTracker.Snapshot(),AionClas
     "validated Sorcerer Wish base cooldown reconstruction excludes specialty reductions");
 Equal(ValidatedCooldownCatalog.Remaining(sorcererWishTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(61))["Wish of Concentration"],0,
     "Sorcerer Wish returns after validated 60s base cooldown when no specialization reduction is proven");
+var sorcererWishObservation=sorcererWishTracker.Snapshot();
+var sorcererWishSignals=PassiveRotationSignalDeriver.Derive(sorcererWishObservation,AionClass.Sorcerer,t.AddSeconds(10.9));
+True(sorcererWishSignals.Contains("SorcererBurstWindow"),"observed current-Global Wish opens Sorcerer 10s burst window");
+True(!PassiveRotationSignalDeriver.Derive(sorcererWishObservation,AionClass.Sorcerer,t.AddSeconds(11.1)).Contains("SorcererBurstWindow"),"Sorcerer Wish burst window expires after current-Global 10s duration");
+var sorcererWishReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Wish of Concentration",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererWishReady.Next?.Skill=="Wish of Concentration","ready current-Global Wish leads ordinary Sorcerer filler");
+var sorcererWishRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Wish of Concentration",20}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererWishRecovering.Next?.Skill!="Wish of Concentration","Sorcerer cannot recommend Wish while its validated Global cooldown is recovering");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
