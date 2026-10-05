@@ -143,8 +143,13 @@ public static class RotationProfileCatalog
             AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Punishing Earth",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"passively observed Cleric state supports Punishing Earth")}),
-                new RotationRule("Healing Light",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"passively observed healing state supports Healing Light")})
+                new RotationRule("Earth Punishment",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"establish Earth Punishment before the Condemnation damage loop")}),
+                new RotationRule("Condemnation",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"consume/reset Condemnation opportunity for primary single-target damage")}),
+                new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
+                new RotationRule("Divine Aura",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available")}),
+                new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
+                new RotationRule("Earth's Retribution",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"weave the MP-restoring basic damage action")}),
+                new RotationRule("Healing Light",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
             },
             "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
     }
