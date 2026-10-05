@@ -164,6 +164,10 @@ var judgmentAndPunishmentReady=rotationEngine.Evaluate(new RotationState(t.AddSe
     new Dictionary<string,double>{{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow","TemplarFillerWindow"}},templarProvisional);
 True(judgmentAndPunishmentReady.Next?.Skill=="Judgment","short observed Judgment opportunity is consumed before ready Punishment");
+var punishmentWithoutJudgment=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>{{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
+True(punishmentWithoutJudgment.Next?.Skill=="Punishment","ready Punishment remains Templar priority when no observed Judgment window exists");
 var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
