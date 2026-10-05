@@ -425,9 +425,16 @@ var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Range
 True(rangerBurstReady.Next?.Skill=="Snipe","Global APL starts Snipe chain before ready Burst Arrow");
 var rangerAfterSnipeUnavailable=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
-    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow","RangerBurstArrowWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
     rangerProvisional.Rules.Where(r=>!r.Skill.Equals("Snipe",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic priority isolation"));
-True(rangerAfterSnipeUnavailable.Next?.Skill=="Burst Arrow","ready Burst Arrow outranks Gale/Drill/Tempest when Snipe is unavailable");
+True(rangerAfterSnipeUnavailable.Next?.Skill=="Burst Arrow","ready Burst Arrow with observed Slow/Root outranks Gale/Drill/Tempest when Snipe is unavailable");
+var rangerBurstNoCc=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    rangerProvisional.Rules.Where(r=>!r.Skill.Equals("Snipe",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic CC fail-closed isolation"));
+True(rangerBurstNoCc.Next?.Skill!="Burst Arrow","ready Burst Arrow fails closed without passively observed Slow or Root");
+var rangerSlowObservation=new PassiveRotationObservation(79,AionClass.Ranger,new Dictionary<string,DateTime>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Slow"});
+True(PassiveRotationSignalDeriver.Derive(rangerSlowObservation,AionClass.Ranger,t).Contains("RangerBurstArrowWindow"),"observed target Slow exposes Ranger Burst Arrow window");
 var rangerDrillReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>{{"Drill Dart",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
@@ -574,6 +581,16 @@ var spiritmasterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Spi
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},spiritmasterProvisional);
 True(spiritmasterFiller.Next?.Skill=="Cold Shock","current Global APL places Cold Shock ahead of sustained Combustion filler");
+var spiritmasterCurseReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Curse",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},new RotationProfile(AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    spiritmasterProvisional.Rules.Where(r=>r.Skill!="Cold Shock").ToArray(),"synthetic Curse readiness isolation"));
+True(spiritmasterCurseReady.Next?.Skill=="Jointstrike: Curse","ready Jointstrike Curse leads secondary Spiritmaster sustained filler");
+var spiritmasterCurseRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Curse",4}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},new RotationProfile(AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    spiritmasterProvisional.Rules.Where(r=>r.Skill!="Cold Shock").ToArray(),"synthetic Curse recovery isolation"));
+True(spiritmasterCurseRecovering.Next?.Skill!="Jointstrike: Curse","Spiritmaster cannot recommend Jointstrike Curse while its validated cooldown is recovering");
 var spiritmasterWithoutCoreDebuffs=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},new RotationProfile(AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
