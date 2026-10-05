@@ -12,7 +12,8 @@ public static class ValidatedCooldownCatalog
     static readonly ValidatedCooldown[] entries =
     {
         new(AionClass.Templar,"Punishment",30,"1.0.21.0","AION 2 Global database skill 12090000"),
-        new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000")
+        new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000"),
+        new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000")
     };
 
     public static IReadOnlyList<ValidatedCooldown> Entries => entries;
