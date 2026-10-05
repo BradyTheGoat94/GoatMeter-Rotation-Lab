@@ -222,7 +222,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Dark Crush",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately after the observed ranged setup")}),
                 new RotationRule("Resonance Crush",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterResonanceCrushWindow",Reason:"continue the observed Onslaught chain")}),
                 new RotationRule("Bolt Crush",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBoltCrushWindow",Reason:"finish the observed Onslaught chain")}),
-                new RotationRule("Heat Wave Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window")}),
+                new RotationRule("Heat Wave Blow",700,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Heat Wave Blow",Reason:"validated 10s Global base cooldown is ready")
+                }),
                 new RotationRule("Wave Blow",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"begin the sustained heavy-damage sequence")}),
                 new RotationRule("Impactful Crush",625,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"current Global APL places Impactful Crush above the Onslaught chain"),
