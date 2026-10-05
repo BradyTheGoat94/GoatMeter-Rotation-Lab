@@ -351,7 +351,7 @@ var cloneSignals=PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.
 True(cloneSignals.Contains("AssassinBurstWindow"),"observed Illusive Clone opens bounded Assassin burst window");
 True(!PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.Assassin,t.AddSeconds(20.1)).Contains("AssassinBurstWindow"),"Assassin Illusive Clone burst window expires after 20s");
 var cloneDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=cloneSignals},assassinProvisional);
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Shadowstrike",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=cloneSignals},assassinProvisional);
 True(cloneDecision.Next?.Skill=="Shadowstrike","observed Illusive Clone exposes Assassin burst recommendation");
 var assassinShadowRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Shadowstrike",5}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
