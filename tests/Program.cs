@@ -169,7 +169,7 @@ var doomWindow=judgmentTracker.Snapshot();
 True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),"Doom Shield opens observed 3s Judgment window");
 True(!doomWindow.JudgmentWindowActive(t.AddSeconds(7.1)),"Doom Shield Judgment window expires after 3s");
 var gladiatorSignalObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
-    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{["Rending Blow"]=t}},new HashSet<string>(),new HashSet<string>());
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){["Rending Blow"]=t},new HashSet<string>(),new HashSet<string>());
 var gladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Gladiator,t.AddSeconds(2));
 True(gladiatorSignals.Contains("GladiatorSmashingWindow")&&gladiatorSignals.Contains("GladiatorFillerWindow"),"pure passive signal derivation opens observed Gladiator chain and sustained windows");
 var expiredGladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Gladiator,t.AddSeconds(4));
