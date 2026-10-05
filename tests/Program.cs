@@ -172,5 +172,18 @@ var judgmentDecision=rotationEngine.Evaluate(judgmentState,templarProvisional);
 True(judgmentDecision.Next?.Skill=="Judgment"&&!judgmentDecision.Next.Actionable,"observed Judgment window yields provisional informational Judgment");
 var noJudgmentSignal=rotationEngine.Evaluate(judgmentState with {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase)},templarProvisional);
 True(noJudgmentSignal.Next is null,"Judgment remains ineligible without observed trigger signal");
+var assassinProvisional=RotationProfileCatalog.CreateProvisionalAssassinSingleTarget();
+True(assassinProvisional.Validation==ProfileValidation.Provisional,"Assassin fixture remains provisional");
+var assassinUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),assassinProvisional);
+True(assassinUnknown.Next is null,"Assassin fails closed without passively proven crit or Insignia state");
+var assassinCrit=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow"}},assassinProvisional);
+True(assassinCrit.Next?.Skill=="Heart Gore"&&!assassinCrit.Next.Actionable,"observed Assassin crit signal yields informational Heart Gore");
+var assassinInsignia=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"InsigniaReady"}},assassinProvisional);
+True(assassinInsignia.Next?.Skill=="Insignia Explosion"&&!assassinInsignia.Next.Actionable,"observed Assassin Insignia signal yields informational explosion");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
