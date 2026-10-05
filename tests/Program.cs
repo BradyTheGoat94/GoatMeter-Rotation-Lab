@@ -175,6 +175,10 @@ True(gladiatorSignals.Contains("GladiatorSmashingWindow")&&gladiatorSignals.Cont
 var expiredGladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Gladiator,t.AddSeconds(4));
 True(!expiredGladiatorSignals.Contains("GladiatorSmashingWindow")&&expiredGladiatorSignals.Contains("GladiatorFillerWindow"),"Gladiator chain signal expires before generic observed-combat window");
 var wrongClassSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Sorcerer,t.AddSeconds(2));
+var wrathfulSignalObservation=new PassiveRotationObservation(78,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rupture Strike",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(wrathfulSignalObservation,AionClass.Gladiator,t.AddSeconds(2.9)).Contains("GladiatorWrathfulWindow"),"observed Rupture Strike opens Gladiator Wrathful Strike chain window");
+True(!PassiveRotationSignalDeriver.Derive(wrathfulSignalObservation,AionClass.Gladiator,t.AddSeconds(3.1)).Contains("GladiatorWrathfulWindow"),"Gladiator Wrathful Strike chain window expires after 3s");
 True(!wrongClassSignals.Contains("GladiatorSmashingWindow"),"passive sequence signals remain isolated to the observed class");
 var chanterSignalObservation=new PassiveRotationObservation(88,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
