@@ -109,7 +109,10 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Marking Shot",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support when the mark needs refresh")}),
+                new RotationRule("Marking Shot",700,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support only when a passively proven refresh window exists"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Marking Shot",Reason:"validated 10s current-Global base cooldown is ready; Precision state is never inferred from the cast")
+                }),
                 new RotationRule("Deadshot",650,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"RangerDeadshotWindow",Reason:"observed current-Global Precision state enables Deadshot's 35% damage bonus"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Deadshot",Reason:"validated 20s current Global base cooldown is ready; charge level and specialization modifiers remain player-controlled")
