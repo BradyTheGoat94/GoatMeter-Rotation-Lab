@@ -227,8 +227,14 @@ var templarThreat=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),Aion
 True(templarThreat.Next?.Skill=="Threatening Blow","observed Templar main chain finishes at Threatening Blow");
 judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"Doom Shield",SourceClass:"Templar"));
 var doomWindow=judgmentTracker.Snapshot();
-True(doomWindow.JudgmentTrigger=="Shield Smite"&&!doomWindow.JudgmentWindowActive(t.AddSeconds(4)),
-    "unverified Doom Shield does not manufacture a new Judgment window");
+True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),
+    "current Global Doom Shield opens its documented 3s Judgment window");
+True(!doomWindow.JudgmentWindowActive(t.AddSeconds(7.1)),
+    "Doom Shield Judgment window expires after 3s");
+var doomDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(5),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow"}},templarProvisional);
+True(doomDecision.Next?.Skill=="Judgment","observed Doom Shield window prioritizes Judgment");
 var gladiatorSignalObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rending Blow",t}},new HashSet<string>(),new HashSet<string>());
 var gladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Gladiator,t.AddSeconds(2));
