@@ -406,6 +406,23 @@ True(gladiatorUpwardSignals.Contains("GladiatorUpwardStrikeWindow"),"observed Ov
 var gladiatorUpward=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=gladiatorUpwardSignals},gladiatorProvisional);
 True(gladiatorUpward.Next?.Skill=="Upward Strike","observed Overhead Slam immediately prioritizes Upward Strike");
+var gladiatorCrushingObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Crushing Wave",t}},new HashSet<string>(),new HashSet<string>());
+var gladiatorFrenziedSignals=PassiveRotationSignalDeriver.Derive(gladiatorCrushingObservation,AionClass.Gladiator,t.AddSeconds(2.9));
+True(gladiatorFrenziedSignals.Contains("GladiatorFrenziedWaveWindow"),"observed current-Global Crushing Wave opens Frenzied Wave chain window");
+True(!PassiveRotationSignalDeriver.Derive(gladiatorCrushingObservation,AionClass.Gladiator,t.AddSeconds(3.1)).Contains("GladiatorFrenziedWaveWindow"),"Gladiator Frenzied Wave chain window expires after 3s");
+var gladiatorFrenzied=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=gladiatorFrenziedSignals},gladiatorProvisional);
+True(gladiatorFrenzied.Next?.Skill=="Frenzied Wave","observed Crushing Wave immediately prioritizes current-Global Frenzied Wave");
+var gladiatorCrushingReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Crushing Wave",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorCrushingReady.Next?.Skill=="Crushing Wave","ready Crushing Wave enters current-Global Gladiator sustained priority");
+var gladiatorCrushingRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Crushing Wave",7}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorCrushingRecovering.Next?.Skill!="Crushing Wave","Gladiator cannot recommend Crushing Wave while its validated cooldown is recovering");
 var rangerProvisional=RotationProfileCatalog.CreateProvisionalRangerSingleTarget();
 True(rangerProvisional.Validation==ProfileValidation.Provisional,"Ranger fixture remains provisional");
 var rangerUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
