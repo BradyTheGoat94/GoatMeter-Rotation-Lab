@@ -253,7 +253,10 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Heat Wave Blow",Reason:"validated 10s Global base cooldown is ready")
                 }),
-                new RotationRule("Wave Blow",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"begin the sustained heavy-damage sequence")}),
+                new RotationRule("Wave Blow",650,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterWaveBlowWindow",Reason:"current Global Wave Blow requires an observed stunned target"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Wave Blow",Reason:"validated 20s current-Global base cooldown is ready; incapacitation-immunity specialization behavior excluded")
+                }),
                 new RotationRule("Impactful Crush",625,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"current Global APL places Impactful Crush above the Onslaught chain"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Impactful Crush",Reason:"validated current Global 15s base cooldown is ready")
