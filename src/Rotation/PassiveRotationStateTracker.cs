@@ -15,6 +15,7 @@ public sealed class PassiveRotationStateTracker
     AionClass? playerClass;
     DateTime? judgmentWindowUntil;
     string judgmentTrigger="";
+    DateTime? criticalHitWindowUntil;
 
     public void Observe(CombatEvent e)
     {
@@ -29,6 +30,8 @@ public sealed class PassiveRotationStateTracker
                 if(!string.IsNullOrWhiteSpace(e.Skill))
                 {
                     lastSkillUse[e.Skill]=e.Utc;
+                    if(playerClass==AionClass.Assassin && e.Kind==CombatKind.Damage && e.DamageFlags.HasFlag(DamageFlags.Critical))
+                        criticalHitWindowUntil=e.Utc.AddSeconds(2);
                     if(playerClass==AionClass.Templar && JudgmentWindowSeconds.TryGetValue(e.Skill,out var seconds))
                     {
                         judgmentWindowUntil=e.Utc.AddSeconds(seconds);
@@ -48,12 +51,12 @@ public sealed class PassiveRotationStateTracker
             new Dictionary<string,DateTime>(lastSkillUse,StringComparer.OrdinalIgnoreCase),
             new HashSet<string>(buffs,StringComparer.OrdinalIgnoreCase),
             new HashSet<string>(debuffs,StringComparer.OrdinalIgnoreCase),
-            judgmentWindowUntil,judgmentTrigger);
+            judgmentWindowUntil,judgmentTrigger,criticalHitWindowUntil);
     }
 
     public void Reset()
     {
-        playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";
+        playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";criticalHitWindowUntil=null;
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
@@ -68,7 +71,8 @@ public sealed class PassiveRotationStateTracker
 
 public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassName,
     IReadOnlyDictionary<string,DateTime> LastSkillUse,IReadOnlySet<string> Buffs,IReadOnlySet<string> Debuffs,
-    DateTime? JudgmentWindowUntil=null,string JudgmentTrigger="")
+    DateTime? JudgmentWindowUntil=null,string JudgmentTrigger="",DateTime? CriticalHitWindowUntil=null)
 {
     public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until;
+    public bool CriticalHitWindowActive(DateTime utc)=>CriticalHitWindowUntil is DateTime until && utc<=until;
 }
