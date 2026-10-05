@@ -125,7 +125,8 @@ internal static class Program
   var liveDecision=new RotationEngine().Evaluate(liveState,liveProfile);
   window.RenderRotation(liveDecision);
   if(liveDecision.Next is not null)throw new Exception("Unvalidated live profile produced a recommendation");
-  if(((TextBlock)window.FindName("RotationNextSkill")).Text!="No recommendation")throw new Exception("Fail-closed live state was not rendered");
+  if(((TextBlock)window.FindName("RotationNextSkill")).Text!="Waiting for observed state")throw new Exception("Fail-closed passive waiting state was not rendered");
+  if(((TextBlock)window.FindName("RotationStateText")).Text!="PASSIVE • WAITING")throw new Exception("Passive waiting label missing");
   if(!((TextBlock)window.FindName("RotationReason")).Text.Contains("No validated rules"))throw new Exception("Fail-closed diagnostic missing");
   Console.WriteLine("PASS: passive live-state bridge remains fail closed without validated class rules");
   window.RenderRotation(liveDecision with {ReadinessContext="Cooldown readiness: Punishment 18.0s"});
