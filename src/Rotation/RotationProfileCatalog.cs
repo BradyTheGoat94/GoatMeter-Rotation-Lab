@@ -137,6 +137,30 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. Dispel and spirit-burst decisions remain gated on passive signals; no recommendation is emitted until the relevant state is proven.");
     }
 
+    public static RotationProfile CreateProvisionalClericSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Punishing Earth",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"passively observed Cleric state supports Punishing Earth")}),
+                new RotationRule("Healing Light",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"passively observed healing state supports Healing Light")})
+            },
+            "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
+    }
+
+    public static RotationProfile CreateProvisionalChanterSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Mountain Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"passively observed Chanter state supports Mountain Crash")}),
+                new RotationRule("Healing Burst",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"passively observed healing state supports Healing Burst")})
+            },
+            "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
