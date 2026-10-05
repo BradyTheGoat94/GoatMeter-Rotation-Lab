@@ -68,12 +68,11 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Ice Chain",now,3))
                 signals.Add("SorcererColdWaveWindow");
 
-            // Global fire hits apply Fire Mark. Reconstruct only from named fire
-            // skills with current evidence; never treat generic Sorcerer activity as a mark.
-            if(observed.UsedRecently("Flame Arrow",now,10) ||
-               observed.UsedRecently("Flame Harpoon",now,10) ||
-               observed.UsedRecently("Fire Wall",now,10) ||
-               observed.UsedRecently("Hellfire",now,10))
+            // Current Global Fire Mark lasts 5s after a Fire hit. Reconstruct only
+            // from named fire skills with current evidence; never treat generic combat
+            // or specialty-dependent cooldown behavior as proof of the target mark.
+            string[] fireMarkSources={"Flame Arrow","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"};
+            if(fireMarkSources.Any(skill=>observed.UsedRecently(skill,now,5)))
                 signals.Add("SorcererFireMarkWindow");
         }
         if(observedClass==AionClass.Cleric)
