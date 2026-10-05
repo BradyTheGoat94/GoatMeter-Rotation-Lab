@@ -217,6 +217,13 @@ var chanterSignalObservation=new PassiveRotationObservation(88,AionClass.Chanter
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
 True(PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(2.9)).Contains("ChanterDarkCrushWindow"),"Impactful Crush opens observed Chanter Dark Crush window");
 True(!PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window expires after 3s");
+var chanterGlobalSetupObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Spinning Strike",t}},
+    new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(2.9)).Contains("ChanterDarkCrushWindow"),
+    "current Global observed Spinning Strike setup opens Chanter Dark Crush window");
+True(!PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),
+    "current Global Chanter Dark Crush setup remains bounded to the short reaction window");
 var spiritSignalObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Blessing",t},{"Summon: Ancient Spirit",t}},new HashSet<string>(),new HashSet<string>());
 var spiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,AionClass.Spiritmaster,t.AddSeconds(7.9));
