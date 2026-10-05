@@ -631,6 +631,14 @@ var chanterReaction=rotationEngine.Evaluate(new RotationState(t,AionClass.Chante
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
 True(chanterReaction.Next?.Skill=="Dark Crush","observed Chanter reaction window outranks sustained filler");
+var chanterHeatReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heat Wave Blow",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterBurstWindow","ChanterFillerWindow"}},chanterProvisional);
+True(chanterHeatReady.Next?.Skill=="Heat Wave Blow","ready Heat Wave Blow leads proven Chanter burst window");
+var chanterHeatRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heat Wave Blow",4}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterBurstWindow","ChanterFillerWindow"}},chanterProvisional);
+True(chanterHeatRecovering.Next?.Skill!="Heat Wave Blow","Chanter burst cannot recommend Heat Wave Blow while its validated cooldown is recovering");
 var chanterOnslaughtObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Onslaught",t}},new HashSet<string>(),new HashSet<string>());
 var chanterOnslaughtSignals=PassiveRotationSignalDeriver.Derive(chanterOnslaughtObservation,AionClass.Chanter,t.AddSeconds(2.9));
