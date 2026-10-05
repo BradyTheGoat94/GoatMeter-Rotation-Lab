@@ -47,6 +47,13 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Savage Roar",now,3))signals.Add("AssassinSavageBackKickWindow");
             if(observed.UsedRecently("Savage Back Kick",now,3))signals.Add("AssassinSavageSmashWindow");
         }
+        if(observedClass==AionClass.Ranger)
+        {
+            // Precision must be observed, never inferred from generic activity.
+            // Current Global evidence makes Deadshot the immediate high-value payoff.
+            if(observed.Buffs.Contains("Precision"))
+                signals.Add("RangerDeadshotWindow");
+        }
         if(observedClass==AionClass.Sorcerer && observed.UsedRecently("Ice Chain",now,3))
             signals.Add("SorcererColdWaveWindow");
         if(observedClass==AionClass.Cleric && observed.UsedRecently("Chain of Torment",now,10))
