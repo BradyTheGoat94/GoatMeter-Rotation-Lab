@@ -13,6 +13,7 @@ public static class ValidatedCooldownCatalog
     {
         new(AionClass.Templar,"Punishment",30,"1.0.21.0","AION 2 Global database skill 12090000"),
         new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000"),
+        new(AionClass.Templar,"Doom Shield",30,"Global 0.0.4387.0","Global client skill 12070000; triggers Judgment for 3s"),
         new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000"),
         new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
