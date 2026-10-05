@@ -49,6 +49,7 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Rupture Strike",now,3))signals.Add("GladiatorWrathfulWindow");
             if(observed.UsedRecently("Rage Burst",now,10))signals.Add("GladiatorOverheadWindow");
             if(observed.UsedRecently("Overhead Slam",now,3))signals.Add("GladiatorUpwardStrikeWindow");
+            if(observed.UsedRecently("Crushing Wave",now,3))signals.Add("GladiatorFrenziedWaveWindow");
         }
         if(observedClass==AionClass.Assassin)
         {
