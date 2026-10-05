@@ -116,7 +116,9 @@ internal static class Program
   if(!((TextBlock)window.FindName("RotationQueue")).Text.Contains("Fixture Followup"))throw new Exception("Assistant queue missing");
   if(((TextBlock)window.FindName("RotationIconGlyph")).Text!="?")throw new Exception("Unverified skill icon fallback missing");
   if(((TextBlock)window.FindName("RotationIconState")).Text!="ICON UNVERIFIED")throw new Exception("Unverified skill icon was not labeled");
-  Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed icon state");
+  if(((TextBlock)window.FindName("RotationQueueIconGlyph")).Text!="?")throw new Exception("Unverified planned-skill icon fallback missing");
+  if(((TextBlock)window.FindName("RotationQueueIconState")).Text!="ICONS UNVERIFIED")throw new Exception("Unverified planned-skill icons were not labeled");
+  Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed primary/queue icon states");
 
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
