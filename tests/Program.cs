@@ -552,6 +552,11 @@ var clericEarth=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionCl
     {Signals=clericEarthSignals},clericProvisional);
 True(clericEarth.Next?.Skill=="Condemnation"&&!clericEarth.Next.Actionable,
     "observed Cleric Earth Punishment window keeps Condemnation above sustained filler without assuming reset specialty");
+var clericEarthRecovering=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Condemnation",1.5}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Earth Punishment"},0,100,1,false,true,.95)
+    {Signals=clericEarthSignals},clericProvisional);
+True(clericEarthRecovering.Next?.Skill!="Condemnation",
+    "high-value Cleric Earth Punishment state cannot bypass the validated Condemnation cooldown");
 var clericNoEarthSignals=PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(2));
 True(!clericNoEarthSignals.Contains("ClericEarthPunishmentWindow"),
     "Cleric Earth Punishment state fails closed when the debuff is not observed");
