@@ -73,8 +73,14 @@ public static class RotationProfileCatalog
             new[]
             {
                 new RotationRule("Upward Strike",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorUpwardStrikeWindow",Reason:"complete the observed Overhead Slam chain immediately")}),
-                new RotationRule("Overhead Slam",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the observed Rage Burst Overhead Slam opportunity")}),
-                new RotationRule("Ruinous Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state")}),
+                new RotationRule("Overhead Slam",800,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the observed Rage Burst Overhead Slam opportunity"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Overhead Slam",Reason:"validated 5s Global base cooldown is ready; level-16 no-cooldown specialization excluded")
+                }),
+                new RotationRule("Ruinous Blow",700,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Ruinous Blow",Reason:"validated 45s Global base cooldown is ready; specialization reductions excluded")
+                }),
                 new RotationRule("Rending Blow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"core sustained single-target damage after conditional attacks")}),
                 new RotationRule("Smashing Blow",675,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
                 new RotationRule("Seismic Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFinisherWindow",Reason:"passively observed chain state supports Seismic Crash")}),
