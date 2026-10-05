@@ -75,4 +75,6 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
 {
     public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until;
     public bool CriticalHitWindowActive(DateTime utc)=>CriticalHitWindowUntil is DateTime until && utc<=until;
+    public bool UsedRecently(string skill,DateTime utc,double seconds)=>
+        LastSkillUse.TryGetValue(skill,out var used) && utc-used>=TimeSpan.Zero && utc-used<=TimeSpan.FromSeconds(seconds);
 }
