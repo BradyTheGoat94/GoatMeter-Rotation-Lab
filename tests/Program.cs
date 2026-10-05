@@ -292,13 +292,21 @@ var assassinUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Assass
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),assassinProvisional);
 True(assassinUnknown.Next is null,"Assassin fails closed without passively proven crit or Insignia state");
 var assassinCrit=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heart Gore",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow"}},assassinProvisional);
 True(assassinCrit.Next?.Skill=="Heart Gore"&&!assassinCrit.Next.Actionable,"observed Assassin crit signal yields informational Heart Gore");
 var assassinInsignia=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Insignia Explosion",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"InsigniaReady"}},assassinProvisional);
 True(assassinInsignia.Next?.Skill=="Insignia Explosion"&&!assassinInsignia.Next.Actionable,"observed Assassin Insignia signal yields informational explosion");
+var assassinHeartRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heart Gore",2}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinHeartRecovering.Next?.Skill!="Heart Gore","Assassin does not recommend Heart Gore while validated base cooldown is recovering");
+var assassinCooldownTracker=new PassiveRotationStateTracker();
+assassinCooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+assassinCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"AssassinTester",99,"Dummy","Insignia Explosion",100,SourceClass:"Assassin"));
+Equal(ValidatedCooldownCatalog.Remaining(assassinCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(5))["Insignia Explosion"],6,"validated Assassin Insignia Explosion base cooldown reconstruction");
 var assassinFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinFillerWindow"}},assassinProvisional);
