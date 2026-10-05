@@ -271,8 +271,10 @@ True(wardingTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Warding 
 var rushTracker=new PassiveRotationStateTracker();
 rushTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
 rushTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Shield Rush",100,SourceClass:"Templar"));
-True(!rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2)),
-    "unverified Shield Rush does not manufacture a Judgment window");
+True(rushTracker.Snapshot().JudgmentTrigger=="Shield Rush"&&rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),
+    "current Global Shield Rush opens its documented 2s Judgment window");
+True(!rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.1)),
+    "Shield Rush Judgment window expires after 2s");
 var judgmentState=new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow"}};
