@@ -86,14 +86,11 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Rupture Arrow",500,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerRuptureWindow",Reason:"passively observed Ranger state supports Rupture Arrow")
-                }),
-                new RotationRule("Destruction Trap",300,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerTrapWindow",Reason:"passively observed Ranger state supports Destruction Trap")
-                })
+                new RotationRule("Marking Shot",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support when the mark needs refresh")}),
+                new RotationRule("Deadshot",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerDeadshotWindow",Reason:"use charged Deadshot in a proven damage window")}),
+                new RotationRule("Snipe",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"cycle Snipe while higher-priority state actions are unavailable")}),
+                new RotationRule("Rupture Arrow",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerRuptureWindow",Reason:"passively observed Ranger state supports Rupture Arrow")}),
+                new RotationRule("Destruction Trap",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerTrapWindow",Reason:"passively observed Ranger state supports Destruction Trap")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Rupture Arrow and Destruction Trap remain gated on passive state signals; no recommendation is emitted until those states are proven.");
     }
