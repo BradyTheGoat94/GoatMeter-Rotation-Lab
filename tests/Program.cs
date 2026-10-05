@@ -325,6 +325,18 @@ var gladiatorRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladi
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorRuptureWindow","GladiatorFillerWindow"}},gladiatorProvisional);
 True(gladiatorRupture.Next?.Skill=="Rupture Strike","observed Keen Strike chain advances to the current Global Rupture Strike name");
+var gladiatorRageObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",t}},new HashSet<string>(),new HashSet<string>());
+var gladiatorRageSignals=PassiveRotationSignalDeriver.Derive(gladiatorRageObservation,AionClass.Gladiator,t.AddSeconds(9.9));
+True(gladiatorRageSignals.Contains("GladiatorOverheadWindow"),"observed Rage Burst opens the documented 10s Overhead Slam window");
+True(!PassiveRotationSignalDeriver.Derive(gladiatorRageObservation,AionClass.Gladiator,t.AddSeconds(10.1)).Contains("GladiatorOverheadWindow"),"Gladiator Rage Burst Overhead window expires after 10s");
+var gladiatorOverheadObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Overhead Slam",t}},new HashSet<string>(),new HashSet<string>());
+var gladiatorUpwardSignals=PassiveRotationSignalDeriver.Derive(gladiatorOverheadObservation,AionClass.Gladiator,t.AddSeconds(2));
+True(gladiatorUpwardSignals.Contains("GladiatorUpwardStrikeWindow"),"observed Overhead Slam opens Upward Strike chain window");
+var gladiatorUpward=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=gladiatorUpwardSignals},gladiatorProvisional);
+True(gladiatorUpward.Next?.Skill=="Upward Strike","observed Overhead Slam immediately prioritizes Upward Strike");
 var rangerProvisional=RotationProfileCatalog.CreateProvisionalRangerSingleTarget();
 True(rangerProvisional.Validation==ProfileValidation.Provisional,"Ranger fixture remains provisional");
 var rangerUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
@@ -461,6 +473,17 @@ var chanterReaction=rotationEngine.Evaluate(new RotationState(t,AionClass.Chante
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
 True(chanterReaction.Next?.Skill=="Dark Crush","observed Chanter reaction window outranks sustained filler");
+var chanterOnslaughtObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Onslaught",t}},new HashSet<string>(),new HashSet<string>());
+var chanterOnslaughtSignals=PassiveRotationSignalDeriver.Derive(chanterOnslaughtObservation,AionClass.Chanter,t.AddSeconds(2.9));
+True(chanterOnslaughtSignals.Contains("ChanterResonanceCrushWindow"),"observed Onslaught opens Resonance Crush chain window");
+var chanterResonanceObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Resonance Crush",t}},new HashSet<string>(),new HashSet<string>());
+var chanterBoltSignals=PassiveRotationSignalDeriver.Derive(chanterResonanceObservation,AionClass.Chanter,t.AddSeconds(2.9));
+True(chanterBoltSignals.Contains("ChanterBoltCrushWindow"),"observed Resonance Crush opens Bolt Crush chain window");
+var chanterBolt=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=chanterBoltSignals},chanterProvisional);
+True(chanterBolt.Next?.Skill=="Bolt Crush","observed Chanter chain progresses to Bolt Crush");
 var chanterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterFillerWindow"}},chanterProvisional);
