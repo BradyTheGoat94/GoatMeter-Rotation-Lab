@@ -115,7 +115,10 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Element Enhancement",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"establish the primary damage enhancement before the burst sequence")}),
                 new RotationRule("Delayed Explosion",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"apply delayed burst early in the damage sequence")}),
-                new RotationRule("Hellfire",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Hellfire during a proven burst window")}),
+                new RotationRule("Hellfire",650,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Hellfire during a proven burst window"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Hellfire",Reason:"validated 45s Global base cooldown is ready; charge choice remains situational")
+                }),
                 new RotationRule("Fire Wall",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"maintain high-value fire damage during burst")}),
                 new RotationRule("Cold Storm",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Cold Storm in the sustained burst sequence")}),
                 new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
@@ -123,10 +126,12 @@ public static class RotationProfileCatalog
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
                 new RotationRule("Blaze",575,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Blaze",Reason:"validated 5s Global base cooldown is ready; specialty reductions excluded"),
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFireMarkWindow",Reason:"a directly observed Global fire hit establishes the Fire Mark window")
                 }),
                 new RotationRule("Blaze",574,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Blaze",Reason:"validated 5s Global base cooldown is ready; specialty reductions excluded"),
                     new RotationCondition(RotationConditionKind.DebuffPresent,"Fire Mark",Reason:"an explicitly decoded Fire Mark target also proves Blaze eligibility")
                 }),
                 new RotationRule("Ice Chain",325,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"continue with the repeatedly observed Global sustained spell without inferring hidden burst state")}),
