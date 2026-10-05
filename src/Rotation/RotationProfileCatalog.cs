@@ -179,7 +179,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Dimensional Control",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDimensionalControlWindow",Reason:"consume the brief observed post-summon activation before returning to filler")}),
                 new RotationRule("Jointstrike: Destructive Attack",490,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use on cooldown without sacrificing higher-priority Fusion or stack state")}),
                 new RotationRule("Cold Shock",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"current Global PvE priority places Cold Shock ahead of secondary filler")}),
-                new RotationRule("Jointstrike: Curse",565,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"current Global PvE priority maintains Jointstrike: Curse before secondary filler")}),
+                new RotationRule("Jointstrike: Curse",565,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"current Global PvE priority maintains Jointstrike: Curse before secondary filler"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Jointstrike: Curse",Reason:"validated 10s Global base cooldown is ready")
+                }),
                 new RotationRule("Combustion",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use the repeatedly observed Global sustained damage action while stronger spirit windows are unavailable")}),
                 new RotationRule("Earth Tremor",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"maintain basic-attack buff stacks during sustained damage")}),
                 new RotationRule("Disenchant",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")})
