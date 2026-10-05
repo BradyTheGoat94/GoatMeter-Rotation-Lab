@@ -31,7 +31,7 @@ public partial class OverlayWindow : Window
         RotationStateText.Text=decision.Next?.Actionable==true?"VERIFIED":"INFORMATIONAL";
         RotationReason.Text=decision.Next is null?decision.Diagnostic:string.Join(" • ",decision.Next.Reasons.Take(2));
         RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join("  →  ",decision.Alternatives.Select(x=>x.Skill));
-        RotationDiagnostic.Text=decision.Diagnostic;
+        RotationDiagnostic.Text=string.IsNullOrWhiteSpace(decision.ReadinessContext)?decision.Diagnostic:$"{decision.ReadinessContext} • {decision.Diagnostic}";
     }
 
     static readonly Dictionary<string,string> Colors = new(StringComparer.OrdinalIgnoreCase) {
