@@ -441,10 +441,10 @@ True(rangerProvisional.Validation==ProfileValidation.Provisional,"Ranger fixture
 var rangerUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),rangerProvisional);
 True(rangerUnknown.Next is null,"Ranger fails closed without passively proven proc/state");
-var rangerRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+var rangerUnreconciledRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerRuptureWindow"}},rangerProvisional);
-True(rangerRupture.Next?.Skill=="Rupture Arrow"&&!rangerRupture.Next.Actionable,"observed Ranger rupture signal yields informational Rupture Arrow");
+True(rangerUnreconciledRupture.Next is null,"unreconciled Ranger rupture vocabulary cannot create an actionable or informational recommendation");
 var rangerFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
