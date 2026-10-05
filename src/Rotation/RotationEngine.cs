@@ -175,6 +175,14 @@ public sealed class RotationEngine
             case RotationConditionKind.Stationary:
                 return !state.IsMoving;
 
+            case RotationConditionKind.SignalPresent:
+                if (Contains(state.Signals, condition.Key))
+                {
+                    reason = $"{condition.Key} observed";
+                    return true;
+                }
+                return false;
+
             default:
                 return false;
         }
