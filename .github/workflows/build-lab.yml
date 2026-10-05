@@ -1,0 +1,39 @@
+name: Build Rotation Lab
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".github/workflows/build-lab.yml"
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Combat and protocol regression checks
+        run: dotnet run --project tests/Regression.csproj -c Release
+      - name: Restore
+        run: dotnet restore src/Aion2DPSPro.csproj
+      - name: WPF overlay smoke checks
+        run: dotnet run --project tests/OverlaySmoke/OverlaySmoke.csproj -c Release
+      - name: Publish isolated Windows x64 lab build
+        run: dotnet publish src/Aion2DPSPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+      - name: Upload lab artifact only
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoatMeter-Rotation-Lab-win-x64
+          path: publish/
+          if-no-files-found: error
