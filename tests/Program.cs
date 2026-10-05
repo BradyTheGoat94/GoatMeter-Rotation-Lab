@@ -592,10 +592,25 @@ var clericDamageWindow=rotationEngine.Evaluate(new RotationState(t,AionClass.Cle
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},clericProvisional);
 True(clericDamageWindow.Next?.Skill=="Earth Punishment","Earth Punishment remains the Cleric damage-window setup above Bolt and filler");
 var clericBoltIsolation=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Bolt",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},new RotationProfile(AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
     clericProvisional.Rules.Where(r=>r.Skill!="Earth Punishment"&&r.Skill!="Divine Aura").ToArray(),"synthetic damage-window isolation"));
 True(clericBoltIsolation.Next?.Skill=="Bolt","current Global Cleric damage window includes Bolt above sustained filler");
+var clericBoltRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Bolt",12}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},new RotationProfile(AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    clericProvisional.Rules.Where(r=>r.Skill!="Earth Punishment"&&r.Skill!="Divine Aura").ToArray(),"synthetic Bolt recovery isolation"));
+True(clericBoltRecovering.Next?.Skill!="Bolt","Cleric cannot recommend Bolt while its validated base cooldown is recovering");
+var clericAuraReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Divine Aura",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},new RotationProfile(AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    clericProvisional.Rules.Where(r=>r.Skill!="Earth Punishment").ToArray(),"synthetic Aura readiness isolation"));
+True(clericAuraReady.Next?.Skill=="Divine Aura","ready Divine Aura leads remaining Cleric damage-window actions");
+var clericAuraRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Divine Aura",8},{"Bolt",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},new RotationProfile(AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    clericProvisional.Rules.Where(r=>r.Skill!="Earth Punishment").ToArray(),"synthetic Aura recovery isolation"));
+True(clericAuraRecovering.Next?.Skill=="Bolt","recovering Divine Aura falls through to ready Bolt rather than emitting an unavailable action");
 var clericChainObservation=new PassiveRotationObservation(88,AionClass.Cleric,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Chain of Torment",t}},new HashSet<string>(),new HashSet<string>());
 True(PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(9.9)).Contains("ClericCondemnationWindow"),"observed Chain of Torment opens bounded Cleric Condemnation window");
