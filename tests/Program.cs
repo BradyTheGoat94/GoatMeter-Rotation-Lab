@@ -223,7 +223,7 @@ True(sorcererUnknown.Next is null,"Sorcerer fails closed without passively prove
 var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
-True(sorcererBurst.Next?.Skill=="Flame Harpoon"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal yields informational Flame Harpoon");
+True(sorcererBurst.Next?.Skill=="Hellfire"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal follows expanded priority with Hellfire first");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
@@ -232,7 +232,7 @@ True(spiritmasterUnknown.Next is null,"Spiritmaster fails closed without passive
 var spiritmasterBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterBurstWindow"}},spiritmasterProvisional);
-True(spiritmasterBurst.Next?.Skill=="Spirit Ruinous Offensive"&&!spiritmasterBurst.Next.Actionable,"observed Spiritmaster burst signal yields informational spirit offensive");
+True(spiritmasterBurst.Next?.Skill=="Elemental Fusion"&&!spiritmasterBurst.Next.Actionable,"observed Spiritmaster burst signal follows expanded priority with Elemental Fusion");
 var clericProvisional=RotationProfileCatalog.CreateProvisionalClericSingleTarget();
 var clericUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),clericProvisional);
