@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     Task saveTail=Task.CompletedTask;
     readonly FightStore store=new();
     readonly RotationEngine rotationEngine=new();
+    readonly PassiveRotationStateTracker rotationTracker=new();
     readonly IReadOnlyList<RotationProfile> rotationProfiles=RotationProfileCatalog.CreateUnvalidatedGlobalStubs();
     public MainWindow()
     {
@@ -76,6 +77,7 @@ public partial class MainWindow : Window
         capture.EventReceived += e=>
         {
             engine.Apply(e);
+            rotationTracker.Observe(e);
             lock(diagnosticsGate)
             {
                 parsedEvents++;
@@ -102,15 +104,16 @@ public partial class MainWindow : Window
         // Lab-only passive bridge: derive only facts present in the meter snapshot.
         // Unknown build/readiness/resource/movement state deliberately keeps all
         // eight profiles fail-closed until stronger passive evidence is validated.
-        var self=s.Players.FirstOrDefault(p=>Enum.TryParse<AionClass>(p.ClassName,true,out _));
-        if(self is null || !Enum.TryParse<AionClass>(self.ClassName,true,out var observedClass))
+        var observed=rotationTracker.Snapshot();
+        var self=s.Players.FirstOrDefault(p=>p.EntityId==observed.PlayerId);
+        if(self is null || observed.ClassName is not AionClass observedClass)
             overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
         else
         {
             var profile=rotationProfiles.First(p=>p.ClassName==observedClass);
             var targetHp=s.Target?.Percent??100;
             var state=new RotationState(DateTime.UtcNow,observedClass,profile.BuildId,profile.Mode,
-                new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,targetHp,1,false,
+                new Dictionary<string,double>(),observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25);
             overlay.RenderRotation(rotationEngine.Evaluate(state,profile));
         }
