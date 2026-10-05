@@ -356,7 +356,7 @@ var rangerPrecisionObservation=new PassiveRotationObservation(77,AionClass.Range
 var rangerPrecisionSignals=PassiveRotationSignalDeriver.Derive(rangerPrecisionObservation,AionClass.Ranger,t.AddSeconds(1));
 True(rangerPrecisionSignals.Contains("RangerDeadshotWindow"),"observed Precision buff opens Ranger Deadshot window");
 var rangerPrecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>())
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,0,false,false,0)
     {Signals=rangerPrecisionSignals},rangerProvisional);
 True(rangerPrecision.Next?.Skill=="Deadshot","observed Precision prioritizes Ranger Deadshot over sustained filler");
 var rangerNoPrecisionObservation=rangerPrecisionObservation with { Buffs=new HashSet<string>() };
