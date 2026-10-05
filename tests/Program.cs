@@ -157,5 +157,12 @@ judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"D
 var doomWindow=judgmentTracker.Snapshot();
 True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),"Doom Shield opens observed 3s Judgment window");
 True(!doomWindow.JudgmentWindowActive(t.AddSeconds(7.1)),"Doom Shield Judgment window expires after 3s");
+var judgmentState=new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow"}};
+var judgmentDecision=rotationEngine.Evaluate(judgmentState,templarProvisional);
+True(judgmentDecision.Next?.Skill=="Judgment"&&!judgmentDecision.Next.Actionable,"observed Judgment window yields provisional informational Judgment");
+var noJudgmentSignal=rotationEngine.Evaluate(judgmentState with {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase)},templarProvisional);
+True(noJudgmentSignal.Next is null,"Judgment remains ineligible without observed trigger signal");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
