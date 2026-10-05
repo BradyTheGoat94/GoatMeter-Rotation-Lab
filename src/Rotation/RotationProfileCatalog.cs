@@ -121,11 +121,11 @@ public static class RotationProfileCatalog
                 new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
                 new RotationRule("Flame Cage",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"refresh damage-over-time state when proven necessary")}),
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
-                new RotationRule("Blaze",525,new[]{
+                new RotationRule("Blaze",575,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFireMarkWindow",Reason:"a directly observed Global fire hit establishes the Fire Mark window")
                 }),
-                new RotationRule("Blaze",524,new[]{
+                new RotationRule("Blaze",574,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
                     new RotationCondition(RotationConditionKind.DebuffPresent,"Fire Mark",Reason:"an explicitly decoded Fire Mark target also proves Blaze eligibility")
                 }),
