@@ -118,7 +118,11 @@ public static class RotationProfileCatalog
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
                 new RotationRule("Blaze",525,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
-                    new RotationCondition(RotationConditionKind.DebuffPresent,"Fire Mark",Reason:"current Global Blaze requires an observed Fire Mark target")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFireMarkWindow",Reason:"a directly observed Global fire hit establishes the Fire Mark window")
+                }),
+                new RotationRule("Blaze",524,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
+                    new RotationCondition(RotationConditionKind.DebuffPresent,"Fire Mark",Reason:"an explicitly decoded Fire Mark target also proves Blaze eligibility")
                 }),
                 new RotationRule("Ice Chain",325,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"continue with the repeatedly observed Global sustained spell without inferring hidden burst state")}),
                 new RotationRule("Flame Arrow",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"basic damage/MP filler while higher priorities are unavailable")})
