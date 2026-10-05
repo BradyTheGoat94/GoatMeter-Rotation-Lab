@@ -189,7 +189,10 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterAncientWindow",Reason:"summon Ancient Spirit after observed opener buffs so the summon snapshots the damage state"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Summon: Ancient Spirit",Reason:"validated 90s current-Global base cooldown is ready; specialization effects excluded")
                 }),
-                new RotationRule("Jointstrike: Corrode",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"maintain the high-value Corrode damage-over-time effect")}),
+                new RotationRule("Jointstrike: Corrode",700,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"apply the current-Global Corrode target state after observed Ancient Spirit setup"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeMissingWindow",Reason:"do not reapply while the proven base 20s Corrode window remains active")
+                }),
                 new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
                 new RotationRule("Dimensional Control",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDimensionalControlWindow",Reason:"consume the brief observed post-summon activation before returning to filler")}),
                 new RotationRule("Jointstrike: Destructive Attack",490,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use on cooldown without sacrificing higher-priority Fusion or stack state")}),
