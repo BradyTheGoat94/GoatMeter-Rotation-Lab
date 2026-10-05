@@ -193,6 +193,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Bolt Crush",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBoltCrushWindow",Reason:"finish the observed Onslaught chain")}),
                 new RotationRule("Heat Wave Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window")}),
                 new RotationRule("Wave Blow",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"begin the sustained heavy-damage sequence")}),
+                new RotationRule("Impactful Crush",625,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"current Global APL places Impactful Crush above the Onslaught chain"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Impactful Crush",Reason:"validated current Global 15s base cooldown is ready")
+                }),
                 new RotationRule("Incandescent Blow",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"core sustained damage while reaction/burst skills are unavailable")}),
                 new RotationRule("Bursting Blow",525,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"use the repeatedly observed Global sustained strike while stronger Chanter windows are unavailable")}),
                 new RotationRule("Fracturing Blow",510,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"continue the observed Global sustained strike sequence without inventing hidden proc state")}),
