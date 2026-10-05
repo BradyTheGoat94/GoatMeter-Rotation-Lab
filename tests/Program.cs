@@ -380,10 +380,14 @@ var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
 True(sorcererBurst.Next?.Skill=="Hellfire"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal follows expanded priority with Hellfire first");
-var sorcererFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+var sorcererFillerState=new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
-    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
-True(sorcererFiller.Next?.Skill=="Blaze"&&!sorcererFiller.Next.Actionable,"confirmed combat activity uses observed Global Blaze as Sorcerer sustained priority");
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}};
+var sorcererFiller=rotationEngine.Evaluate(sorcererFillerState,sorcererProvisional);
+True(sorcererFiller.Next?.Skill!="Blaze","Sorcerer Blaze fails closed without observed Fire Mark");
+var sorcererFireMark=rotationEngine.Evaluate(sorcererFillerState with
+    {Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Fire Mark"}},sorcererProvisional);
+True(sorcererFireMark.Next?.Skill=="Blaze"&&!sorcererFireMark.Next.Actionable,"observed Fire Mark prioritizes Sorcerer Blaze over sustained filler");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
