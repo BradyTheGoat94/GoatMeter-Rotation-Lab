@@ -78,4 +78,7 @@ public sealed record SkillRecommendation(
 public sealed record RotationDecision(
     SkillRecommendation? Next,
     IReadOnlyList<SkillRecommendation> Alternatives,
-    string Diagnostic);
+    string Diagnostic)
+{
+    public string ReadinessContext { get; init; } = "";
+}
