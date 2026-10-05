@@ -19,6 +19,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Gladiator,"Ruinous Blow",45,"Global Season 1","current Global client data; specialization/cooldown-reduction effects excluded"),
         new(AionClass.Gladiator,"Crushing Wave",20,"Global Season 1","current Global client data; base cooldown only"),
         new(AionClass.Gladiator,"Rage Burst",45,"Global Season 1","current Global client data; level-5 30s specialization excluded"),
+        new(AionClass.Ranger,"Marking Shot",10,"Global 1.0.21.0","current Global release skill 14090000; base 10s Precision duration, +5s duration and consecutive-use specializations excluded"),
         new(AionClass.Ranger,"Deadshot",20,"Global release","AION 2 Global release database skill 14010000; charge level and specialization modifiers excluded"),
         new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000"),
         new(AionClass.Ranger,"Burst Arrow",20,"Global Season 1","current Global April balance; base cooldown reduced from 30s to 20s"),
