@@ -204,8 +204,14 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.CooldownReady,"Condemnation",Reason:"validated 3s Global base cooldown is ready unless an observed specialization reset proves otherwise")
                 }),
                 new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
-                new RotationRule("Divine Aura",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available")}),
-                new RotationRule("Bolt",525,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"current Global PvE APL treats Bolt as a major damage action; specialization-driven cooldown reduction is not inferred")}),
+                new RotationRule("Divine Aura",550,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Divine Aura",Reason:"validated 30s Global base cooldown is ready; level-16 -10s specialization excluded")
+                }),
+                new RotationRule("Bolt",525,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"current Global PvE APL treats Bolt as a major damage action"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Bolt",Reason:"validated 45s Global base cooldown is ready; Discharge-driven cooldown reduction is not inferred")
+                }),
                 new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
                 new RotationRule("Earth's Retribution",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"weave the MP-restoring basic damage action")}),
                 new RotationRule("Healing Light",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
