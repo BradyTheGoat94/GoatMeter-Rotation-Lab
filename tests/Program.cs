@@ -561,7 +561,12 @@ True(spiritmasterCorrode.Next?.Skill=="Jointstrike: Corrode","observed Ancient S
 var spiritmasterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},spiritmasterProvisional);
-True(spiritmasterFiller.Next?.Skill=="Combustion","current Global APL uses Combustion as Spiritmaster primary sustained filler");
+True(spiritmasterFiller.Next?.Skill=="Cold Shock","current Global APL places Cold Shock ahead of sustained Combustion filler");
+var spiritmasterWithoutCoreDebuffs=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},new RotationProfile(AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    spiritmasterProvisional.Rules.Where(r=>r.Skill!="Cold Shock"&&r.Skill!="Jointstrike: Curse").ToArray(),"synthetic sustained isolation"));
+True(spiritmasterWithoutCoreDebuffs.Next?.Skill=="Combustion","Combustion remains Spiritmaster primary spam filler after core debuff actions");
 var clericProvisional=RotationProfileCatalog.CreateProvisionalClericSingleTarget();
 var clericUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),clericProvisional);
@@ -570,6 +575,15 @@ var clericFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"g
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericFillerWindow"}},clericProvisional);
 True(clericFiller.Next?.Skill=="Judgment Thunder"&&!clericFiller.Next.Actionable,"confirmed combat activity uses observed Global Judgment Thunder as Cleric sustained priority");
+var clericDamageWindow=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},clericProvisional);
+True(clericDamageWindow.Next?.Skill=="Earth Punishment","Earth Punishment remains the Cleric damage-window setup above Bolt and filler");
+var clericBoltIsolation=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericDamageWindow","ClericFillerWindow"}},new RotationProfile(AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    clericProvisional.Rules.Where(r=>r.Skill!="Earth Punishment"&&r.Skill!="Divine Aura").ToArray(),"synthetic damage-window isolation"));
+True(clericBoltIsolation.Next?.Skill=="Bolt","current Global Cleric damage window includes Bolt above sustained filler");
 var clericChainObservation=new PassiveRotationObservation(88,AionClass.Cleric,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Chain of Torment",t}},new HashSet<string>(),new HashSet<string>());
 True(PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(9.9)).Contains("ClericCondemnationWindow"),"observed Chain of Torment opens bounded Cleric Condemnation window");
