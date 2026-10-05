@@ -103,7 +103,7 @@ public static class RotationProfileCatalog
                 new RotationRule("Marking Shot",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support when the mark needs refresh")}),
                 new RotationRule("Deadshot",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerDeadshotWindow",Reason:"use charged Deadshot in a proven damage window")}),
                 new RotationRule("Burst Arrow",610,new[]{
-                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"current Global sustained APL places Burst Arrow above lower filler"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerBurstArrowWindow",Reason:"current Global Burst Arrow requires passively proven Slow or Root target state"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Burst Arrow",Reason:"validated current Global 20s base cooldown is ready")
                 }),
                 new RotationRule("Gale Arrow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"maintain the documented Global sustained Gale Arrow priority")}),
