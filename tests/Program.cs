@@ -353,6 +353,10 @@ True(!PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.Assassin,t.
 var cloneDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=cloneSignals},assassinProvisional);
 True(cloneDecision.Next?.Skill=="Shadowstrike","observed Illusive Clone exposes Assassin burst recommendation");
+var assassinShadowRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Shadowstrike",5}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinBurstWindow","AssassinFillerWindow"}},assassinProvisional);
+True(assassinShadowRecovering.Next?.Skill!="Shadowstrike","Assassin burst cannot recommend Shadowstrike while its validated cooldown is recovering");
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
 var identityTracker=new PassiveRotationStateTracker();
@@ -482,6 +486,14 @@ var sorcererBlazeRecovering=rotationEngine.Evaluate(sorcererFillerState with
     {CooldownSeconds=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Blaze",2}},
      Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Fire Mark"}},sorcererProvisional);
 True(sorcererBlazeRecovering.Next?.Skill!="Blaze","observed Fire Mark cannot bypass validated Blaze cooldown");
+var sorcererFirestormReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Firestorm",0},{"Bittercold Wind",8},{"Blaze",3}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererFirestormReady.Next?.Skill=="Firestorm","ready Firestorm leads Sorcerer sustained filler when Blaze and Bittercold Wind are recovering");
+var sorcererBittercoldReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Firestorm",2},{"Bittercold Wind",0},{"Blaze",3}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererBittercoldReady.Next?.Skill=="Bittercold Wind","ready Bittercold Wind leads Sorcerer sustained filler when Firestorm and Blaze are recovering");
 var sorcererObservedFire=new PassiveRotationObservation(66,AionClass.Sorcerer,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Arrow",t}},new HashSet<string>(),new HashSet<string>());
 var sorcererObservedFireSignals=PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(2));
