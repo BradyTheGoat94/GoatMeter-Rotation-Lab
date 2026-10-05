@@ -64,7 +64,8 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Overhead Slam",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the proven conditional Overhead Slam opportunity")}),
+                new RotationRule("Upward Strike",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorUpwardStrikeWindow",Reason:"complete the observed Overhead Slam chain immediately")}),
+                new RotationRule("Overhead Slam",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the observed Rage Burst Overhead Slam opportunity")}),
                 new RotationRule("Ruinous Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state")}),
                 new RotationRule("Rending Blow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"core sustained single-target damage after conditional attacks")}),
                 new RotationRule("Smashing Blow",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
@@ -172,7 +173,9 @@ public static class RotationProfileCatalog
             AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Dark Crush",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately inside the short Impactful Crush reaction window")}),
+                new RotationRule("Dark Crush",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately after the observed ranged setup")}),
+                new RotationRule("Resonance Crush",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterResonanceCrushWindow",Reason:"continue the observed Onslaught chain")}),
+                new RotationRule("Bolt Crush",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBoltCrushWindow",Reason:"finish the observed Onslaught chain")}),
                 new RotationRule("Heat Wave Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window")}),
                 new RotationRule("Wave Blow",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"begin the sustained heavy-damage sequence")}),
                 new RotationRule("Incandescent Blow",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"core sustained damage while reaction/burst skills are unavailable")}),
