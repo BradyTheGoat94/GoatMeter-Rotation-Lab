@@ -16,6 +16,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Templar,"Doom Shield",30,"Global 0.0.4387.0","Global client skill 12070000; triggers Judgment for 3s"),
         new(AionClass.Templar,"Shield Rush",20,"Global Season 1","AION 2 Global database skill 12430000; triggers Judgment for 2s, specialization -10s excluded"),
         new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000"),
+        new(AionClass.Ranger,"Burst Arrow",20,"Global Season 1","current Global April balance; base cooldown reduced from 30s to 20s"),
         new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
