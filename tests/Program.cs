@@ -739,7 +739,14 @@ True(chanterUnknown.Next is null,"Chanter fails closed without passively proven 
 var chanterReaction=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
-True(chanterReaction.Next?.Skill=="Dark Crush","observed Chanter reaction window outranks sustained filler");
+var chanterDarkReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Dark Crush",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
+True(chanterDarkReady.Next?.Skill=="Dark Crush","observed current-Global ranged window recommends ready Dark Crush");
+var chanterDarkRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Dark Crush",3}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
+True(chanterDarkRecovering.Next?.Skill!="Dark Crush","current-Global ranged window cannot bypass Dark Crush base cooldown");
 var chanterHeatReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heat Wave Blow",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterBurstWindow","ChanterFillerWindow"}},chanterProvisional);
