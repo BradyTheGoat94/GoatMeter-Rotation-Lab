@@ -124,6 +124,7 @@ public static class RotationProfileCatalog
                 new RotationRule("Jointstrike: Corrode",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"maintain the high-value Corrode damage-over-time effect")}),
                 new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
                 new RotationRule("Jointstrike: Destructive Attack",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use on cooldown without sacrificing higher-priority Fusion or stack state")}),
+                new RotationRule("Combustion",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use the repeatedly observed Global sustained damage action while stronger spirit windows are unavailable")}),
                 new RotationRule("Earth Tremor",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"maintain basic-attack buff stacks during sustained damage")}),
                 new RotationRule("Disenchant",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")})
             },
