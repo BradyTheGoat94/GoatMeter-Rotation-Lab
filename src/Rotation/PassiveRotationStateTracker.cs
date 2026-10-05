@@ -22,7 +22,7 @@ public sealed class PassiveRotationStateTracker
         lock(gate)
         {
             if(e.Kind==CombatKind.Zone) {Reset();return;}
-            if(e.Kind==CombatKind.PlayerName && e.SourceId!=0 && Enum.TryParse<AionClass>(e.SourceClass,true,out var cls))
+            if(e.Kind==CombatKind.PlayerName && e.SourceIdentityConfirmed && e.SourceId!=0 && Enum.TryParse<AionClass>(e.SourceClass,true,out var cls))
             { playerId=e.SourceId;playerClass=cls; }
 
             if(playerId==0 || e.SourceId!=playerId)return;
