@@ -41,6 +41,10 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Vicious Strike",now,3))signals.Add("TemplarDecisiveStrikeWindow");
             if(observed.UsedRecently("Decisive Strike",now,3))signals.Add("TemplarDesperateStrikeWindow");
             if(observed.UsedRecently("Desperate Strike",now,3))signals.Add("TemplarThreateningBlowWindow");
+            // Current Global Annihilate is enabled by observed target Stun or Knockdown.
+            // Do not infer its low-chance Incapacitated-Immunity activation.
+            if(observed.Debuffs.Contains("Stun") || observed.Debuffs.Contains("Knockdown"))
+                signals.Add("TemplarAnnihilateWindow");
         }
         if(observedClass==AionClass.Gladiator)
         {
