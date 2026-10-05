@@ -128,6 +128,21 @@ public partial class MainWindow : Window
             var signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if(observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
             if(observed.CriticalHitWindowActive(now))signals.Add("CriticalHitWindow");
+            // A confirmed local skill observation proves combat activity without
+            // guessing any hidden game state. It may unlock only generic sustained
+            // damage/filler rules; proc, chain, buff and burst rules stay gated.
+            bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used<=TimeSpan.FromSeconds(8));
+            if(observedCombatAction)
+            {
+                signals.Add("AssassinFillerWindow");
+                signals.Add("GladiatorFillerWindow");
+                signals.Add("RangerFillerWindow");
+                signals.Add("SorcererFillerWindow");
+                signals.Add("SpiritmasterFillerWindow");
+                signals.Add("ClericFillerWindow");
+                signals.Add("ChanterFillerWindow");
+                signals.Add("TemplarFillerWindow");
+            }
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                 cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
