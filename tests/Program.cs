@@ -503,6 +503,16 @@ var rangerMarkDeadshot=rotationEngine.Evaluate(new RotationState(t.AddSeconds(9.
     {Signals=rangerMarkSignals},rangerProvisional);
 True(rangerMarkDeadshot.Next?.Skill!="Deadshot",
     "Marking Shot alone fails closed instead of enabling Deadshot without observed Precision");
+var rangerMarkGateProfile=new RotationProfile(AionClass.Ranger,"ranger-mark-gate-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    rangerProvisional.Rules.Where(r=>r.Skill.Equals("Marking Shot",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic Marking Shot cooldown gate isolation");
+var rangerMarkReady=rotationEngine.Evaluate(new RotationState(t.AddSeconds(11),AionClass.Ranger,"ranger-mark-gate-test",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Marking Shot",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerMarkWindow"}},rangerMarkGateProfile);
+True(rangerMarkReady.Next?.Skill=="Marking Shot","proven Ranger mark-refresh window can recommend ready Marking Shot");
+var rangerMarkRecovering=rotationEngine.Evaluate(new RotationState(t.AddSeconds(5),AionClass.Ranger,"ranger-mark-gate-test",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Marking Shot",5}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerMarkWindow"}},rangerMarkGateProfile);
+True(rangerMarkRecovering.Next is null,"Ranger Marking Shot refresh fails closed while validated cooldown is recovering");
 var rangerMarkTracker=new PassiveRotationStateTracker();
 rangerMarkTracker.Observe(new(t,CombatKind.PlayerName,77,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true));
 rangerMarkTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"RangerTester",Skill:"Marking Shot",SourceClass:"Ranger"));
