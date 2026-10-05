@@ -95,7 +95,7 @@ public partial class MainWindow : Window
     }
     void RenderRotation() => RenderRotation(engine.Snapshot());
 
-    void RenderRotation(CombatSnapshot s)
+    void RenderRotation(MeterSnapshot s)
     {
             // Lab-only passive bridge: derive only facts present in the meter snapshot.
             // Unknown build/readiness/resource/movement state deliberately keeps all
