@@ -53,6 +53,27 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. Heart Gore and Insignia Explosion are gated on passive signals; until those signals can be proven by the live decoder, the profile intentionally emits no recommendation.");
     }
 
+    public static RotationProfile CreateProvisionalGladiatorSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Gladiator,
+            "global-gladiator-provisional",
+            RotationMode.SingleTarget,
+            ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Seismic Crash",400,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFinisherWindow",Reason:"passively observed chain state supports Seismic Crash")
+                }),
+                new RotationRule("Rupture",300,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRuptureWindow",Reason:"passively observed chain state supports Rupture")
+                })
+            },
+            "PROVISIONAL Global Season 1 single-target fixture. High-value finishers are represented only behind passive chain signals; until the live decoder proves those signals, the profile intentionally emits no recommendation.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
