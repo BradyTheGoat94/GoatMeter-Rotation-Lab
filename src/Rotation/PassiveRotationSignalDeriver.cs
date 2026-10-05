@@ -39,6 +39,8 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Rending Blow",now,3))signals.Add("GladiatorSmashingWindow");
             if(observed.UsedRecently("Keen Strike",now,3))signals.Add("GladiatorRuptureWindow");
             if(observed.UsedRecently("Rupture Strike",now,3))signals.Add("GladiatorWrathfulWindow");
+            if(observed.UsedRecently("Rage Burst",now,10))signals.Add("GladiatorOverheadWindow");
+            if(observed.UsedRecently("Overhead Slam",now,3))signals.Add("GladiatorUpwardStrikeWindow");
         }
         if(observedClass==AionClass.Assassin)
         {
@@ -78,6 +80,10 @@ public static class PassiveRotationSignalDeriver
                 signals.Add("ChanterDarkCrushWindow");
             else if(observed.UsedRecently("Impactful Crush",now,3))
                 signals.Add("ChanterDarkCrushWindow");
+            if(observed.UsedRecently("Onslaught",now,3))
+                signals.Add("ChanterResonanceCrushWindow");
+            if(observed.UsedRecently("Resonance Crush",now,3))
+                signals.Add("ChanterBoltCrushWindow");
         }
         if(observedClass==AionClass.Spiritmaster)
         {
