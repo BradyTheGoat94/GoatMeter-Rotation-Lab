@@ -293,6 +293,15 @@ var rangerObservedOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Ran
 True(rangerObservedOnly.Next?.Skill!="Marking Shot"&&rangerObservedOnly.Next?.Skill!="Deadshot","generic observed Ranger combat does not invent unreconciled mark or charged-shot state");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
+var sorcererChainObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Ice Chain",t}},new HashSet<string>(),new HashSet<string>());
+var sorcererChainSignals=PassiveRotationSignalDeriver.Derive(sorcererChainObservation,AionClass.Sorcerer,t.AddSeconds(2.9));
+True(sorcererChainSignals.Contains("SorcererColdWaveWindow"),"observed Ice Chain opens Sorcerer Cold Wave chain window");
+True(!PassiveRotationSignalDeriver.Derive(sorcererChainObservation,AionClass.Sorcerer,t.AddSeconds(3.1)).Contains("SorcererColdWaveWindow"),"Sorcerer Cold Wave chain window expires after 3s");
+var sorcererColdWave=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererColdWaveWindow","SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererColdWave.Next?.Skill=="Cold Wave"&&!sorcererColdWave.Next.Actionable,"observed Ice Chain prioritizes Cold Wave over Sorcerer sustained filler");
 var sorcererUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),sorcererProvisional);
 True(sorcererUnknown.Next is null,"Sorcerer fails closed without passively proven burst/state");
