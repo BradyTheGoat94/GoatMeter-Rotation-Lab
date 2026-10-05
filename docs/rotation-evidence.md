@@ -23,9 +23,23 @@ This file records sanitized observations used to challenge or corroborate provis
 - Confirmed Global captures directly observe Combustion, Earth Tremor, Spirit's Descent, Corrode, Jointstrike: Curse and summon-owned attacks.
 - Combustion is included as provisional sustained coverage; summon/buff state remains fail-closed where not directly observed.
 
-### Other classes
-- Confirmed Global identities for Chanter and Assassin are present in stored captures.
-- Mine only sanitized skill names/timing relationships and require repeated or corroborated evidence before changing recommendation logic.
+### Gladiator
+- Confirmed Global captures directly observe Rending Blow, Keen Strike, Wrathful Strike, Smashing Blow, Rupture Strike and Murderous Burst.
+- Repeated observations corroborate the sustained chain vocabulary. Passive timing windows are used only where current Global mechanics also support the transition; no hidden proc state is inferred.
+
+### Assassin
+- Confirmed Global captures directly observe Heart Gore, Insignia Explosion, Exploit Weakness, Savage Fang, Ambush Stance and Doppelganger Attack.
+- Heart Gore is repeatedly observed with critical/back-hit context, but capture ordering does not prove Insignia stack count. Keep InsigniaReady fail-closed until stack state is decoded reliably.
+
+### Sorcerer
+- Confirmed Global captures directly observe Blaze, Ice Chain, Cold Wave, Cold Snap, Burst and Cold Storm.
+- Ice Chain and Cold Wave capture vocabulary agrees with the current Global chain definition, supporting a short passive Cold Wave opportunity after an observed Ice Chain.
+- Do not infer Fire Mark, Element Enhancement, DoT refresh state or other hidden buff/debuff state from damage ordering alone.
+
+### Chanter
+- Confirmed Global captures directly observe Rushing Smash, Bursting Blow, Fracturing Blow, Incandescent Blow, Onslaught and Impactful Crush.
+- Repeated sequences include Incandescent Blow followed by Onslaught and Bursting Blow, but repetition alone does not prove a mandatory chain. Keep these as sustained priority skills unless current Global mechanics corroborate a deterministic transition.
+- Impactful Crush remains the evidence-backed passive trigger for the short Dark Crush opportunity.
 
 ## Evidence policy
 - Captures are observational evidence, not proof of optimal rotation.
