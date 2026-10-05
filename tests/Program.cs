@@ -1,6 +1,7 @@
 using Aion2DPSPro;
 using Aion2DPSPro.Protocol;
 using Aion2DPSPro.Storage;
+using Aion2DPSPro.Rotation;
 
 int checks=0;
 void Equal(double actual,double expected,string label) {checks++;if(Math.Abs(actual-expected)>.00001)throw new Exception($"{label}: expected {expected}, got {actual}");}
@@ -100,4 +101,22 @@ reportEngine.ResetFight();reportEngine.Apply(Hit(10,1,999));Equal(reportEngine.S
 True(PublicGameData.EnglishTargetLabel("Training Scarecrow")=="Training Scarecrow","English target label preserved");
 True(PublicGameData.EnglishTargetLabel("노인 주민")==null,"untranslated Korean NPC falls back to English target label");
 True(PublicGameData.EnglishTargetLabel("Boss 마족")==null,"mixed language target label rejected");
+// Rotation Lab fail-closed safety regressions.
+var stubs=RotationProfileCatalog.CreateUnvalidatedGlobalStubs();
+Equal(stubs.Count,8,"all eight rotation class stubs");
+True(stubs.All(x=>x.Validation==ProfileValidation.Unvalidated&&x.Rules.Count==0),"unvalidated profiles contain no guessed rules");
+var rotationEngine=new RotationEngine();
+var rotationState=new RotationState(t,AionClass.Templar,"global-unvalidated",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1.0);
+var emptyDecision=rotationEngine.Evaluate(rotationState,stubs.Single(x=>x.ClassName==AionClass.Templar));
+True(emptyDecision.Next is null,"unvalidated empty profile yields no recommendation");
+var validatedProfile=new RotationProfile(AionClass.Templar,"fixture",RotationMode.SingleTarget,ProfileValidation.Validated,
+    new[]{new RotationRule("Fixture Strike",100,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Fixture Strike")})},
+    "Regression fixture only");
+var validatedState=rotationState with {BuildId="fixture",CooldownSeconds=new Dictionary<string,double>{{"Fixture Strike",0}},ObservationConfidence=.95};
+var recommendation=rotationEngine.Evaluate(validatedState,validatedProfile);
+True(recommendation.Next?.Skill=="Fixture Strike"&&recommendation.Next.Actionable,"validated high-confidence rule can recommend");
+var lowConfidence=rotationEngine.Evaluate(validatedState with {ObservationConfidence=.4},validatedProfile);
+True(lowConfidence.Next is not null&&!lowConfidence.Next.Actionable,"low-confidence observation is informational only");
+
 Console.WriteLine($"PASS: {checks} regression assertions");
