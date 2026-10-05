@@ -156,6 +156,10 @@ judgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Du
 var shieldWindow=judgmentTracker.Snapshot();
 True(shieldWindow.JudgmentTrigger=="Shield Smite"&&shieldWindow.JudgmentWindowActive(t.AddSeconds(2.9)),"Shield Smite opens observed Judgment window");
 True(!shieldWindow.JudgmentWindowActive(t.AddSeconds(3.1)),"Shield Smite Judgment window expires after 2s");
+var judgmentAfterShield=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow","TemplarFillerWindow"}},templarProvisional);
+True(judgmentAfterShield.Next?.Skill=="Judgment","observed Shield Smite chain prioritizes Judgment over sustained filler");
 judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"Doom Shield",SourceClass:"Templar"));
 var doomWindow=judgmentTracker.Snapshot();
 True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),"Doom Shield opens observed 3s Judgment window");
