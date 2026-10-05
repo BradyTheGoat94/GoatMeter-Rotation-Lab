@@ -160,6 +160,10 @@ var judgmentAfterShield=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow","TemplarFillerWindow"}},templarProvisional);
 True(judgmentAfterShield.Next?.Skill=="Judgment","observed Shield Smite chain prioritizes Judgment over sustained filler");
+var judgmentAndPunishmentReady=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>{{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow","TemplarFillerWindow"}},templarProvisional);
+True(judgmentAndPunishmentReady.Next?.Skill=="Judgment","short observed Judgment opportunity is consumed before ready Punishment");
 var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
