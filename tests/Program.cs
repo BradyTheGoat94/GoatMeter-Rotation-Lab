@@ -532,6 +532,22 @@ True(rangerSpiralSignals.Contains("RangerSpiralArrowWindow"),"observed Rapid Fir
 var rangerSpiral=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=rangerSpiralSignals},rangerProvisional);
 True(rangerSpiral.Next?.Skill=="Spiral Arrow","observed Ranger Snipe chain progresses to Spiral Arrow");
+var rangerSlowObservation=new PassiveRotationObservation(77,AionClass.Ranger,new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Slow"});
+var rangerSlowSignals=PassiveRotationSignalDeriver.Derive(rangerSlowObservation,AionClass.Ranger,t);
+True(rangerSlowSignals.Contains("RangerBurstArrowWindow"),"observed Ranger Slow opens Burst Arrow state");
+var rangerRootObservation=rangerSlowObservation with { Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Root"} };
+True(PassiveRotationSignalDeriver.Derive(rangerRootObservation,AionClass.Ranger,t).Contains("RangerBurstArrowWindow"),"observed Ranger Root opens Burst Arrow state");
+var rangerNoCcObservation=rangerSlowObservation with { Debuffs=new HashSet<string>() };
+True(!PassiveRotationSignalDeriver.Derive(rangerNoCcObservation,AionClass.Ranger,t).Contains("RangerBurstArrowWindow"),"Ranger Burst Arrow fails closed without observed Slow or Root");
+var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    {Signals=rangerSlowSignals},rangerProvisional);
+True(rangerBurstReady.Next?.Skill=="Burst Arrow","observed Slow can recommend ready Ranger Burst Arrow");
+var rangerBurstRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",8}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
+    {Signals=rangerSlowSignals},rangerProvisional);
+True(rangerBurstRecovering.Next?.Skill!="Burst Arrow","Ranger Burst Arrow fails closed while validated cooldown is recovering");
+True(!rangerProvisional.Rules.Any(r=>r.Skill=="Rupture Arrow"||r.Skill=="Destruction Trap"),"unreconciled Ranger Rupture Arrow and Destruction Trap hooks stay out of actionable Global profile");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
 var sorcererChainObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
