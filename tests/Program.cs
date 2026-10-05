@@ -209,5 +209,14 @@ var rangerRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerRuptureWindow"}},rangerProvisional);
 True(rangerRupture.Next?.Skill=="Rupture Arrow"&&!rangerRupture.Next.Actionable,"observed Ranger rupture signal yields informational Rupture Arrow");
+var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
+True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
+var sorcererUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),sorcererProvisional);
+True(sorcererUnknown.Next is null,"Sorcerer fails closed without passively proven burst/state");
+var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
+True(sorcererBurst.Next?.Skill=="Flame Harpoon"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal yields informational Flame Harpoon");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
