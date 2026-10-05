@@ -51,8 +51,17 @@ public static class PassiveRotationSignalDeriver
             signals.Add("SorcererColdWaveWindow");
         if(observedClass==AionClass.Cleric && observed.UsedRecently("Chain of Torment",now,10))
             signals.Add("ClericCondemnationWindow");
-        if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
-            signals.Add("ChanterDarkCrushWindow");
+        if(observedClass==AionClass.Chanter)
+        {
+            // Current Global Season 1 changed Dark Crush to activate after a ranged skill.
+            // Spinning Strike is an observed ranged setup in the current PvE loop.
+            // Retain the older Impactful Crush path only as provisional corroboration until
+            // live Global observations can conclusively retire it.
+            if(observed.UsedRecently("Spinning Strike",now,3))
+                signals.Add("ChanterDarkCrushWindow");
+            else if(observed.UsedRecently("Impactful Crush",now,3))
+                signals.Add("ChanterDarkCrushWindow");
+        }
         if(observedClass==AionClass.Spiritmaster)
         {
             if(observed.UsedRecently("Flame Blessing",now,8)||observed.UsedRecently("Spirit's Benediction",now,8))
