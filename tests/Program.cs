@@ -407,7 +407,7 @@ var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Range
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
 True(rangerBurstReady.Next?.Skill=="Snipe","Global APL starts Snipe chain before ready Burst Arrow");
-var rangerAfterSnipeUnavailable=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+var rangerAfterSnipeUnavailable=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
     rangerProvisional.Rules.Where(r=>!r.Skill.Equals("Snipe",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic priority isolation"));
