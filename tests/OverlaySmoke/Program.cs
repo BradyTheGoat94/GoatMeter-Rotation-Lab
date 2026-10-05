@@ -128,6 +128,11 @@ internal static class Program
   if(((TextBlock)window.FindName("RotationNextSkill")).Text!="No recommendation")throw new Exception("Fail-closed live state was not rendered");
   if(!((TextBlock)window.FindName("RotationReason")).Text.Contains("No validated rules"))throw new Exception("Fail-closed diagnostic missing");
   Console.WriteLine("PASS: passive live-state bridge remains fail closed without validated class rules");
+  window.RenderRotation(liveDecision with {ReadinessContext="Cooldown readiness: Punishment 18.0s"});
+  if(!((TextBlock)window.FindName("RotationDiagnostic")).Text.Contains("Punishment 18.0s"))throw new Exception("Validated readiness context not rendered");
+  window.RenderRotation(liveDecision with {ReadinessContext="Cooldown readiness: insufficient validated observations"});
+  if(!((TextBlock)window.FindName("RotationDiagnostic")).Text.Contains("insufficient validated observations"))throw new Exception("Unknown readiness did not fail closed");
+  Console.WriteLine("PASS: readiness context renders validated timers and explicit unknown state");
 
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
