@@ -107,14 +107,14 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Flame Harpoon",500,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")
-                }),
-                new RotationRule("Flame Cage",350,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"passively observed Sorcerer state supports Flame Cage")
-                })
+                new RotationRule("Element Enhancement",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"establish the primary damage enhancement before the burst sequence")}),
+                new RotationRule("Delayed Explosion",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"apply delayed burst early in the damage sequence")}),
+                new RotationRule("Hellfire",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Hellfire during a proven burst window")}),
+                new RotationRule("Fire Wall",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"maintain high-value fire damage during burst")}),
+                new RotationRule("Cold Storm",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Cold Storm in the sustained burst sequence")}),
+                new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
+                new RotationRule("Flame Cage",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"refresh damage-over-time state when proven necessary")}),
+                new RotationRule("Flame Arrow",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"basic damage/MP filler while higher priorities are unavailable")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Burst and damage-over-time decisions are represented only behind passive state signals; no recommendation is emitted until those states are proven.");
     }
