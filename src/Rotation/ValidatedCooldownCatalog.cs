@@ -12,6 +12,7 @@ public static class ValidatedCooldownCatalog
     static readonly ValidatedCooldown[] entries =
     {
         new(AionClass.Templar,"Punishment",30,"1.0.21.0","AION 2 Global database skill 12090000"),
+        new(AionClass.Templar,"Annihilate",20,"Global 1.0.21.0","AION 2 Global release skill 12300000; requires Stun or Knockdown, level-12 -10s specialization excluded"),
         new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000"),
         new(AionClass.Templar,"Doom Shield",30,"Global 0.0.4387.0","Global client skill 12070000; triggers Judgment for 3s"),
         new(AionClass.Templar,"Shield Rush",20,"Global Season 1","AION 2 Global database skill 12430000; triggers Judgment for 2s, specialization -10s excluded"),
