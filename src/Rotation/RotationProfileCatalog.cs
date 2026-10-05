@@ -95,6 +95,27 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. Rupture Arrow and Destruction Trap remain gated on passive state signals; no recommendation is emitted until those states are proven.");
     }
 
+    public static RotationProfile CreateProvisionalSorcererSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Sorcerer,
+            "global-sorcerer-provisional",
+            RotationMode.SingleTarget,
+            ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Flame Harpoon",500,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")
+                }),
+                new RotationRule("Flame Cage",350,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"passively observed Sorcerer state supports Flame Cage")
+                })
+            },
+            "PROVISIONAL Global Season 1 single-target fixture. Burst and damage-over-time decisions are represented only behind passive state signals; no recommendation is emitted until those states are proven.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
