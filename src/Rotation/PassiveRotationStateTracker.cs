@@ -63,7 +63,8 @@ public sealed class PassiveRotationStateTracker
         new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase)
         {
             ["Shield Smite"]=2,
-            ["Warding Strike"]=2
+            ["Warding Strike"]=2,
+            ["Doom Shield"]=3
         };
 }
 
