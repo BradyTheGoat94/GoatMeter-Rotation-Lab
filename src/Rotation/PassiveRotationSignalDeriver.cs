@@ -32,6 +32,8 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Keen Strike",now,3))signals.Add("GladiatorRuptureWindow");
             if(observed.UsedRecently("Rupture Strike",now,3))signals.Add("GladiatorWrathfulWindow");
         }
+        if(observedClass==AionClass.Sorcerer && observed.UsedRecently("Ice Chain",now,3))
+            signals.Add("SorcererColdWaveWindow");
         if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
             signals.Add("ChanterDarkCrushWindow");
         if(observedClass==AionClass.Spiritmaster)
