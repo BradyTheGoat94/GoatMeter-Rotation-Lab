@@ -200,5 +200,14 @@ var gladiatorFinisher=rotationEngine.Evaluate(new RotationState(t,AionClass.Glad
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFinisherWindow"}},gladiatorProvisional);
 True(gladiatorFinisher.Next?.Skill=="Seismic Crash"&&!gladiatorFinisher.Next.Actionable,"observed Gladiator finisher signal yields informational Seismic Crash");
+var rangerProvisional=RotationProfileCatalog.CreateProvisionalRangerSingleTarget();
+True(rangerProvisional.Validation==ProfileValidation.Provisional,"Ranger fixture remains provisional");
+var rangerUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),rangerProvisional);
+True(rangerUnknown.Next is null,"Ranger fails closed without passively proven proc/state");
+var rangerRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerRuptureWindow"}},rangerProvisional);
+True(rangerRupture.Next?.Skill=="Rupture Arrow"&&!rangerRupture.Next.Actionable,"observed Ranger rupture signal yields informational Rupture Arrow");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
