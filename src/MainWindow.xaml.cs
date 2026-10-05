@@ -145,15 +145,13 @@ public partial class MainWindow : Window
             }
             // Sequence windows below use only the observed local skill history. They
             // do not infer hidden buffs/stacks: an exact preceding action is required.
-            bool UsedRecently(string skill,double seconds)=>
-                observed.LastSkillUse.TryGetValue(skill,out var used) && now-used>=TimeSpan.Zero && now-used<=TimeSpan.FromSeconds(seconds);
-            if(observedClass==AionClass.Chanter && UsedRecently("Impactful Crush",3))
+            if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
                 signals.Add("ChanterDarkCrushWindow");
             if(observedClass==AionClass.Spiritmaster)
             {
-                if(UsedRecently("Flame Blessing",8)||UsedRecently("Spirit's Benediction",8))
+                if(observed.UsedRecently("Flame Blessing",now,8)||observed.UsedRecently("Spirit's Benediction",now,8))
                     signals.Add("SpiritmasterAncientWindow");
-                if(UsedRecently("Summon: Ancient Spirit",8))
+                if(observed.UsedRecently("Summon: Ancient Spirit",now,8))
                     signals.Add("SpiritmasterCorrodeWindow");
             }
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
