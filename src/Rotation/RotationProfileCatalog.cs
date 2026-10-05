@@ -47,7 +47,10 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Insignia Explosion",Reason:"validated 10s base cooldown is ready; specialization reductions are not assumed")
                 }),
-                new RotationRule("Shadowstrike",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside the directly observed Illusive Clone burst window")}),
+                new RotationRule("Shadowstrike",625,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside the directly observed Illusive Clone burst window"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Shadowstrike",Reason:"validated 20s Global base cooldown is ready; rear-position safety is not inferred")
+                }),
                 new RotationRule("Breaking Slice",590,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBreakingSliceWindow",Reason:"complete the current Global Quick Slice chain after its observed opener")}),
                 new RotationRule("Swift Slice",585,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSwiftSliceWindow",Reason:"complete the current Global Quick Slice chain after observed Breaking Slice")}),
                 new RotationRule("Savage Back Kick",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageBackKickWindow",Reason:"complete the current Global Savage Roar chain after its observed opener")}),
@@ -129,6 +132,14 @@ public static class RotationProfileCatalog
                 new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
                 new RotationRule("Flame Cage",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"refresh damage-over-time state when proven necessary")}),
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
+                new RotationRule("Firestorm",565,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"current Global sustained APL places Firestorm above basic filler"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Firestorm",Reason:"validated 5s Global base cooldown is ready; specialty Hellfire reduction excluded")
+                }),
+                new RotationRule("Bittercold Wind",560,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"current Global sustained APL includes Bittercold Wind before basic filler"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Bittercold Wind",Reason:"validated 15s Global base cooldown is ready")
+                }),
                 new RotationRule("Blaze",575,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"use Blaze in the sustained Global damage loop"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Blaze",Reason:"validated 5s Global base cooldown is ready; specialty reductions excluded"),
