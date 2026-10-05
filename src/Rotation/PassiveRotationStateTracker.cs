@@ -13,6 +13,8 @@ public sealed class PassiveRotationStateTracker
     readonly HashSet<string> debuffs=new(StringComparer.OrdinalIgnoreCase);
     long playerId;
     AionClass? playerClass;
+    DateTime? judgmentWindowUntil;
+    string judgmentTrigger="";
 
     public void Observe(CombatEvent e)
     {
@@ -24,7 +26,15 @@ public sealed class PassiveRotationStateTracker
 
             if(playerId==0 || e.SourceId!=playerId)return;
             if(e.Kind is CombatKind.Damage or CombatKind.Heal or CombatKind.Cast)
-                if(!string.IsNullOrWhiteSpace(e.Skill))lastSkillUse[e.Skill]=e.Utc;
+                if(!string.IsNullOrWhiteSpace(e.Skill))
+                {
+                    lastSkillUse[e.Skill]=e.Utc;
+                    if(playerClass==AionClass.Templar && JudgmentWindowSeconds.TryGetValue(e.Skill,out var seconds))
+                    {
+                        judgmentWindowUntil=e.Utc.AddSeconds(seconds);
+                        judgmentTrigger=e.Skill;
+                    }
+                }
             if(e.Kind==CombatKind.BuffApply && !string.IsNullOrWhiteSpace(e.Effect))buffs.Add(e.Effect);
             if(e.Kind==CombatKind.BuffRemove && !string.IsNullOrWhiteSpace(e.Effect))buffs.Remove(e.Effect);
             if(e.Kind==CombatKind.DebuffApply && !string.IsNullOrWhiteSpace(e.Effect))debuffs.Add(e.Effect);
@@ -37,14 +47,27 @@ public sealed class PassiveRotationStateTracker
         lock(gate)return new(playerId,playerClass,
             new Dictionary<string,DateTime>(lastSkillUse,StringComparer.OrdinalIgnoreCase),
             new HashSet<string>(buffs,StringComparer.OrdinalIgnoreCase),
-            new HashSet<string>(debuffs,StringComparer.OrdinalIgnoreCase));
+            new HashSet<string>(debuffs,StringComparer.OrdinalIgnoreCase),
+            judgmentWindowUntil,judgmentTrigger);
     }
 
     public void Reset()
     {
-        playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();
+        playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";
     }
 }
 
+    static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
+        new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Shield Smite"]=2,
+            ["Doom Shield"]=3
+        };
+}
+
 public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassName,
-    IReadOnlyDictionary<string,DateTime> LastSkillUse,IReadOnlySet<string> Buffs,IReadOnlySet<string> Debuffs);
+    IReadOnlyDictionary<string,DateTime> LastSkillUse,IReadOnlySet<string> Buffs,IReadOnlySet<string> Debuffs,
+    DateTime? JudgmentWindowUntil=null,string JudgmentTrigger="")
+{
+    public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until;
+}
