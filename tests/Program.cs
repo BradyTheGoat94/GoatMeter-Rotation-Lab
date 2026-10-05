@@ -637,7 +637,23 @@ Equal(ValidatedCooldownCatalog.Remaining(spiritmasterAncientTracker.Snapshot(),A
 var spiritmasterCorrode=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
-True(spiritmasterCorrode.Next?.Skill=="Jointstrike: Corrode","observed Ancient Spirit sequence advances to Corrode ahead of filler");
+var spiritmasterCorrodeMissingSignals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterCorrodeMissingWindow","SpiritmasterFillerWindow"};
+var spiritmasterCorrodeMissing=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=spiritmasterCorrodeMissingSignals},spiritmasterProvisional);
+True(spiritmasterCorrodeMissing.Next?.Skill=="Jointstrike: Corrode","observed Ancient Spirit sequence advances to Corrode only when Corrode is missing");
+var spiritmasterCorrodeObservation=new PassiveRotationObservation(88,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",t}},new HashSet<string>(),new HashSet<string>());
+var spiritmasterCorrodeActiveSignals=PassiveRotationSignalDeriver.Derive(spiritmasterCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(19.9));
+True(spiritmasterCorrodeActiveSignals.Contains("SpiritmasterCorrodeActiveWindow")&&!spiritmasterCorrodeActiveSignals.Contains("SpiritmasterCorrodeMissingWindow"),
+    "current-Global base Corrode remains active through 20s");
+var spiritmasterCorrodeExpiredSignals=PassiveRotationSignalDeriver.Derive(spiritmasterCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(20.1));
+True(!spiritmasterCorrodeExpiredSignals.Contains("SpiritmasterCorrodeActiveWindow")&&spiritmasterCorrodeExpiredSignals.Contains("SpiritmasterCorrodeMissingWindow"),
+    "base Corrode expires after 20s without assuming the 30s specialization");
+var spiritmasterNoEarlyRefresh=rotationEngine.Evaluate(new RotationState(t.AddSeconds(19.9),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterCorrodeActiveWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
+True(spiritmasterNoEarlyRefresh.Next?.Skill!="Jointstrike: Corrode","Spiritmaster does not waste Corrode while the proven base window remains active");
 var spiritmasterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},spiritmasterProvisional);
