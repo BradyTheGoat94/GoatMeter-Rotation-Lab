@@ -44,6 +44,8 @@ public static class RotationProfileCatalog
                 }),
                 new RotationRule("Shadowstrike",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside a proven burst/rear-access window")}),
                 new RotationRule("Savage Roar",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"build Insignias while core spenders are unavailable")}),
+                new RotationRule("Savage Fang",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"use the repeatedly observed Global sustained strike while spender state is unavailable")}),
+                new RotationRule("Exploit Weakness",350,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"include the repeatedly observed Global damage action without inferring hidden Insignia state")}),
                 new RotationRule("Quick Slice",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"weave Quick Slice while core spenders are unavailable")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Heart Gore and Insignia Explosion are gated on passive signals; until those signals can be proven by the live decoder, the profile intentionally emits no recommendation.");
