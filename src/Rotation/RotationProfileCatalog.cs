@@ -83,7 +83,7 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Marking Shot",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support when the mark needs refresh")}),
                 new RotationRule("Deadshot",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerDeadshotWindow",Reason:"use charged Deadshot in a proven damage window")}),
-                new RotationRule("Drill Dart",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"use a high-value sustained Global Ranger attack while stronger state actions are unavailable")}),
+                new RotationRule("Drill Dart",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"use a high-value sustained Global Ranger attack while stronger state actions are unavailable"),new RotationCondition(RotationConditionKind.CooldownReady,"Drill Dart",Reason:"validated 5s Global base cooldown is ready")}),
                 new RotationRule("Tempest Shot",610,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"continue the sustained Global Ranger loop while stronger state actions are unavailable")}),
                 new RotationRule("Snipe",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"use MP-positive sustained filler while higher-priority state actions are unavailable")}),
                 new RotationRule("Rupture Arrow",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerRuptureWindow",Reason:"passively observed Ranger state supports Rupture Arrow")}),
