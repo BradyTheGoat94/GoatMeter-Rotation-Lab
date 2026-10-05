@@ -118,5 +118,18 @@ var recommendation=rotationEngine.Evaluate(validatedState,validatedProfile);
 True(recommendation.Next?.Skill=="Fixture Strike"&&recommendation.Next.Actionable,"validated high-confidence rule can recommend");
 var lowConfidence=rotationEngine.Evaluate(validatedState with {ObservationConfidence=.4},validatedProfile);
 True(lowConfidence.Next is not null&&!lowConfidence.Next.Actionable,"low-confidence observation is informational only");
+var tracker=new PassiveRotationStateTracker();
+tracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+tracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"Tester",Skill:"Observed Cast",SourceClass:"Templar"));
+tracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,77,"Tester",99,"Dummy","Observed Strike",100,SourceClass:"Templar"));
+tracker.Observe(new(t.AddSeconds(3),CombatKind.BuffApply,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
+var observedRotation=tracker.Snapshot();
+True(observedRotation.PlayerId==77&&observedRotation.ClassName==AionClass.Templar,"passive tracker resolves confirmed class");
+True(observedRotation.LastSkillUse.ContainsKey("Observed Cast")&&observedRotation.LastSkillUse.ContainsKey("Observed Strike"),"passive tracker records observed skill use");
+True(observedRotation.Buffs.Contains("Observed Buff"),"passive tracker records observed buff");
+tracker.Observe(new(t.AddSeconds(4),CombatKind.BuffRemove,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
+True(!tracker.Snapshot().Buffs.Contains("Observed Buff"),"passive tracker removes observed buff");
+tracker.Observe(new(t.AddSeconds(5),CombatKind.Zone));
+True(tracker.Snapshot().PlayerId==0&&tracker.Snapshot().LastSkillUse.Count==0,"passive tracker clears across zone");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
