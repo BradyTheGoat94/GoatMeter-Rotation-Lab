@@ -125,42 +125,7 @@ public partial class MainWindow : Window
             var targetHp=s.Target?.Percent??100;
             var now=DateTime.UtcNow;
             var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
-            var signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            if(observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
-            if(observed.CriticalHitWindowActive(now))signals.Add("CriticalHitWindow");
-            // A confirmed local skill observation proves combat activity without
-            // guessing any hidden game state. It may unlock only generic sustained
-            // damage/filler rules; proc, chain, buff and burst rules stay gated.
-            bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used>=TimeSpan.Zero && now-used<=TimeSpan.FromSeconds(8));
-            if(observedCombatAction)
-            {
-                signals.Add("AssassinFillerWindow");
-                signals.Add("GladiatorFillerWindow");
-                signals.Add("RangerFillerWindow");
-                signals.Add("SorcererFillerWindow");
-                signals.Add("SpiritmasterFillerWindow");
-                signals.Add("ClericFillerWindow");
-                signals.Add("ChanterFillerWindow");
-                signals.Add("TemplarFillerWindow");
-            }
-            // Sequence windows below use only the observed local skill history. They
-            // do not infer hidden buffs/stacks: an exact preceding action is required.
-            if(observedClass==AionClass.Gladiator)
-            {
-                if(observed.UsedRecently("Rending Blow",now,3))
-                    signals.Add("GladiatorSmashingWindow");
-                if(observed.UsedRecently("Keen Strike",now,3))
-                    signals.Add("GladiatorRuptureWindow");
-            }
-            if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
-                signals.Add("ChanterDarkCrushWindow");
-            if(observedClass==AionClass.Spiritmaster)
-            {
-                if(observed.UsedRecently("Flame Blessing",now,8)||observed.UsedRecently("Spirit's Benediction",now,8))
-                    signals.Add("SpiritmasterAncientWindow");
-                if(observed.UsedRecently("Summon: Ancient Spirit",now,8))
-                    signals.Add("SpiritmasterCorrodeWindow");
-            }
+            var signals=PassiveRotationSignalDeriver.Derive(observed,observedClass,now);
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                 cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
