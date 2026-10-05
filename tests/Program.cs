@@ -452,7 +452,7 @@ True(rangerFiller.Next?.Skill=="Snipe"&&!rangerFiller.Next.Actionable,"Global AP
 var rangerCcBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
-True(rangerBurstReady.Next?.Skill=="Snipe","Global APL starts Snipe chain before ready Burst Arrow");
+True(rangerCcBurstReady.Next?.Skill=="Snipe","Global APL starts Snipe chain before ready Burst Arrow");
 var rangerAfterSnipeUnavailable=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow","RangerBurstArrowWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
