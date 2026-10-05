@@ -748,6 +748,20 @@ var chanterHeatRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heat Wave Blow",4}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterBurstWindow","ChanterFillerWindow"}},chanterProvisional);
 True(chanterHeatRecovering.Next?.Skill!="Heat Wave Blow","Chanter burst cannot recommend Heat Wave Blow while its validated cooldown is recovering");
+var chanterStunObservation=new PassiveRotationObservation(89,AionClass.Chanter,
+    new Dictionary<string,DateTime>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"});
+var chanterStunSignals=PassiveRotationSignalDeriver.Derive(chanterStunObservation,AionClass.Chanter,t);
+True(chanterStunSignals.Contains("ChanterWaveBlowWindow"),"observed target Stun opens current-Global Wave Blow window");
+var chanterWaveReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Wave Blow",0}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
+    {Signals=chanterStunSignals},chanterProvisional);
+True(chanterWaveReady.Next?.Skill=="Wave Blow","ready Wave Blow is recommended only with observed current-Global Stun state");
+var chanterWaveRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Wave Blow",8}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
+    {Signals=chanterStunSignals},chanterProvisional);
+True(chanterWaveRecovering.Next?.Skill!="Wave Blow","observed Stun cannot bypass Wave Blow's validated 20s cooldown");
+var chanterNoStunSignals=PassiveRotationSignalDeriver.Derive(chanterStunObservation with {Debuffs=new HashSet<string>()},AionClass.Chanter,t);
+True(!chanterNoStunSignals.Contains("ChanterWaveBlowWindow"),"Chanter Wave Blow fails closed without observed target Stun");
 var chanterOnslaughtObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Onslaught",t}},new HashSet<string>(),new HashSet<string>());
 var chanterOnslaughtSignals=PassiveRotationSignalDeriver.Derive(chanterOnslaughtObservation,AionClass.Chanter,t.AddSeconds(2.9));
