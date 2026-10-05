@@ -106,6 +106,10 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Chanter)
         {
+            // Current Global Wave Blow requires a stunned target. Only an observed
+            // target status can open this path; generic Chanter activity cannot.
+            if(observed.Debuffs.Contains("Stun"))
+                signals.Add("ChanterWaveBlowWindow");
             // Current Global Season 1 changed Dark Crush to activate after a ranged skill.
             // Spinning Strike is an observed ranged setup in the current PvE loop.
             // Retain the older Impactful Crush path only as provisional corroboration until
