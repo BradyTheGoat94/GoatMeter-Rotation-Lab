@@ -114,7 +114,9 @@ internal static class Program
   window.RenderRotation(assistantFixture);window.UpdateLayout();
   if(((TextBlock)window.FindName("RotationNextSkill")).Text!="Fixture Primary")throw new Exception("Assistant primary label missing");
   if(!((TextBlock)window.FindName("RotationQueue")).Text.Contains("Fixture Followup"))throw new Exception("Assistant queue missing");
-  Console.WriteLine("PASS: assistant panel renders fixture decision");
+  if(((TextBlock)window.FindName("RotationIconGlyph")).Text!="?")throw new Exception("Unverified skill icon fallback missing");
+  if(((TextBlock)window.FindName("RotationIconState")).Text!="ICON UNVERIFIED")throw new Exception("Unverified skill icon was not labeled");
+  Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed icon state");
 
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
