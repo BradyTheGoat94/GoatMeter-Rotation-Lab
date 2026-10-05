@@ -202,6 +202,19 @@ var punishmentWithoutJudgment=rotationEngine.Evaluate(new RotationState(t.AddSec
     new Dictionary<string,double>{{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(punishmentWithoutJudgment.Next?.Skill=="Punishment","ready Punishment remains Templar priority when no observed Judgment window exists");
+var templarStunObservation=new PassiveRotationObservation(42,AionClass.Templar,new Dictionary<string,DateTime>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"});
+var templarAnnihilateSignals=PassiveRotationSignalDeriver.Derive(templarStunObservation,AionClass.Templar,t);
+True(templarAnnihilateSignals.Contains("TemplarAnnihilateWindow"),"observed target Stun opens current-Global Templar Annihilate window");
+var templarAnnihilateReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",8},{"Annihilate",0}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
+    {Signals=templarAnnihilateSignals},templarProvisional);
+True(templarAnnihilateReady.Next?.Skill=="Annihilate","ready Annihilate consumes observed current-Global Stun opportunity");
+var templarAnnihilateRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",8},{"Annihilate",6}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
+    {Signals=templarAnnihilateSignals},templarProvisional);
+True(templarAnnihilateRecovering.Next?.Skill!="Annihilate","observed Stun cannot bypass Annihilate's validated 20s cooldown");
+var templarNoControl=PassiveRotationSignalDeriver.Derive(templarStunObservation with {Debuffs=new HashSet<string>()},AionClass.Templar,t);
+True(!templarNoControl.Contains("TemplarAnnihilateWindow"),"Templar Annihilate fails closed without observed Stun or Knockdown");
 var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
