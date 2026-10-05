@@ -34,6 +34,14 @@ public static class PassiveRotationSignalDeriver
             if(fillerSignal is not null)signals.Add(fillerSignal);
         }
 
+        if(observedClass==AionClass.Templar)
+        {
+            // Current Global main attack chain. Each continuation requires the
+            // immediately preceding cast to be observed; no chain state is guessed.
+            if(observed.UsedRecently("Vicious Strike",now,3))signals.Add("TemplarDecisiveStrikeWindow");
+            if(observed.UsedRecently("Decisive Strike",now,3))signals.Add("TemplarDesperateStrikeWindow");
+            if(observed.UsedRecently("Desperate Strike",now,3))signals.Add("TemplarThreateningBlowWindow");
+        }
         if(observedClass==AionClass.Gladiator)
         {
             if(observed.UsedRecently("Rending Blow",now,3))signals.Add("GladiatorSmashingWindow");
