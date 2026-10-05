@@ -391,6 +391,14 @@ var gladiatorRageObservation=new PassiveRotationObservation(77,AionClass.Gladiat
 var gladiatorRageSignals=PassiveRotationSignalDeriver.Derive(gladiatorRageObservation,AionClass.Gladiator,t.AddSeconds(9.9));
 True(gladiatorRageSignals.Contains("GladiatorOverheadWindow"),"observed Rage Burst opens the documented 10s Overhead Slam window");
 True(!PassiveRotationSignalDeriver.Derive(gladiatorRageObservation,AionClass.Gladiator,t.AddSeconds(10.1)).Contains("GladiatorOverheadWindow"),"Gladiator Rage Burst Overhead window expires after 10s");
+var gladiatorOverheadReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Overhead Slam",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorOverheadWindow","GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorOverheadReady.Next?.Skill=="Overhead Slam","ready base-rank Overhead Slam consumes observed Rage Burst window");
+var gladiatorOverheadRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Overhead Slam",2}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorOverheadWindow","GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorOverheadRecovering.Next?.Skill!="Overhead Slam","base-rank Gladiator cannot recommend Overhead Slam while its validated cooldown is recovering");
 var gladiatorOverheadObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Overhead Slam",t}},new HashSet<string>(),new HashSet<string>());
 var gladiatorUpwardSignals=PassiveRotationSignalDeriver.Derive(gladiatorOverheadObservation,AionClass.Gladiator,t.AddSeconds(2));
