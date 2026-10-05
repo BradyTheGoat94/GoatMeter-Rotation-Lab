@@ -17,7 +17,7 @@ public static class RotationProfileCatalog
             new[]
             {
                 new RotationRule("Punishment",800,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready; current Global guidance prioritizes Punishment")}),
-                new RotationRule("Judgment",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened the Judgment damage window")}),
+                new RotationRule("Judgment",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened the Judgment damage window")}),
                 new RotationRule("Empyrean Lord's Punishment",650,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s base cooldown is ready")}),
                 new RotationRule("Pummel",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"weave Pummel between Judgment/Punishment opportunities")}),
                 new RotationRule("Vicious Strike",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"sustain the attack-chain/resource loop while higher priorities recover")})
