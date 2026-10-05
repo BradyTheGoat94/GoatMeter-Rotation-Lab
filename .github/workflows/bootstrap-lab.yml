@@ -1,0 +1,109 @@
+name: Bootstrap Rotation Lab
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/bootstrap-lab.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout lab
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Copy production GoatMeter baseline safely
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/BradyTheGoat94/GoatMeter.git /tmp/goatmeter-source
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/workflows/build-windows.yml' \
+            --exclude='.github/workflows/bootstrap-lab.yml' \
+            /tmp/goatmeter-source/ ./
+
+          mkdir -p .github/workflows
+          rm -f .github/workflows/build-windows.yml
+
+          cat > .github/workflows/build-lab.yml <<'LABYAML'
+          name: Build Rotation Lab
+
+          on:
+            workflow_dispatch:
+            push:
+              branches: [main]
+              paths:
+                - "src/**"
+                - "tests/**"
+                - ".github/workflows/build-lab.yml"
+            pull_request:
+              branches: [main]
+
+          jobs:
+            build:
+              runs-on: windows-latest
+              permissions:
+                contents: read
+              steps:
+                - name: Checkout
+                  uses: actions/checkout@v4
+                - name: Setup .NET 8
+                  uses: actions/setup-dotnet@v4
+                  with:
+                    dotnet-version: "8.0.x"
+                - name: Combat and protocol regression checks
+                  run: dotnet run --project tests/Regression.csproj -c Release
+                - name: Restore
+                  run: dotnet restore src/Aion2DPSPro.csproj
+                - name: WPF overlay smoke checks
+                  run: dotnet run --project tests/OverlaySmoke/OverlaySmoke.csproj -c Release
+                - name: Publish isolated Windows x64 lab build
+                  run: dotnet publish src/Aion2DPSPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+                - name: Upload lab artifact
+                  uses: actions/upload-artifact@v4
+                  with:
+                    name: GoatMeter-Rotation-Lab-win-x64
+                    path: publish/
+                    if-no-files-found: error
+          LABYAML
+
+          cp README.md /tmp/source-readme.md
+          cat > README.md <<'LABREADME'
+          # GoatMeter Rotation Lab
+
+          **Experimental repository.** This is an isolated copy of GoatMeter for developing a passive rotation assistant.
+
+          - Production repository: `BradyTheGoat94/GoatMeter`
+          - This lab does **not** publish GoatMeter releases.
+          - No automatic key presses, input simulation, game injection, memory modification, or anti-cheat bypassing are part of this project.
+          - The goal is passive combat-state analysis and next-skill recommendations that the player executes manually.
+
+          ## Production baseline
+
+          The code below was copied from the current GoatMeter production baseline when this lab was initialized.
+
+          LABREADME
+          cat /tmp/source-readme.md >> README.md
+
+          rm -f .github/workflows/bootstrap-lab.yml
+
+      - name: Commit isolated baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Bootstrap isolated GoatMeter rotation lab baseline"
+          git push origin main
