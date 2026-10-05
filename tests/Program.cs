@@ -199,8 +199,8 @@ var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Temp
 True(templarFillerOnly.Next?.Skill=="Pummel","confirmed combat activity uses Pummel as priority filler without inventing a fixed combo");
 judgmentTracker.Observe(new(t.AddSeconds(4),CombatKind.Cast,77,"Tester",Skill:"Doom Shield",SourceClass:"Templar"));
 var doomWindow=judgmentTracker.Snapshot();
-True(doomWindow.JudgmentTrigger=="Doom Shield"&&doomWindow.JudgmentWindowActive(t.AddSeconds(6.9)),"Doom Shield opens observed 3s Judgment window");
-True(!doomWindow.JudgmentWindowActive(t.AddSeconds(7.1)),"Doom Shield Judgment window expires after 3s");
+True(doomWindow.JudgmentTrigger=="Shield Smite"&&!doomWindow.JudgmentWindowActive(t.AddSeconds(4)),
+    "unverified Doom Shield does not manufacture a new Judgment window");
 var gladiatorSignalObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rending Blow",t}},new HashSet<string>(),new HashSet<string>());
 var gladiatorSignals=PassiveRotationSignalDeriver.Derive(gladiatorSignalObservation,AionClass.Gladiator,t.AddSeconds(2));
@@ -237,7 +237,8 @@ True(wardingTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Warding 
 var rushTracker=new PassiveRotationStateTracker();
 rushTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
 rushTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Shield Rush",100,SourceClass:"Templar"));
-True(rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Shield Rush opens observed 2s Judgment window");
+True(!rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2)),
+    "unverified Shield Rush does not manufacture a Judgment window");
 var judgmentState=new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"JudgmentWindow"}};
@@ -374,6 +375,18 @@ True(rangerPrecision.Next?.Skill=="Deadshot","observed Precision prioritizes Ran
 var rangerNoPrecisionObservation=rangerPrecisionObservation with { Buffs=new HashSet<string>() };
 True(!PassiveRotationSignalDeriver.Derive(rangerNoPrecisionObservation,AionClass.Ranger,t.AddSeconds(1)).Contains("RangerDeadshotWindow"),
     "Ranger Deadshot state fails closed without observed Precision");
+var rangerSnipeObservation=new PassiveRotationObservation(77,AionClass.Ranger,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Snipe",t}},new HashSet<string>(),new HashSet<string>());
+var rangerSnipeSignals=PassiveRotationSignalDeriver.Derive(rangerSnipeObservation,AionClass.Ranger,t.AddSeconds(2.9));
+True(rangerSnipeSignals.Contains("RangerRapidFireWindow"),"observed Snipe opens Ranger Rapid Fire chain window");
+True(!PassiveRotationSignalDeriver.Derive(rangerSnipeObservation,AionClass.Ranger,t.AddSeconds(3.1)).Contains("RangerRapidFireWindow"),"Ranger Rapid Fire chain window expires after 3s");
+var rangerRapidObservation=new PassiveRotationObservation(77,AionClass.Ranger,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rapid Fire",t}},new HashSet<string>(),new HashSet<string>());
+var rangerSpiralSignals=PassiveRotationSignalDeriver.Derive(rangerRapidObservation,AionClass.Ranger,t.AddSeconds(2));
+True(rangerSpiralSignals.Contains("RangerSpiralArrowWindow"),"observed Rapid Fire opens Ranger Spiral Arrow chain window");
+var rangerSpiral=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=rangerSpiralSignals},rangerProvisional);
+True(rangerSpiral.Next?.Skill=="Spiral Arrow","observed Ranger Snipe chain progresses to Spiral Arrow");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
 var sorcererChainObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
