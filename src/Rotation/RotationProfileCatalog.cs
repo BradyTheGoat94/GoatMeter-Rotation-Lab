@@ -127,10 +127,8 @@ public static class RotationProfileCatalog
                 new RotationRule("Rapid Fire",640,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerRapidFireWindow",Reason:"continue the observed Snipe chain")}),
                 new RotationRule("Spiral Arrow",635,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerSpiralArrowWindow",Reason:"finish the observed Snipe chain")}),
                 new RotationRule("Snipe",620,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"start the documented sustained Snipe chain while stronger state actions are unavailable")}),
-                new RotationRule("Rupture Arrow",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerRuptureWindow",Reason:"passively observed Ranger state supports Rupture Arrow")}),
-                new RotationRule("Destruction Trap",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerTrapWindow",Reason:"passively observed Ranger state supports Destruction Trap")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Rupture Arrow and Destruction Trap remain gated on passive state signals; no recommendation is emitted until those states are proven.");
+            "PROVISIONAL Global Season 1 single-target fixture. Precision, crowd-control and Snipe-chain decisions are passive/evidence-gated. Older Rupture Arrow/Destruction Trap hooks were removed because current Global captures do not yet reconcile that vocabulary; no hidden state is invented.");
     }
 
     public static RotationProfile CreateProvisionalSorcererSingleTarget()
