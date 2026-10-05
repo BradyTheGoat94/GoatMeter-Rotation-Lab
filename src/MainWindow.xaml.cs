@@ -13,6 +13,7 @@ public partial class MainWindow : Window
 {
     readonly CombatEngine engine=new();
     readonly DispatcherTimer timer=new() {Interval=TimeSpan.FromMilliseconds(250)};
+    readonly DispatcherTimer rotationTimer=new() {Interval=TimeSpan.FromMilliseconds(100)};
     readonly OverlayWindow overlay=new();
     readonly LiveCaptureAdapter capture;
     readonly object diagnosticsGate=new();
@@ -89,8 +90,50 @@ public partial class MainWindow : Window
                 inspector.Enqueue($"{e.Utc:HH:mm:ss.fff} {lastEvent}");while(inspector.Count>12)inspector.Dequeue();
             }
         };
-        timer.Tick += (_,_)=>Render(); timer.Start(); capture.Start();
+        timer.Tick += (_,_)=>Render(); timer.Start();
+        rotationTimer.Tick += (_,_)=>RenderRotation(); rotationTimer.Start(); capture.Start();
     }
+    void RenderRotation() => RenderRotation(engine.Snapshot());
+
+    void RenderRotation(CombatSnapshot s)
+    {
+            // Lab-only passive bridge: derive only facts present in the meter snapshot.
+            // Unknown build/readiness/resource/movement state deliberately keeps all
+            // eight profiles fail-closed until stronger passive evidence is validated.
+            var observed=rotationTracker.Snapshot();
+            var self=s.Players.FirstOrDefault(p=>p.EntityId==observed.PlayerId);
+            if(self is null || observed.ClassName is not AionClass observedClass)
+                overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
+            else
+            {
+                var profile=observedClass switch
+                {
+                    AionClass.Templar=>RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),
+                    AionClass.Assassin=>RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),
+                    AionClass.Gladiator=>RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),
+                    AionClass.Ranger=>RotationProfileCatalog.CreateProvisionalRangerSingleTarget(),
+                    AionClass.Sorcerer=>RotationProfileCatalog.CreateProvisionalSorcererSingleTarget(),
+                    AionClass.Spiritmaster=>RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget(),
+                    AionClass.Cleric=>RotationProfileCatalog.CreateProvisionalClericSingleTarget(),
+                    AionClass.Chanter=>RotationProfileCatalog.CreateProvisionalChanterSingleTarget(),
+                    _=>rotationProfiles.First(p=>p.ClassName==observedClass)
+                };
+                var targetHp=s.Target?.Percent??100;
+                var now=DateTime.UtcNow;
+                var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
+                var signals=PassiveRotationSignalDeriver.Derive(observed,observedClass,now);
+                var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
+                    cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
+                    s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
+                    {Signals=signals};
+                var decision=rotationEngine.Evaluate(state,profile);
+                var readiness=cooldowns.Count==0
+                    ?"Cooldown readiness: insufficient validated observations"
+                    :"Cooldown readiness: "+string.Join(" • ",cooldowns.OrderBy(x=>x.Key).Select(x=>$"{x.Key} {(x.Value<=0?"READY":$"{x.Value:0.0}s")}"));
+                overlay.RenderRotation(decision with {ReadinessContext=readiness});
+            }
+    }
+
     void OpenOverlay(object sender,RoutedEventArgs e) {if(!overlay.IsVisible)overlay.Show();overlay.Activate();}
     void Reset(object sender,RoutedEventArgs e)=>engine.ResetFight();
     void Render()
@@ -101,41 +144,7 @@ public partial class MainWindow : Window
         Target.Text=s.Target is null?"No target":$"{s.Target.Name} {s.Target.Percent:0.0}% {s.Target.CurrentHp:N0}/{s.Target.MaxHp:N0}";
         Grid.ItemsSource=s.Players.Select((p,i)=>new {Rank=i+1,p.Name,Dps=p.Dps.ToString("N0"),Damage=p.Damage.ToString("N0"),Share=$"{p.Share:0.0}%"}).ToArray();
         overlay.Render(s);
-        // Lab-only passive bridge: derive only facts present in the meter snapshot.
-        // Unknown build/readiness/resource/movement state deliberately keeps all
-        // eight profiles fail-closed until stronger passive evidence is validated.
-        var observed=rotationTracker.Snapshot();
-        var self=s.Players.FirstOrDefault(p=>p.EntityId==observed.PlayerId);
-        if(self is null || observed.ClassName is not AionClass observedClass)
-            overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
-        else
-        {
-            var profile=observedClass switch
-            {
-                AionClass.Templar=>RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),
-                AionClass.Assassin=>RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),
-                AionClass.Gladiator=>RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),
-                AionClass.Ranger=>RotationProfileCatalog.CreateProvisionalRangerSingleTarget(),
-                AionClass.Sorcerer=>RotationProfileCatalog.CreateProvisionalSorcererSingleTarget(),
-                AionClass.Spiritmaster=>RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget(),
-                AionClass.Cleric=>RotationProfileCatalog.CreateProvisionalClericSingleTarget(),
-                AionClass.Chanter=>RotationProfileCatalog.CreateProvisionalChanterSingleTarget(),
-                _=>rotationProfiles.First(p=>p.ClassName==observedClass)
-            };
-            var targetHp=s.Target?.Percent??100;
-            var now=DateTime.UtcNow;
-            var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
-            var signals=PassiveRotationSignalDeriver.Derive(observed,observedClass,now);
-            var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
-                cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
-                s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
-                {Signals=signals};
-            var decision=rotationEngine.Evaluate(state,profile);
-            var readiness=cooldowns.Count==0
-                ?"Cooldown readiness: insufficient validated observations"
-                :"Cooldown readiness: "+string.Join(" • ",cooldowns.OrderBy(x=>x.Key).Select(x=>$"{x.Key} {(x.Value<=0?"READY":$"{x.Value:0.0}s")}"));
-            overlay.RenderRotation(decision with {ReadinessContext=readiness});
-        }
+        RenderRotation(s);
         lock(diagnosticsGate)
         {
             Status.Text=$"{captureStatus} | {capture.Health}"+(historyError.Length>0?$" | {historyError}":"");
@@ -152,7 +161,7 @@ public partial class MainWindow : Window
         if(allowClose) {base.OnClosing(e);return;}
         e.Cancel=true;base.OnClosing(e);
         if(closing)return;
-        closing=true;timer.Stop();capture.Dispose();
+        closing=true;timer.Stop();rotationTimer.Stop();capture.Dispose();
         try
         {
             await capture.Completion;
