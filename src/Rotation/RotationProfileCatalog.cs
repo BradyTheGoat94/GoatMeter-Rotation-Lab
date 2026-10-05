@@ -19,8 +19,11 @@ public static class RotationProfileCatalog
                 new RotationRule("Punishment",800,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready; current Global guidance prioritizes Punishment")}),
                 new RotationRule("Judgment",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened the Judgment damage window")}),
                 new RotationRule("Empyrean Lord's Punishment",650,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s base cooldown is ready")}),
+                new RotationRule("Decisive Strike",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDecisiveStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
+                new RotationRule("Desperate Strike",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDesperateStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
+                new RotationRule("Threatening Blow",565,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarThreateningBlowWindow",Reason:"finish the observed Global Vicious Strike chain")}),
                 new RotationRule("Pummel",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"weave Pummel between Judgment/Punishment opportunities")}),
-                new RotationRule("Vicious Strike",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"sustain the attack-chain/resource loop while higher priorities recover")})
+                new RotationRule("Vicious Strike",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"start the Global main attack chain while higher priorities recover")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Current guides prioritize Punishment and Judgment; only evidence-gated cooldown-ready skills are emitted here. Judgment is emitted only inside an evidence-backed passively observed shield-skill window; specialization/build modifiers remain unproven.");
     }
