@@ -133,6 +133,8 @@ public static class PassiveRotationSignalDeriver
             // The specialization extension to 30s is intentionally not inferred.
             if(observed.Debuffs.Contains("Corrode") || observed.UsedRecently("Jointstrike: Corrode",now,20))
                 signals.Add("SpiritmasterCorrodeActiveWindow");
+            else
+                signals.Add("SpiritmasterCorrodeMissingWindow");
 
             // Elemental Fusion is enabled by the four-element state. Consume only a
             // passively observed state name; never infer stacks from generic combat.
