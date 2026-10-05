@@ -93,6 +93,11 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Marking Shot",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerMarkWindow",Reason:"maintain Precision and Deadshot support when the mark needs refresh")}),
                 new RotationRule("Deadshot",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerDeadshotWindow",Reason:"use charged Deadshot in a proven damage window")}),
+                new RotationRule("Burst Arrow",610,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"current Global sustained APL places Burst Arrow above lower filler"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Burst Arrow",Reason:"validated current Global 20s base cooldown is ready")
+                }),
+                new RotationRule("Gale Arrow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"maintain the documented Global sustained Gale Arrow priority")}),
                 new RotationRule("Drill Dart",585,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"use a high-value sustained Global Ranger attack while stronger state actions are unavailable"),new RotationCondition(RotationConditionKind.CooldownReady,"Drill Dart",Reason:"validated 5s Global base cooldown is ready")}),
                 new RotationRule("Tempest Shot",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerFillerWindow",Reason:"continue the sustained Global Ranger loop while stronger state actions are unavailable")}),
                 new RotationRule("Rapid Fire",640,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"RangerRapidFireWindow",Reason:"continue the observed Snipe chain")}),
