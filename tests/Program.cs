@@ -376,6 +376,14 @@ var clericFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"g
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericFillerWindow"}},clericProvisional);
 True(clericFiller.Next?.Skill=="Judgment Thunder"&&!clericFiller.Next.Actionable,"confirmed combat activity uses observed Global Judgment Thunder as Cleric sustained priority");
+var clericChainObservation=new PassiveRotationObservation(88,AionClass.Cleric,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Chain of Torment",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(9.9)).Contains("ClericCondemnationWindow"),"observed Chain of Torment opens bounded Cleric Condemnation window");
+True(!PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(10.1)).Contains("ClericCondemnationWindow"),"Cleric Condemnation window expires with base Chain of Torment duration");
+var clericCondemnation=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericCondemnationWindow","ClericFillerWindow"}},clericProvisional);
+True(clericCondemnation.Next?.Skill=="Condemnation"&&!clericCondemnation.Next.Actionable,"observed Chain of Torment prioritizes Condemnation over Cleric filler");
 var chanterProvisional=RotationProfileCatalog.CreateProvisionalChanterSingleTarget();
 var chanterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),chanterProvisional);
