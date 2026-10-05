@@ -43,6 +43,8 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion")
                 }),
                 new RotationRule("Shadowstrike",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside a proven burst/rear-access window")}),
+                new RotationRule("Savage Back Kick",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageBackKickWindow",Reason:"complete the current Global Savage Roar chain after its observed opener")}),
+                new RotationRule("Savage Smash",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageSmashWindow",Reason:"complete the current Global Savage chain after observed Savage Back Kick")}),
                 new RotationRule("Savage Roar",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"build Insignias while core spenders are unavailable")}),
                 new RotationRule("Savage Fang",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"use the repeatedly observed Global sustained strike while spender state is unavailable")}),
                 new RotationRule("Exploit Weakness",350,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"include the repeatedly observed Global damage action without inferring hidden Insignia state")}),
