@@ -218,5 +218,14 @@ var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
 True(sorcererBurst.Next?.Skill=="Flame Harpoon"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal yields informational Flame Harpoon");
+var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
+True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
+var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),spiritmasterProvisional);
+True(spiritmasterUnknown.Next is null,"Spiritmaster fails closed without passively proven target/spirit state");
+var spiritmasterBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterBurstWindow"}},spiritmasterProvisional);
+True(spiritmasterBurst.Next?.Skill=="Spirit Ruinous Offensive"&&!spiritmasterBurst.Next.Actionable,"observed Spiritmaster burst signal yields informational spirit offensive");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
