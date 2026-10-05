@@ -81,6 +81,11 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Ruinous Blow",Reason:"validated 45s Global base cooldown is ready; specialization reductions excluded")
                 }),
+                new RotationRule("Frenzied Wave",690,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFrenziedWaveWindow",Reason:"consume the current-Global 3s chain activation after observed Crushing Wave")}),
+                new RotationRule("Crushing Wave",610,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"current Global sustained damage action opens Frenzied Wave"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Crushing Wave",Reason:"validated 20s Global base cooldown is ready; rank-12 critical reset specialization excluded")
+                }),
                 new RotationRule("Rending Blow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"core sustained single-target damage after conditional attacks")}),
                 new RotationRule("Smashing Blow",675,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
                 new RotationRule("Seismic Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFinisherWindow",Reason:"passively observed chain state supports Seismic Crash")}),
