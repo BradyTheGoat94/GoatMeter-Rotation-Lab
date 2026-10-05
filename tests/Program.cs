@@ -539,13 +539,15 @@ var rangerRootObservation=rangerCcSlowObservation with { Debuffs=new HashSet<str
 True(PassiveRotationSignalDeriver.Derive(rangerRootObservation,AionClass.Ranger,t).Contains("RangerBurstArrowWindow"),"observed Ranger Root opens Burst Arrow state");
 var rangerNoCcObservation=rangerCcSlowObservation with { Debuffs=new HashSet<string>() };
 True(!PassiveRotationSignalDeriver.Derive(rangerNoCcObservation,AionClass.Ranger,t).Contains("RangerBurstArrowWindow"),"Ranger Burst Arrow fails closed without observed Slow or Root");
-var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+var rangerBurstRuleProfile=new RotationProfile(AionClass.Ranger,"ranger-burst-rule-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    rangerProvisional.Rules.Where(r=>r.Skill.Equals("Burst Arrow",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic Burst Arrow state/cooldown isolation");
+var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-rule-test",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
-    {Signals=rangerSlowSignals},rangerProvisional);
-True(rangerCcBurstReady.Next?.Skill=="Burst Arrow","observed Slow can recommend ready Ranger Burst Arrow");
-var rangerBurstRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    {Signals=rangerSlowSignals},rangerBurstRuleProfile);
+True(rangerBurstReady.Next?.Skill=="Burst Arrow","observed Slow can recommend ready Ranger Burst Arrow");
+var rangerBurstRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"ranger-burst-rule-test",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",8}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,1)
-    {Signals=rangerSlowSignals},rangerProvisional);
+    {Signals=rangerSlowSignals},rangerBurstRuleProfile);
 True(rangerBurstRecovering.Next?.Skill!="Burst Arrow","Ranger Burst Arrow fails closed while validated cooldown is recovering");
 True(!rangerProvisional.Rules.Any(r=>r.Skill=="Rupture Arrow"||r.Skill=="Destruction Trap"),"unreconciled Ranger Rupture Arrow and Destruction Trap hooks stay out of actionable Global profile");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
