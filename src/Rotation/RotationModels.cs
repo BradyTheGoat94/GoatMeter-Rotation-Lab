@@ -30,7 +30,8 @@ public enum RotationConditionKind
     EnemyCountAtLeast,
     EnemyCountAtMost,
     Moving,
-    Stationary
+    Stationary,
+    SignalPresent
 }
 
 public sealed record RotationCondition(
@@ -66,7 +67,10 @@ public sealed record RotationState(
     int EnemyCount,
     bool IsMoving,
     bool TargetAlive,
-    double ObservationConfidence);
+    double ObservationConfidence)
+{
+    public IReadOnlySet<string> Signals { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+}
 
 public sealed record SkillRecommendation(
     string Skill,
