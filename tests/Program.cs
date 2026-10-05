@@ -172,6 +172,9 @@ Equal(clericCooldowns["Condemnation"],1,"validated base Condemnation cooldown re
 Equal(ValidatedCooldownCatalog.Remaining(clericCooldownTracker.Snapshot(),AionClass.Cleric,t.AddSeconds(4))["Condemnation"],0,"base Condemnation readiness returns after 3s when no reset is proven");
 True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never guessed");
 True(ValidatedCooldownCatalog.Entries.All(x=>!string.IsNullOrWhiteSpace(x.GlobalVersion)),"every validated cooldown pins its Global evidence/version");
+Equal(ValidatedCooldownCatalog.Entries.Count,
+    ValidatedCooldownCatalog.Entries.Select(x=>$"{x.ClassName}:{x.Skill}").Distinct(StringComparer.OrdinalIgnoreCase).Count(),
+    "validated cooldown catalog has no duplicate class/skill entries");
 var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
 True(templarProvisional.Validation==ProfileValidation.Provisional,"Templar fixture remains provisional");
 True(templarProvisional.Rules.Single(x=>x.Skill=="Judgment").Conditions.Any(x=>x.Kind==RotationConditionKind.SignalPresent&&x.Key=="JudgmentWindow"),"Judgment requires observed trigger signal");
