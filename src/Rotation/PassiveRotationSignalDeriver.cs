@@ -101,9 +101,11 @@ public static class PassiveRotationSignalDeriver
             // Spinning Strike is an observed ranged setup in the current PvE loop.
             // Retain the older Impactful Crush path only as provisional corroboration until
             // live Global observations can conclusively retire it.
-            if(observed.UsedRecently("Spinning Strike",now,3))
-                signals.Add("ChanterDarkCrushWindow");
-            else if(observed.UsedRecently("Impactful Crush",now,3))
+            // Current Global Dark Crush activates after use of a ranged skill.
+            // These are named, documented ranged setup skills in the current PvE loop;
+            // do not infer activation from generic combat or melee activity.
+            string[] darkCrushSetups={"Spinning Strike","Impactful Crush"};
+            if(darkCrushSetups.Any(skill=>observed.UsedRecently(skill,now,3)))
                 signals.Add("ChanterDarkCrushWindow");
             if(observed.UsedRecently("Onslaught",now,3))
                 signals.Add("ChanterResonanceCrushWindow");
