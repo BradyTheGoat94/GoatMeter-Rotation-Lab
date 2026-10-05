@@ -37,6 +37,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Sorcerer,"Hellfire",45,"1.0.21.0","Global client skill data; specialty cooldown reductions excluded"),
         new(AionClass.Sorcerer,"Wish of Concentration",60,"1.0.21.0","AION 2 Global database skill 15310000; base cooldown only"),
         new(AionClass.Chanter,"Impactful Crush",15,"Global Season 1 Sep 2","current Global Season 1 Chanter guide; Sep 2 cooldown reverted to 15s"),
+        new(AionClass.Chanter,"Dark Crush",5,"Global Season 1","current Global release base cooldown; level-16 no-cooldown specialization excluded"),
         new(AionClass.Chanter,"Heat Wave Blow",10,"1.0.21.0","AION 2 Global database skill 18150000; base cooldown only"),
         new(AionClass.Chanter,"Wave Blow",20,"Global 1.0.21.0","current Global release skill 18080000; requires Stun target state, incapacitation-immunity specialization behavior excluded"),
         new(AionClass.Assassin,"Heart Gore",5,"Global Season 1","Global client skill data; base cooldown only, level-16 critical reset excluded"),
