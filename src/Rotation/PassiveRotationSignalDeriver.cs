@@ -60,8 +60,19 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Rapid Fire",now,3))
                 signals.Add("RangerSpiralArrowWindow");
         }
-        if(observedClass==AionClass.Sorcerer && observed.UsedRecently("Ice Chain",now,3))
-            signals.Add("SorcererColdWaveWindow");
+        if(observedClass==AionClass.Sorcerer)
+        {
+            if(observed.UsedRecently("Ice Chain",now,3))
+                signals.Add("SorcererColdWaveWindow");
+
+            // Global fire hits apply Fire Mark. Reconstruct only from named fire
+            // skills with current evidence; never treat generic Sorcerer activity as a mark.
+            if(observed.UsedRecently("Flame Arrow",now,10) ||
+               observed.UsedRecently("Flame Harpoon",now,10) ||
+               observed.UsedRecently("Fire Wall",now,10) ||
+               observed.UsedRecently("Hellfire",now,10))
+                signals.Add("SorcererFireMarkWindow");
+        }
         if(observedClass==AionClass.Cleric)
         {
             // Condemnation itself requires Chain of Torment on the target.
