@@ -138,5 +138,14 @@ var knownCooldowns=ValidatedCooldownCatalog.Remaining(cooldownTracker.Snapshot()
 Equal(knownCooldowns["Punishment"],18,"validated Punishment cooldown reconstruction");
 True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never guessed");
 True(ValidatedCooldownCatalog.Entries.All(x=>x.GlobalVersion=="1.0.21.0"),"cooldown evidence pinned to Global version");
+var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
+True(templarProvisional.Validation==ProfileValidation.Provisional,"Templar fixture remains provisional");
+True(!templarProvisional.Rules.Any(x=>x.Skill=="Judgment"),"unobserved Judgment trigger state is not guessed");
+var templarReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>{{"Punishment",0},{"Empyrean Lord's Punishment",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
+True(templarReady.Next?.Skill=="Punishment"&&!templarReady.Next.Actionable,"provisional Templar emits informational Punishment when observed ready");
+var templarUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
+True(templarUnknown.Next is null,"provisional Templar fails closed when cooldown readiness is unknown");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
