@@ -66,6 +66,10 @@ public static class PassiveRotationSignalDeriver
             // Current Global evidence makes Deadshot the immediate high-value payoff.
             if(observed.Buffs.Contains("Precision"))
                 signals.Add("RangerDeadshotWindow");
+            // Burst Arrow is legal only when Slow or Root is actually observed on target.
+            // Never infer crowd-control state from generic Ranger activity.
+            if(observed.Debuffs.Contains("Slow")||observed.Debuffs.Contains("Root"))
+                signals.Add("RangerBurstArrowWindow");
             if(observed.UsedRecently("Snipe",now,3))
                 signals.Add("RangerRapidFireWindow");
             if(observed.UsedRecently("Rapid Fire",now,3))
