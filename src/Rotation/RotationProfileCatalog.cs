@@ -125,14 +125,14 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Disenchant",500,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")
-                }),
-                new RotationRule("Spirit Ruinous Offensive",350,new[]
-                {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"passively observed Spiritmaster burst state supports spirit offensive")
-                })
+                new RotationRule("Flame Blessing",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"buff before Ancient Spirit so the summon snapshots the damage state")}),
+                new RotationRule("Spirit's Benediction",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"apply spirit damage buff before Ancient Spirit")}),
+                new RotationRule("Summon: Ancient Spirit",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterAncientWindow",Reason:"summon Ancient Spirit after opener buffs")}),
+                new RotationRule("Jointstrike: Corrode",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"maintain the high-value Corrode damage-over-time effect")}),
+                new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
+                new RotationRule("Jointstrike: Destructive Attack",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use on cooldown without sacrificing higher-priority Fusion or stack state")}),
+                new RotationRule("Earth Tremor",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"maintain basic-attack buff stacks during sustained damage")}),
+                new RotationRule("Disenchant",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Dispel and spirit-burst decisions remain gated on passive signals; no recommendation is emitted until the relevant state is proven.");
     }
