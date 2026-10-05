@@ -139,6 +139,13 @@ cooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Tem
 cooldownTracker.Observe(new(t,CombatKind.Damage,77,"Tester",99,"Dummy","Punishment",100,SourceClass:"Templar"));
 var knownCooldowns=ValidatedCooldownCatalog.Remaining(cooldownTracker.Snapshot(),AionClass.Templar,t.AddSeconds(12));
 Equal(knownCooldowns["Punishment"],18,"validated Punishment cooldown reconstruction");
+var rangerCooldownTracker=new PassiveRotationStateTracker();
+rangerCooldownTracker.Observe(new(t,CombatKind.PlayerName,88,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true));
+rangerCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"RangerTester",99,"Dummy","Drill Dart",100,SourceClass:"Ranger"));
+var rangerCooldowns=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(4));
+Equal(rangerCooldowns["Drill Dart"],2,"validated Drill Dart cooldown reconstruction");
+var rangerCooldownReady=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(6));
+Equal(rangerCooldownReady["Drill Dart"],0,"validated Drill Dart becomes ready after 5s");
 True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never guessed");
 True(ValidatedCooldownCatalog.Entries.All(x=>x.GlobalVersion=="1.0.21.0"),"cooldown evidence pinned to Global version");
 var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
