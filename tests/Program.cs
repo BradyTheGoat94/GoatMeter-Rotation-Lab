@@ -140,7 +140,7 @@ True(!knownCooldowns.ContainsKey("Unknown Skill"),"unknown cooldown is never gue
 True(ValidatedCooldownCatalog.Entries.All(x=>x.GlobalVersion=="1.0.21.0"),"cooldown evidence pinned to Global version");
 var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
 True(templarProvisional.Validation==ProfileValidation.Provisional,"Templar fixture remains provisional");
-True(!templarProvisional.Rules.Any(x=>x.Skill=="Judgment"),"unobserved Judgment trigger state is not guessed");
+True(templarProvisional.Rules.Single(x=>x.Skill=="Judgment").Conditions.Any(x=>x.Kind==RotationConditionKind.SignalPresent&&x.Key=="JudgmentWindow"),"Judgment requires observed trigger signal");
 var templarReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>{{"Punishment",0},{"Empyrean Lord's Punishment",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
 True(templarReady.Next?.Skill=="Punishment"&&!templarReady.Next.Actionable,"provisional Templar emits informational Punishment when observed ready");
