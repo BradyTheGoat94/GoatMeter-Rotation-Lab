@@ -227,5 +227,15 @@ var spiritmasterBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Spir
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterBurstWindow"}},spiritmasterProvisional);
 True(spiritmasterBurst.Next?.Skill=="Spirit Ruinous Offensive"&&!spiritmasterBurst.Next.Actionable,"observed Spiritmaster burst signal yields informational spirit offensive");
+var clericProvisional=RotationProfileCatalog.CreateProvisionalClericSingleTarget();
+var clericUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),clericProvisional);
+True(clericUnknown.Next is null,"Cleric fails closed without passively proven damage/heal state");
+var chanterProvisional=RotationProfileCatalog.CreateProvisionalChanterSingleTarget();
+var chanterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),chanterProvisional);
+True(chanterUnknown.Next is null,"Chanter fails closed without passively proven damage/heal state");
+True(clericProvisional.Validation==ProfileValidation.Provisional&&chanterProvisional.Validation==ProfileValidation.Provisional,
+    "Cleric and Chanter fixtures remain provisional");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
