@@ -350,6 +350,18 @@ var rangerObservedOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Ran
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
 True(rangerObservedOnly.Next?.Skill!="Marking Shot"&&rangerObservedOnly.Next?.Skill!="Deadshot","generic observed Ranger combat does not invent unreconciled mark or charged-shot state");
+var rangerPrecisionObservation=new PassiveRotationObservation(77,AionClass.Ranger,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Observed Ranger Action",t}},
+    new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Precision"},new HashSet<string>());
+var rangerPrecisionSignals=PassiveRotationSignalDeriver.Derive(rangerPrecisionObservation,AionClass.Ranger,t.AddSeconds(1));
+True(rangerPrecisionSignals.Contains("RangerDeadshotWindow"),"observed Precision buff opens Ranger Deadshot window");
+var rangerPrecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>())
+    {Signals=rangerPrecisionSignals},rangerProvisional);
+True(rangerPrecision.Next?.Skill=="Deadshot","observed Precision prioritizes Ranger Deadshot over sustained filler");
+var rangerNoPrecisionObservation=rangerPrecisionObservation with { Buffs=new HashSet<string>() };
+True(!PassiveRotationSignalDeriver.Derive(rangerNoPrecisionObservation,AionClass.Ranger,t.AddSeconds(1)).Contains("RangerDeadshotWindow"),
+    "Ranger Deadshot state fails closed without observed Precision");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
 var sorcererChainObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
