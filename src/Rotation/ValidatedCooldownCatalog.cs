@@ -27,6 +27,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Cleric,"Bolt",45,"Global 1.0.21.0","AION 2 Global skill 17060000; Earths Retribution/Discharge cooldown reduction excluded"),
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
         new(AionClass.Assassin,"Shadowstrike",20,"Global 0.0.4387.0","current Global client extraction; 10s Critical Damage buff, positional safety remains player-controlled"),
+        new(AionClass.Spiritmaster,"Jointstrike: Curse",10,"Global 1.0.21.0","current Global skill database; base cooldown only"),
         new(AionClass.Sorcerer,"Firestorm",5,"1.0.21.0","Global client skill data; specialty Hellfire reduction excluded"),
         new(AionClass.Sorcerer,"Bittercold Wind",15,"1.0.21.0","Global client skill data; base cooldown only"),
         new(AionClass.Sorcerer,"Blaze",5,"1.0.21.0","Global client skill data; Wish reduction specialty excluded"),
