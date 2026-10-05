@@ -403,6 +403,15 @@ var rangerFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"g
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
 True(rangerFiller.Next?.Skill=="Snipe"&&!rangerFiller.Next.Actionable,"Global APL starts the Ranger Snipe chain before lower sustained fillers");
+var rangerBurstReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
+True(rangerBurstReady.Next?.Skill=="Snipe","Global APL starts Snipe chain before ready Burst Arrow");
+var rangerAfterSnipeUnavailable=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Burst Arrow",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},new RotationProfile(AionClass.Ranger,"ranger-burst-test",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    rangerProvisional.Rules.Where(r=>!r.Skill.Equals("Snipe",StringComparison.OrdinalIgnoreCase)).ToArray(),"synthetic priority isolation"));
+True(rangerAfterSnipeUnavailable.Next?.Skill=="Burst Arrow","ready Burst Arrow outranks Gale/Drill/Tempest when Snipe is unavailable");
 var rangerDrillReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>{{"Drill Dart",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
