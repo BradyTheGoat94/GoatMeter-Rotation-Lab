@@ -14,6 +14,9 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Templar,"Punishment",30,"1.0.21.0","AION 2 Global database skill 12090000"),
         new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000"),
         new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000"),
+        new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
+        new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
+        new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000; base cooldown only, specialty resets excluded"),
         new(AionClass.Assassin,"Heart Gore",5,"Global Season 1","Global client skill data; base cooldown only, level-16 critical reset excluded"),
         new(AionClass.Assassin,"Insignia Explosion",10,"1.0.21.0","AION 2 Global database skill 13130000; base cooldown only, specialization reductions excluded")
