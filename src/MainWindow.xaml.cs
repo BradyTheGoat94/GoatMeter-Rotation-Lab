@@ -110,14 +110,18 @@ public partial class MainWindow : Window
             overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
         else
         {
-            var profile=observedClass==AionClass.Templar
-                ?RotationProfileCatalog.CreateProvisionalTemplarSingleTarget()
-                :rotationProfiles.First(p=>p.ClassName==observedClass);
+            var profile=observedClass switch
+            {
+                AionClass.Templar=>RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),
+                AionClass.Assassin=>RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),
+                _=>rotationProfiles.First(p=>p.ClassName==observedClass)
+            };
             var targetHp=s.Target?.Percent??100;
             var now=DateTime.UtcNow;
             var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
             var signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if(observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
+            if(observed.CriticalHitWindowActive(now))signals.Add("CriticalHitWindow");
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                 cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
