@@ -620,9 +620,20 @@ var spiritmasterNoFusion=spiritmasterFusionObservation with {Buffs=new HashSet<s
 True(!PassiveRotationSignalDeriver.Derive(spiritmasterNoFusion,AionClass.Spiritmaster,t.AddSeconds(1)).Contains("SpiritmasterBurstWindow"),
     "Spiritmaster Fusion state fails closed without observed Four Elements");
 var spiritmasterAncient=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Summon: Ancient Spirit",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterAncientWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
-True(spiritmasterAncient.Next?.Skill=="Summon: Ancient Spirit","observed Spiritmaster opener sequence outranks sustained filler");
+True(spiritmasterAncient.Next?.Skill=="Summon: Ancient Spirit","observed Spiritmaster opener sequence with ready Ancient Spirit outranks sustained filler");
+var spiritmasterAncientRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Summon: Ancient Spirit",35}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterAncientWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
+True(spiritmasterAncientRecovering.Next?.Skill!="Summon: Ancient Spirit","observed opener buffs cannot bypass Ancient Spirit's validated Global cooldown");
+var spiritmasterAncientTracker=new PassiveRotationStateTracker();
+spiritmasterAncientTracker.Observe(new(t,CombatKind.PlayerName,88,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true));
+spiritmasterAncientTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,88,"SpiritTester",Skill:"Summon: Ancient Spirit",SourceClass:"Spiritmaster"));
+Equal(ValidatedCooldownCatalog.Remaining(spiritmasterAncientTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(46))["Summon: Ancient Spirit"],45,
+    "validated Ancient Spirit base cooldown reconstructs remaining readiness");
+Equal(ValidatedCooldownCatalog.Remaining(spiritmasterAncientTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(91))["Summon: Ancient Spirit"],0,
+    "Ancient Spirit returns after validated current-Global 90s base cooldown");
 var spiritmasterCorrode=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
