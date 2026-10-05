@@ -446,17 +446,25 @@ var sorcererUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcer
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),sorcererProvisional);
 True(sorcererUnknown.Next is null,"Sorcerer fails closed without passively proven burst/state");
 var sorcererBurst=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Hellfire",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
 True(sorcererBurst.Next?.Skill=="Hellfire"&&!sorcererBurst.Next.Actionable,"observed Sorcerer burst signal follows expanded priority with Hellfire first");
+var sorcererBurstRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Hellfire",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
+True(sorcererBurstRecovering.Next?.Skill=="Fire Wall","recovering Hellfire fails closed and falls through to the next proven Sorcerer burst action");
 var sorcererFillerState=new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Blaze",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}};
 var sorcererFiller=rotationEngine.Evaluate(sorcererFillerState,sorcererProvisional);
 True(sorcererFiller.Next?.Skill!="Blaze","Sorcerer Blaze fails closed without observed Fire Mark");
 var sorcererFireMark=rotationEngine.Evaluate(sorcererFillerState with
     {Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Fire Mark"}},sorcererProvisional);
 True(sorcererFireMark.Next?.Skill=="Blaze"&&!sorcererFireMark.Next.Actionable,"observed Fire Mark prioritizes Sorcerer Blaze over sustained filler");
+var sorcererBlazeRecovering=rotationEngine.Evaluate(sorcererFillerState with
+    {CooldownSeconds=new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Blaze",2}},
+     Debuffs=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Fire Mark"}},sorcererProvisional);
+True(sorcererBlazeRecovering.Next?.Skill!="Blaze","observed Fire Mark cannot bypass validated Blaze cooldown");
 var sorcererObservedFire=new PassiveRotationObservation(66,AionClass.Sorcerer,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Arrow",t}},new HashSet<string>(),new HashSet<string>());
 var sorcererObservedFireSignals=PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(2));
