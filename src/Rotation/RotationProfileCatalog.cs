@@ -32,6 +32,27 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. Current guides prioritize Punishment and Judgment; only evidence-gated cooldown-ready skills are emitted here. Judgment is emitted only inside an evidence-backed passively observed shield-skill window; specialization/build modifiers remain unproven.");
     }
 
+    public static RotationProfile CreateProvisionalAssassinSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Assassin,
+            "global-assassin-provisional",
+            RotationMode.SingleTarget,
+            ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Heart Gore",500,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit can enable Heart Gore")
+                }),
+                new RotationRule("Insignia Explosion",400,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion")
+                })
+            },
+            "PROVISIONAL Global Season 1 single-target fixture. Heart Gore and Insignia Explosion are gated on passive signals; until those signals can be proven by the live decoder, the profile intentionally emits no recommendation.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
