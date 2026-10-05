@@ -56,8 +56,18 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Sorcerer && observed.UsedRecently("Ice Chain",now,3))
             signals.Add("SorcererColdWaveWindow");
-        if(observedClass==AionClass.Cleric && observed.UsedRecently("Chain of Torment",now,10))
-            signals.Add("ClericCondemnationWindow");
+        if(observedClass==AionClass.Cleric)
+        {
+            // Condemnation itself requires Chain of Torment on the target.
+            if(observed.UsedRecently("Chain of Torment",now,10))
+                signals.Add("ClericCondemnationWindow");
+
+            // Earth's Punishment is a separate, directly observable target state.
+            // It materially changes the Condemnation loop in current Global builds,
+            // but specialty-dependent guaranteed-crit/reset behavior is not inferred here.
+            if(observed.Debuffs.Contains("Earth Punishment"))
+                signals.Add("ClericEarthPunishmentWindow");
+        }
         if(observedClass==AionClass.Chanter)
         {
             // Current Global Season 1 changed Dark Crush to activate after a ranged skill.
