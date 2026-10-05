@@ -246,7 +246,10 @@ public static class RotationProfileCatalog
             AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Dark Crush",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately after the observed ranged setup")}),
+                new RotationRule("Dark Crush",800,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately after the observed current-Global ranged setup"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Dark Crush",Reason:"validated 5s base cooldown is ready; level-16 no-cooldown specialization excluded")
+                }),
                 new RotationRule("Resonance Crush",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterResonanceCrushWindow",Reason:"continue the observed Onslaught chain")}),
                 new RotationRule("Bolt Crush",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBoltCrushWindow",Reason:"finish the observed Onslaught chain")}),
                 new RotationRule("Heat Wave Blow",700,new[]{
