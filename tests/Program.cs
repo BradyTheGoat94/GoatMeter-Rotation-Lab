@@ -272,6 +272,10 @@ var rangerFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"g
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
 True(rangerFiller.Next?.Skill=="Drill Dart"&&!rangerFiller.Next.Actionable,"confirmed combat activity can enter provisional Ranger sustained priority without inventing a proc");
+var rangerObservedOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
+True(rangerObservedOnly.Next?.Skill!="Marking Shot"&&rangerObservedOnly.Next?.Skill!="Deadshot","generic observed Ranger combat does not invent unreconciled mark or charged-shot state");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
 var sorcererUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
