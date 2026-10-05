@@ -43,6 +43,8 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion")
                 }),
                 new RotationRule("Shadowstrike",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside a proven burst/rear-access window")}),
+                new RotationRule("Breaking Slice",590,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBreakingSliceWindow",Reason:"complete the current Global Quick Slice chain after its observed opener")}),
+                new RotationRule("Swift Slice",585,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSwiftSliceWindow",Reason:"complete the current Global Quick Slice chain after observed Breaking Slice")}),
                 new RotationRule("Savage Back Kick",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageBackKickWindow",Reason:"complete the current Global Savage Roar chain after its observed opener")}),
                 new RotationRule("Savage Smash",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageSmashWindow",Reason:"complete the current Global Savage chain after observed Savage Back Kick")}),
                 new RotationRule("Savage Roar",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"build Insignias while core spenders are unavailable")}),
