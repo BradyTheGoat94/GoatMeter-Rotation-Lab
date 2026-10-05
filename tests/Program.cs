@@ -444,6 +444,17 @@ True(rotationEngine.Evaluate(sorcererFireHitState,sorcererProvisional).Next?.Ski
 var sorcererIceOnly=new PassiveRotationObservation(66,AionClass.Sorcerer,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Ice Chain",t}},new HashSet<string>(),new HashSet<string>());
 True(!PassiveRotationSignalDeriver.Derive(sorcererIceOnly,AionClass.Sorcerer,t.AddSeconds(2)).Contains("SorcererFireMarkWindow"),"non-fire Sorcerer activity cannot manufacture Fire Mark");
+True(PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(4.9)).Contains("SorcererFireMarkWindow"),
+    "Sorcerer reconstructed Fire Mark remains valid through the documented 5s duration");
+True(!PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(5.1)).Contains("SorcererFireMarkWindow"),
+    "Sorcerer reconstructed Fire Mark expires after the documented 5s duration");
+var sorcererWishTracker=new PassiveRotationStateTracker();
+sorcererWishTracker.Observe(new(t,CombatKind.PlayerName,66,"SorcererTester",SourceClass:"Sorcerer",SourceIdentityConfirmed:true));
+sorcererWishTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,66,"SorcererTester",Skill:"Wish of Concentration",SourceClass:"Sorcerer"));
+Equal(ValidatedCooldownCatalog.Remaining(sorcererWishTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(31))["Wish of Concentration"],30,
+    "validated Sorcerer Wish base cooldown reconstruction excludes specialty reductions");
+Equal(ValidatedCooldownCatalog.Remaining(sorcererWishTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(61))["Wish of Concentration"],0,
+    "Sorcerer Wish returns after validated 60s base cooldown when no specialization reduction is proven");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
