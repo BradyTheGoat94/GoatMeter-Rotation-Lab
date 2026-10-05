@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Aion2DPSPro;
 using Aion2DPSPro.Overlay;
+using Aion2DPSPro.Rotation;
 
 internal static class Program
 {
@@ -106,6 +107,15 @@ internal static class Program
   window.Render(previewEngine.Snapshot(MeterSegment.Current,MeterCategory.Healing));
   if(rows.Items.Count!=0)throw new Exception("Compact healing view reused damage");
   Console.WriteLine("PASS: distinct responsive meter designs, party rows and compact category selection");
+  var assistantFixture=new RotationDecision(
+   new SkillRecommendation("Fixture Primary",120,.94,true,new[]{"fixture ready"}),
+   new[]{new SkillRecommendation("Fixture Followup",110,.94,true,new[]{"fixture"})},
+   "Validated fixture");
+  window.RenderRotation(assistantFixture);window.UpdateLayout();
+  if(((TextBlock)window.FindName("RotationNextSkill")).Text!="Fixture Primary")throw new Exception("Assistant primary label missing");
+  if(!((TextBlock)window.FindName("RotationQueue")).Text.Contains("Fixture Followup"))throw new Exception("Assistant queue missing");
+  Console.WriteLine("PASS: assistant panel renders fixture decision");
+
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
 }
