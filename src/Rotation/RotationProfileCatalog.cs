@@ -16,6 +16,10 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
+                new RotationRule("Judgment",500,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened Judgment window")
+                }),
                 new RotationRule("Punishment",300,new[]
                 {
                     new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready")
@@ -25,7 +29,7 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s base cooldown is ready")
                 })
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Current guides prioritize Punishment and Judgment; only evidence-gated cooldown-ready skills are emitted here. Judgment triggers/build state are not yet passively proven, so Judgment is deliberately omitted.");
+            "PROVISIONAL Global Season 1 single-target fixture. Current guides prioritize Punishment and Judgment; only evidence-gated cooldown-ready skills are emitted here. Judgment is emitted only inside an evidence-backed passively observed shield-skill window; specialization/build modifiers remain unproven.");
     }
 
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
