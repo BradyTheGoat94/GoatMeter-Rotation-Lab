@@ -229,7 +229,7 @@ True(rangerRupture.Next?.Skill=="Rupture Arrow"&&!rangerRupture.Next.Actionable,
 var rangerFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
-True(rangerFiller.Next?.Skill=="Snipe"&&!rangerFiller.Next.Actionable,"confirmed combat activity can enter provisional Ranger sustained filler without inventing a proc");
+True(rangerFiller.Next?.Skill=="Drill Dart"&&!rangerFiller.Next.Actionable,"confirmed combat activity can enter provisional Ranger sustained priority without inventing a proc");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
 var sorcererUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
