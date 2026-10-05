@@ -126,6 +126,9 @@ tracker.Observe(new(t.AddSeconds(3),CombatKind.BuffApply,77,"Tester",77,"Tester"
 var observedRotation=tracker.Snapshot();
 True(observedRotation.PlayerId==77&&observedRotation.ClassName==AionClass.Templar,"passive tracker resolves confirmed class");
 True(observedRotation.LastSkillUse.ContainsKey("Observed Cast")&&observedRotation.LastSkillUse.ContainsKey("Observed Strike"),"passive tracker records observed skill use");
+True(observedRotation.UsedRecently("Observed Strike",t.AddSeconds(4),3),"recent-skill helper accepts an observed local skill inside its evidence window");
+True(!observedRotation.UsedRecently("Observed Strike",t.AddSeconds(6),3),"recent-skill helper expires an observed local skill after its evidence window");
+True(!observedRotation.UsedRecently("Never Observed",t.AddSeconds(3),3),"recent-skill helper fails closed for an unobserved skill");
 True(observedRotation.Buffs.Contains("Observed Buff"),"passive tracker records observed buff");
 tracker.Observe(new(t.AddSeconds(4),CombatKind.BuffRemove,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
 True(!tracker.Snapshot().Buffs.Contains("Observed Buff"),"passive tracker removes observed buff");
