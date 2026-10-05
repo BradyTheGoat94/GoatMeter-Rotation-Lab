@@ -425,6 +425,20 @@ var clericCondemnation=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2)
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ClericCondemnationWindow","ClericFillerWindow"}},clericProvisional);
 True(clericCondemnation.Next?.Skill=="Condemnation"&&!clericCondemnation.Next.Actionable,"observed Chain of Torment prioritizes Condemnation over Cleric filler");
+var clericEarthObservation=new PassiveRotationObservation(88,AionClass.Cleric,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Chain of Torment",t}},
+    new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Earth Punishment"});
+var clericEarthSignals=PassiveRotationSignalDeriver.Derive(clericEarthObservation,AionClass.Cleric,t.AddSeconds(2));
+True(clericEarthSignals.Contains("ClericCondemnationWindow")&&clericEarthSignals.Contains("ClericEarthPunishmentWindow"),
+    "observed Chain of Torment plus Earth Punishment exposes the Cleric high-value Condemnation window");
+var clericEarth=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Earth Punishment"},0,100,1,false,true,.95)
+    {Signals=clericEarthSignals},clericProvisional);
+True(clericEarth.Next?.Skill=="Condemnation"&&!clericEarth.Next.Actionable,
+    "observed Cleric Earth Punishment window keeps Condemnation above sustained filler without assuming reset specialty");
+var clericNoEarthSignals=PassiveRotationSignalDeriver.Derive(clericChainObservation,AionClass.Cleric,t.AddSeconds(2));
+True(!clericNoEarthSignals.Contains("ClericEarthPunishmentWindow"),
+    "Cleric Earth Punishment state fails closed when the debuff is not observed");
 var chanterProvisional=RotationProfileCatalog.CreateProvisionalChanterSingleTarget();
 var chanterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),chanterProvisional);
