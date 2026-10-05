@@ -271,7 +271,15 @@ True(rangerRupture.Next?.Skill=="Rupture Arrow"&&!rangerRupture.Next.Actionable,
 var rangerFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
-True(rangerFiller.Next?.Skill=="Drill Dart"&&!rangerFiller.Next.Actionable,"confirmed combat activity can enter provisional Ranger sustained priority without inventing a proc");
+True(rangerFiller.Next?.Skill=="Tempest Shot"&&!rangerFiller.Next.Actionable,"Ranger sustained priority falls through to Tempest Shot when Drill Dart readiness is unknown");
+var rangerDrillReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>{{"Drill Dart",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
+True(rangerDrillReady.Next?.Skill=="Drill Dart"&&!rangerDrillReady.Next.Actionable,"validated ready Drill Dart outranks Ranger sustained filler");
+var rangerDrillRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>{{"Drill Dart",2.5}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
+True(rangerDrillRecovering.Next?.Skill=="Tempest Shot","Ranger does not recommend Drill Dart while validated cooldown is still recovering");
 var rangerObservedOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Ranger,"global-ranger-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerFillerWindow"}},rangerProvisional);
