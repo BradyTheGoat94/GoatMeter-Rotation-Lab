@@ -112,8 +112,10 @@ public partial class MainWindow : Window
         {
             var profile=rotationProfiles.First(p=>p.ClassName==observedClass);
             var targetHp=s.Target?.Percent??100;
-            var state=new RotationState(DateTime.UtcNow,observedClass,profile.BuildId,profile.Mode,
-                new Dictionary<string,double>(),observed.Buffs,observed.Debuffs,0,targetHp,1,false,
+            var now=DateTime.UtcNow;
+            var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
+            var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
+                cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                 s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25);
             overlay.RenderRotation(rotationEngine.Evaluate(state,profile));
         }
