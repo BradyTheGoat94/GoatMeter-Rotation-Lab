@@ -110,10 +110,10 @@ public static class PassiveRotationSignalDeriver
             // target status can open this path; generic Chanter activity cannot.
             if(observed.Debuffs.Contains("Stun"))
                 signals.Add("ChanterWaveBlowWindow");
-            // Current Global Season 1 changed Dark Crush to activate after a ranged skill.
-            // Spinning Strike is an observed ranged setup in the current PvE loop.
-            // Retain the older Impactful Crush path only as provisional corroboration until
-            // live Global observations can conclusively retire it.
+            // Current Global changed Dark Crush to activate after using a ranged skill.
+            // Spinning Strike and Impactful Crush are both observed base-kit ranged
+            // openers for the short Dark Crush window. Stigma-only ranged triggers
+            // remain excluded until the equipped loadout can be observed.
             // Current Global Dark Crush activates after use of a ranged skill.
             // These are named, documented ranged setup skills in the current PvE loop;
             // do not infer activation from generic combat or melee activity.
