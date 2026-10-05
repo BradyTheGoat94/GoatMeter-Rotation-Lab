@@ -185,7 +185,10 @@ public static class RotationProfileCatalog
             {
                 new RotationRule("Flame Blessing",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"buff before Ancient Spirit so the summon snapshots the damage state")}),
                 new RotationRule("Spirit's Benediction",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"apply spirit damage buff before Ancient Spirit")}),
-                new RotationRule("Summon: Ancient Spirit",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterAncientWindow",Reason:"summon Ancient Spirit after opener buffs")}),
+                new RotationRule("Summon: Ancient Spirit",750,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterAncientWindow",Reason:"summon Ancient Spirit after observed opener buffs so the summon snapshots the damage state"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Summon: Ancient Spirit",Reason:"validated 90s current-Global base cooldown is ready; specialization effects excluded")
+                }),
                 new RotationRule("Jointstrike: Corrode",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"maintain the high-value Corrode damage-over-time effect")}),
                 new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
                 new RotationRule("Dimensional Control",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDimensionalControlWindow",Reason:"consume the brief observed post-summon activation before returning to filler")}),
