@@ -114,6 +114,7 @@ public partial class MainWindow : Window
             {
                 AionClass.Templar=>RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),
                 AionClass.Assassin=>RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),
+                AionClass.Gladiator=>RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),
                 _=>rotationProfiles.First(p=>p.ClassName==observedClass)
             };
             var targetHp=s.Target?.Percent??100;
