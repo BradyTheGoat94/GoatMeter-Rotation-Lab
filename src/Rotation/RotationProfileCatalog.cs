@@ -116,6 +116,27 @@ public static class RotationProfileCatalog
             "PROVISIONAL Global Season 1 single-target fixture. Burst and damage-over-time decisions are represented only behind passive state signals; no recommendation is emitted until those states are proven.");
     }
 
+    public static RotationProfile CreateProvisionalSpiritmasterSingleTarget()
+    {
+        return new RotationProfile(
+            AionClass.Spiritmaster,
+            "global-spiritmaster-provisional",
+            RotationMode.SingleTarget,
+            ProfileValidation.Provisional,
+            new[]
+            {
+                new RotationRule("Disenchant",500,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")
+                }),
+                new RotationRule("Spirit Ruinous Offensive",350,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"passively observed Spiritmaster burst state supports spirit offensive")
+                })
+            },
+            "PROVISIONAL Global Season 1 single-target fixture. Dispel and spirit-burst decisions remain gated on passive signals; no recommendation is emitted until the relevant state is proven.");
+    }
+
     public static IReadOnlyList<RotationProfile> CreateUnvalidatedGlobalStubs()
     {
         return Enum.GetValues<AionClass>()
