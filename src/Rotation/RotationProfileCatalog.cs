@@ -160,8 +160,13 @@ public static class RotationProfileCatalog
             AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Mountain Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"passively observed Chanter state supports Mountain Crash")}),
-                new RotationRule("Healing Burst",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"passively observed healing state supports Healing Burst")})
+                new RotationRule("Dark Crush",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDarkCrushWindow",Reason:"use immediately inside the short Impactful Crush reaction window")}),
+                new RotationRule("Heat Wave Blow",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstWindow",Reason:"place heavy burst inside a proven vulnerability/damage window")}),
+                new RotationRule("Wave Blow",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterDamageWindow",Reason:"begin the sustained heavy-damage sequence")}),
+                new RotationRule("Incandescent Blow",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"core sustained damage while reaction/burst skills are unavailable")}),
+                new RotationRule("Onslaught",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"sustain damage and MP while higher priorities recover")}),
+                new RotationRule("Spinning Strike",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"fill downtime and support the reaction-damage loop")}),
+                new RotationRule("Healing Burst",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
             },
             "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
     }
