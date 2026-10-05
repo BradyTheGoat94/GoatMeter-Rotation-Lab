@@ -64,7 +64,8 @@ public sealed class PassiveRotationStateTracker
         {
             ["Shield Smite"]=2,
             ["Warding Strike"]=2,
-            ["Doom Shield"]=3
+            ["Doom Shield"]=3,
+            ["Shield Rush"]=2
         };
 }
 
