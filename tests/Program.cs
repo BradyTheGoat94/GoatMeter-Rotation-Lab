@@ -258,6 +258,10 @@ True(PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass
     "current Global observed Spinning Strike setup opens Chanter Dark Crush window");
 True(!PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),
     "current Global Chanter Dark Crush setup remains bounded to the short reaction window");
+var chanterMeleeOnlyObservation=new PassiveRotationObservation(90,AionClass.Chanter,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Onslaught",t}},new HashSet<string>(),new HashSet<string>());
+True(!PassiveRotationSignalDeriver.Derive(chanterMeleeOnlyObservation,AionClass.Chanter,t.AddSeconds(2)).Contains("ChanterDarkCrushWindow"),
+    "generic Chanter melee activity cannot manufacture the current Global ranged-skill Dark Crush trigger");
 var spiritSignalObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Blessing",t},{"Summon: Ancient Spirit",t}},new HashSet<string>(),new HashSet<string>());
 var spiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,AionClass.Spiritmaster,t.AddSeconds(7.9));
