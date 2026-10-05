@@ -119,6 +119,15 @@ internal static class Program
   if(((TextBlock)window.FindName("RotationQueueIconGlyph")).Text!="?")throw new Exception("Unverified planned-skill icon fallback missing");
   if(((TextBlock)window.FindName("RotationQueueIconState")).Text!="ICONS UNVERIFIED")throw new Exception("Unverified planned-skill icons were not labeled");
   Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed primary/queue icon states");
+  var liveProfile=RotationProfileCatalog.CreateUnvalidatedGlobalStubs().Single(p=>p.ClassName==AionClass.Templar);
+  var liveState=new RotationState(t,AionClass.Templar,liveProfile.BuildId,liveProfile.Mode,
+   new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25);
+  var liveDecision=new RotationEngine().Evaluate(liveState,liveProfile);
+  window.RenderRotation(liveDecision);
+  if(liveDecision.Next is not null)throw new Exception("Unvalidated live profile produced a recommendation");
+  if(((TextBlock)window.FindName("RotationNextSkill")).Text!="No recommendation")throw new Exception("Fail-closed live state was not rendered");
+  if(!((TextBlock)window.FindName("RotationReason")).Text.Contains("No validated rules"))throw new Exception("Fail-closed diagnostic missing");
+  Console.WriteLine("PASS: passive live-state bridge remains fail closed without validated class rules");
 
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
