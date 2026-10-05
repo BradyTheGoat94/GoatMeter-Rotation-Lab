@@ -121,8 +121,10 @@ public static class PassiveRotationSignalDeriver
             // Current Global Dark Crush activates after use of a ranged skill.
             // These are named, documented ranged setup skills in the current PvE loop;
             // do not infer activation from generic combat or melee activity.
-            string[] darkCrushSetups={"Spinning Strike","Impactful Crush"};
-            if(darkCrushSetups.Any(skill=>observed.UsedRecently(skill,now,3)))
+            // Current Global capture evidence currently proves Impactful Crush as the
+            // passive Dark Crush trigger. Do not broaden this to other ranged attacks
+            // until their activation relationship is directly corroborated.
+            if(observed.UsedRecently("Impactful Crush",now,3))
                 signals.Add("ChanterDarkCrushWindow");
             if(observed.UsedRecently("Onslaught",now,3))
                 signals.Add("ChanterResonanceCrushWindow");
