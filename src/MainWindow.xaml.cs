@@ -145,6 +145,13 @@ public partial class MainWindow : Window
             }
             // Sequence windows below use only the observed local skill history. They
             // do not infer hidden buffs/stacks: an exact preceding action is required.
+            if(observedClass==AionClass.Gladiator)
+            {
+                if(observed.UsedRecently("Rending Blow",now,3))
+                    signals.Add("GladiatorSmashingWindow");
+                if(observed.UsedRecently("Keen Strike",now,3))
+                    signals.Add("GladiatorRuptureWindow");
+            }
             if(observedClass==AionClass.Chanter && observed.UsedRecently("Impactful Crush",now,3))
                 signals.Add("ChanterDarkCrushWindow");
             if(observedClass==AionClass.Spiritmaster)
