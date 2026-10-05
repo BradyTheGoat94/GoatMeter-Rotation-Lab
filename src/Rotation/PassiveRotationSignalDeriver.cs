@@ -128,6 +128,12 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Summon: Ancient Spirit",now,8))
                 signals.Add("SpiritmasterCorrodeWindow");
 
+            // Current Global base Corrode lasts 20s. Preserve that target state from
+            // an observed local Corrode cast when a separate debuff event is unavailable.
+            // The specialization extension to 30s is intentionally not inferred.
+            if(observed.Debuffs.Contains("Corrode") || observed.UsedRecently("Jointstrike: Corrode",now,20))
+                signals.Add("SpiritmasterCorrodeActiveWindow");
+
             // Elemental Fusion is enabled by the four-element state. Consume only a
             // passively observed state name; never infer stacks from generic combat.
             if(observed.Buffs.Contains("Four Elements"))
