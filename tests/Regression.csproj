@@ -8,5 +8,6 @@
   <Compile Include="../src/Core/CombatEngine.cs" Link="CombatEngine.cs"/>
   <Compile Include="../src/Protocol/*.cs" Link="Protocol/%(Filename)%(Extension)"/>
   <Compile Include="../src/Storage/FightStore.cs" Link="FightStore.cs"/>
+  <Compile Include="../src/Rotation/*.cs" Link="Rotation/%(Filename)%(Extension)"/>
  </ItemGroup>
 </Project>
