@@ -191,6 +191,12 @@ assassinTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"AssassinTester
     SourceClass:"Assassin",DamageFlags:DamageFlags.Critical));
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
+var identityTracker=new PassiveRotationStateTracker();
+identityTracker.Observe(new(t,CombatKind.PlayerName,101,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true));
+identityTracker.Observe(new(t.AddMilliseconds(10),CombatKind.PlayerName,202,"Ally",SourceClass:"Sorcerer",SourceIdentityConfirmed:false));
+var identitySnapshot=identityTracker.Snapshot();
+True(identitySnapshot.PlayerId==101&&identitySnapshot.ClassName==AionClass.Templar,
+    "unconfirmed ally identity cannot replace confirmed passive player");
 var gladiatorProvisional=RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget();
 True(gladiatorProvisional.Validation==ProfileValidation.Provisional,"Gladiator fixture remains provisional");
 var gladiatorUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
