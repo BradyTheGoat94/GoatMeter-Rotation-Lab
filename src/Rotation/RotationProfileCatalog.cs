@@ -44,7 +44,7 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"InsigniaReady",Reason:"passively observed Insignia state supports explosion"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Insignia Explosion",Reason:"validated 10s base cooldown is ready; specialization reductions are not assumed")
                 }),
-                new RotationRule("Shadowstrike",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside a proven burst/rear-access window")}),
+                new RotationRule("Shadowstrike",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"use Shadowstrike inside the directly observed Illusive Clone burst window")}),
                 new RotationRule("Breaking Slice",590,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBreakingSliceWindow",Reason:"complete the current Global Quick Slice chain after its observed opener")}),
                 new RotationRule("Swift Slice",585,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSwiftSliceWindow",Reason:"complete the current Global Quick Slice chain after observed Breaking Slice")}),
                 new RotationRule("Savage Back Kick",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageBackKickWindow",Reason:"complete the current Global Savage Roar chain after its observed opener")}),
@@ -165,7 +165,10 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"target has the observed Chain of Torment prerequisite"),
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentWindow",Reason:"observed Earth Punishment state supports the high-value Condemnation damage window")
                 }),
-                new RotationRule("Condemnation",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"Chain of Torment prerequisite is observed; do not infer specialty-dependent reset state")}),
+                new RotationRule("Condemnation",750,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"Chain of Torment prerequisite is observed; do not infer specialty-dependent reset state"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Condemnation",Reason:"validated 3s Global base cooldown is ready unless an observed specialization reset proves otherwise")
+                }),
                 new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
                 new RotationRule("Divine Aura",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available")}),
                 new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
