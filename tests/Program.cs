@@ -191,5 +191,14 @@ assassinTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"AssassinTester
     SourceClass:"Assassin",DamageFlags:DamageFlags.Critical));
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
+var gladiatorProvisional=RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget();
+True(gladiatorProvisional.Validation==ProfileValidation.Provisional,"Gladiator fixture remains provisional");
+var gladiatorUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),gladiatorProvisional);
+True(gladiatorUnknown.Next is null,"Gladiator fails closed without passively proven chain state");
+var gladiatorFinisher=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFinisherWindow"}},gladiatorProvisional);
+True(gladiatorFinisher.Next?.Skill=="Seismic Crash"&&!gladiatorFinisher.Next.Actionable,"observed Gladiator finisher signal yields informational Seismic Crash");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
