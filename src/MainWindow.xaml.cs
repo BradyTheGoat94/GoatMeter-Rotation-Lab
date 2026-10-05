@@ -116,9 +116,12 @@ public partial class MainWindow : Window
             var targetHp=s.Target?.Percent??100;
             var now=DateTime.UtcNow;
             var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
+            var signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if(observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
             var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                 cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
-                s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25);
+                s.Target is not null && (s.Target.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
+                {Signals=signals};
             var decision=rotationEngine.Evaluate(state,profile);
             var readiness=cooldowns.Count==0
                 ?"Cooldown readiness: insufficient validated observations"
