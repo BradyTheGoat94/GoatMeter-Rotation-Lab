@@ -16,14 +16,22 @@ public static class PassiveRotationSignalDeriver
         bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used>=TimeSpan.Zero && now-used<=TimeSpan.FromSeconds(8));
         if(observedCombatAction)
         {
-            signals.Add("AssassinFillerWindow");
-            signals.Add("GladiatorFillerWindow");
-            signals.Add("RangerFillerWindow");
-            signals.Add("SorcererFillerWindow");
-            signals.Add("SpiritmasterFillerWindow");
-            signals.Add("ClericFillerWindow");
-            signals.Add("ChanterFillerWindow");
-            signals.Add("TemplarFillerWindow");
+            // Generic activity is evidence only for the passively resolved local class.
+            // Never broadcast filler readiness across classes: an unresolved/mismatched
+            // class must fail closed instead of manufacturing recommendation state.
+            var fillerSignal=observedClass switch
+            {
+                AionClass.Assassin => "AssassinFillerWindow",
+                AionClass.Gladiator => "GladiatorFillerWindow",
+                AionClass.Ranger => "RangerFillerWindow",
+                AionClass.Sorcerer => "SorcererFillerWindow",
+                AionClass.Spiritmaster => "SpiritmasterFillerWindow",
+                AionClass.Cleric => "ClericFillerWindow",
+                AionClass.Chanter => "ChanterFillerWindow",
+                AionClass.Templar => "TemplarFillerWindow",
+                _ => null
+            };
+            if(fillerSignal is not null)signals.Add(fillerSignal);
         }
 
         if(observedClass==AionClass.Gladiator)
