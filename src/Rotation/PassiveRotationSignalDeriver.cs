@@ -113,6 +113,10 @@ public static class PassiveRotationSignalDeriver
             // passively observed state name; never infer stacks from generic combat.
             if(observed.Buffs.Contains("Four Elements"))
                 signals.Add("SpiritmasterBurstWindow");
+
+            string[] normalSpiritSummons={"Summon: Fire Spirit","Summon: Water Spirit","Summon: Earth Spirit","Summon: Wind Spirit"};
+            if(normalSpiritSummons.Any(skill=>observed.UsedRecently(skill,now,3)))
+                signals.Add("SpiritmasterDimensionalControlWindow");
         }
         return signals;
     }
