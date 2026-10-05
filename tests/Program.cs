@@ -130,6 +130,24 @@ True(observedRotation.UsedRecently("Observed Strike",t.AddSeconds(4),3),"recent-
 True(!observedRotation.UsedRecently("Observed Strike",t.AddSeconds(6),3),"recent-skill helper expires an observed local skill after its evidence window");
 True(!observedRotation.UsedRecently("Never Observed",t.AddSeconds(3),3),"recent-skill helper fails closed for an unobserved skill");
 True(observedRotation.Buffs.Contains("Observed Buff"),"passive tracker records observed buff");
+var fillerClasses=new[]{AionClass.Templar,AionClass.Gladiator,AionClass.Assassin,AionClass.Ranger,AionClass.Sorcerer,AionClass.Spiritmaster,AionClass.Cleric,AionClass.Chanter};
+var fillerNames=new Dictionary<AionClass,string>
+{
+    [AionClass.Templar]="TemplarFillerWindow",[AionClass.Gladiator]="GladiatorFillerWindow",
+    [AionClass.Assassin]="AssassinFillerWindow",[AionClass.Ranger]="RangerFillerWindow",
+    [AionClass.Sorcerer]="SorcererFillerWindow",[AionClass.Spiritmaster]="SpiritmasterFillerWindow",
+    [AionClass.Cleric]="ClericFillerWindow",[AionClass.Chanter]="ChanterFillerWindow"
+};
+foreach(var cls in fillerClasses)
+{
+    var activity=new PassiveRotationObservation(77,cls,
+        new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Observed Combat Action",t}},
+        new HashSet<string>(),new HashSet<string>());
+    var signals=PassiveRotationSignalDeriver.Derive(activity,cls,t.AddSeconds(1));
+    True(signals.Contains(fillerNames[cls]),$"{cls} observed combat emits its own filler window");
+    True(fillerClasses.Where(other=>other!=cls).All(other=>!signals.Contains(fillerNames[other])),
+        $"{cls} observed combat cannot leak filler evidence into another class");
+}
 tracker.Observe(new(t.AddSeconds(4),CombatKind.BuffRemove,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
 True(!tracker.Snapshot().Buffs.Contains("Observed Buff"),"passive tracker removes observed buff");
 tracker.Observe(new(t.AddSeconds(5),CombatKind.Zone));
