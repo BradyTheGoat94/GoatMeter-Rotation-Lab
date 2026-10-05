@@ -172,6 +172,8 @@ public static class RotationProfileCatalog
                 new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
                 new RotationRule("Dimensional Control",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDimensionalControlWindow",Reason:"consume the brief observed post-summon activation before returning to filler")}),
                 new RotationRule("Jointstrike: Destructive Attack",490,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use on cooldown without sacrificing higher-priority Fusion or stack state")}),
+                new RotationRule("Cold Shock",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"current Global PvE priority places Cold Shock ahead of secondary filler")}),
+                new RotationRule("Jointstrike: Curse",565,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"current Global PvE priority maintains Jointstrike: Curse before secondary filler")}),
                 new RotationRule("Combustion",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"use the repeatedly observed Global sustained damage action while stronger spirit windows are unavailable")}),
                 new RotationRule("Earth Tremor",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"maintain basic-attack buff stacks during sustained damage")}),
                 new RotationRule("Disenchant",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")})
@@ -197,6 +199,7 @@ public static class RotationProfileCatalog
                 }),
                 new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
                 new RotationRule("Divine Aura",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available")}),
+                new RotationRule("Bolt",525,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"current Global PvE APL treats Bolt as a major damage action; specialization-driven cooldown reduction is not inferred")}),
                 new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
                 new RotationRule("Earth's Retribution",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"weave the MP-restoring basic damage action")}),
                 new RotationRule("Healing Light",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
