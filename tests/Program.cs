@@ -272,6 +272,10 @@ var chanterReaction=rotationEngine.Evaluate(new RotationState(t,AionClass.Chante
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterDarkCrushWindow","ChanterFillerWindow"}},chanterProvisional);
 True(chanterReaction.Next?.Skill=="Dark Crush","observed Chanter reaction window outranks sustained filler");
+var chanterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterFillerWindow"}},chanterProvisional);
+True(chanterFiller.Next?.Skill=="Incandescent Blow","expanded observed Chanter sustained skills remain below the existing priority filler");
 True(clericProvisional.Validation==ProfileValidation.Provisional&&chanterProvisional.Validation==ProfileValidation.Provisional,
     "Cleric and Chanter fixtures remain provisional");
 
