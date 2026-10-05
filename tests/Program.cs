@@ -256,6 +256,10 @@ var spiritmasterCorrode=rotationEngine.Evaluate(new RotationState(t,AionClass.Sp
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
 True(spiritmasterCorrode.Next?.Skill=="Jointstrike: Corrode","observed Ancient Spirit sequence advances to Corrode ahead of filler");
+var spiritmasterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterFillerWindow"}},spiritmasterProvisional);
+True(spiritmasterFiller.Next?.Skill=="Jointstrike: Destructive Attack","observed Combustion expands Spiritmaster sustained coverage without outranking the existing higher-priority filler action");
 var clericProvisional=RotationProfileCatalog.CreateProvisionalClericSingleTarget();
 var clericUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),clericProvisional);
