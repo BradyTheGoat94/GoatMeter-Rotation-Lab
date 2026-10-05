@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using Aion2DPSPro;
+using Aion2DPSPro.Rotation;
 
 namespace Aion2DPSPro.Overlay;
 public partial class OverlayWindow : Window
@@ -23,6 +24,16 @@ public partial class OverlayWindow : Window
     bool clickThrough;
     bool showDetails = true;
     public OverlayWindow() { InitializeComponent(); CategoryPicker.ItemsSource=new[]{"Damage","Healing","Damage Taken","Deaths","Buffs","Debuffs","Interrupts","Dispels"}; CategoryPicker.SelectedIndex=0; FightHistory.ItemsSource=new[]{new HistoryChoice("Saved fights ▾",null)}; FightHistory.SelectedIndex=0; ApplyTheme(currentTheme); ApplyOverlayStyle(currentStyle); LoadPreferences(); }
+    public void RenderRotation(RotationDecision decision)
+    {
+        RotationNextSkill.Text=decision.Next?.Skill??"No recommendation";
+        RotationConfidence.Text=decision.Next is null?"—":$"{decision.Next.Confidence:P0} confidence";
+        RotationStateText.Text=decision.Next?.Actionable==true?"VERIFIED":"INFORMATIONAL";
+        RotationReason.Text=decision.Next is null?decision.Diagnostic:string.Join(" • ",decision.Next.Reasons.Take(2));
+        RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join("  →  ",decision.Alternatives.Select(x=>x.Skill));
+        RotationDiagnostic.Text=decision.Diagnostic;
+    }
+
     static readonly Dictionary<string,string> Colors = new(StringComparer.OrdinalIgnoreCase) {
         ["Gladiator"]="#E65353", ["Templar"]="#E8903D", ["Assassin"]="#C45CFF", ["Ranger"]="#F2C94C",
         ["Sorcerer"]="#4DA3FF", ["Spiritmaster"]="#48C9D8", ["Cleric"]="#6DDB72", ["Chanter"]="#D6DCE8", ["Brawler"]="#FF7A45", ["Unknown"]="#AAB6CC" };
