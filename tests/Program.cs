@@ -578,6 +578,14 @@ var chanterFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterFillerWindow"}},chanterProvisional);
 True(chanterFiller.Next?.Skill=="Incandescent Blow","expanded observed Chanter sustained skills remain below the existing priority filler");
+var chanterImpactReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterFillerWindow"}},chanterProvisional);
+True(chanterImpactReady.Next?.Skill=="Impactful Crush","ready Impactful Crush outranks the Chanter Onslaught chain and sustained filler");
+var chanterImpactRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",4}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"ChanterFillerWindow"}},chanterProvisional);
+True(chanterImpactRecovering.Next?.Skill=="Incandescent Blow","recovering Impactful Crush fails closed and falls through to Chanter sustained damage");
 True(clericProvisional.Validation==ProfileValidation.Provisional&&chanterProvisional.Validation==ProfileValidation.Provisional,
     "Cleric and Chanter fixtures remain provisional");
 
