@@ -36,8 +36,10 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Sorcerer
 - Confirmed Global captures directly observe Blaze, Ice Chain, Cold Wave, Cold Snap, Burst and Cold Storm.
+- The Sep-16 current-Global change makes Fire Mark a 100% proc on landed Fire attacks and Blaze no longer consumes it. The lab reconstructs only the 5s base mark window from named observed Fire actions or a directly decoded Fire Mark debuff.
 - Ice Chain and Cold Wave capture vocabulary agrees with the current Global chain definition, supporting a short passive Cold Wave opportunity after an observed Ice Chain.
-- Do not infer Fire Mark, Element Enhancement, DoT refresh state or other hidden buff/debuff state from damage ordering alone.
+- Current Global base stigma cooldowns used by the lab are Element Enhancement 60s, Delayed Explosion 30s, Fire Wall 60s and Cold Storm 60s. Because those skills are loadout-dependent, the assistant does not recommend them until that stigma has been observed in the current session.
+- Element Enhancement and Wish of Concentration provide observed 10s burst windows; Delayed Explosion provides a bounded 4s damage-amplification window. Specialty cooldown reductions and unreconciled Flame Cage/Flame Harpoon routing remain excluded.
 
 ### Chanter
 - Confirmed Global captures directly observe Rushing Smash, Bursting Blow, Fracturing Blow, Incandescent Blow, Onslaught and Impactful Crush.
