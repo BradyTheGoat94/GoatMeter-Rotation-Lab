@@ -281,6 +281,27 @@ var spiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,Ai
 True(spiritSignals.Contains("SpiritmasterAncientWindow")&&spiritSignals.Contains("SpiritmasterCorrodeWindow"),"observed Spiritmaster opener actions open Ancient and Corrode windows");
 var expiredSpiritSignals=PassiveRotationSignalDeriver.Derive(spiritSignalObservation,AionClass.Spiritmaster,t.AddSeconds(8.1));
 True(!expiredSpiritSignals.Contains("SpiritmasterAncientWindow")&&!expiredSpiritSignals.Contains("SpiritmasterCorrodeWindow"),"Spiritmaster observed sequence windows expire after 8s");
+var spiritProfile=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
+var corrodeCastObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",t}},new HashSet<string>(),new HashSet<string>());
+var corrodeActiveSignals=PassiveRotationSignalDeriver.Derive(corrodeCastObservation,AionClass.Spiritmaster,t.AddSeconds(19.9));
+True(corrodeActiveSignals.Contains("SpiritmasterCorrodeActiveWindow")&&!corrodeActiveSignals.Contains("SpiritmasterCorrodeMissingWindow"),
+    "observed Spiritmaster Corrode remains active for the validated 20s Global base duration");
+var corrodeActiveDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(19.9),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(corrodeActiveSignals,StringComparer.OrdinalIgnoreCase)},spiritProfile);
+True(corrodeActiveDecision.Next?.Skill!="Jointstrike: Corrode","Spiritmaster cannot recommend Corrode while its observed base-duration target state remains active");
+var corrodeExpiredSignals=PassiveRotationSignalDeriver.Derive(corrodeCastObservation,AionClass.Spiritmaster,t.AddSeconds(20.1));
+True(!corrodeExpiredSignals.Contains("SpiritmasterCorrodeActiveWindow")&&corrodeExpiredSignals.Contains("SpiritmasterCorrodeMissingWindow"),
+    "Spiritmaster Corrode missing window reopens after the validated 20s Global base duration");
+var postSummonExpiredCorrodeObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Summon: Ancient Spirit",t.AddSeconds(15)},{"Jointstrike: Corrode",t.AddSeconds(-6)}},new HashSet<string>(),new HashSet<string>());
+var postSummonExpiredCorrodeSignals=PassiveRotationSignalDeriver.Derive(postSummonExpiredCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(15.5));
+var postSummonExpiredCorrodeDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(15.5),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(postSummonExpiredCorrodeSignals,StringComparer.OrdinalIgnoreCase)},spiritProfile);
+True(postSummonExpiredCorrodeDecision.Next?.Skill=="Jointstrike: Corrode",
+    "observed Ancient Spirit setup can recommend Corrode again only after the prior validated 20s base state has expired");
 var wardingTracker=new PassiveRotationStateTracker();
 wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
 wardingTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Warding Strike",100,SourceClass:"Templar"));
