@@ -32,7 +32,9 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Assassin
 - Confirmed Global captures directly observe Heart Gore, Insignia Explosion, Exploit Weakness, Savage Fang, Ambush Stance and Doppelganger Attack.
-- Heart Gore is repeatedly observed with critical/back-hit context, but capture ordering does not prove Insignia stack count. Keep InsigniaReady fail-closed until stack state is decoded reliably.
+- Current Global Heart Gore remains critical-gated. Outside Illusive Clone the lab uses its validated 5s base cooldown; during the directly observed 20s Illusive Clone window, an observed critical may recommend Heart Gore without that normal cooldown because Clone removes it. Illusive Clone itself retains the current-Global 90s base cooldown.
+- Savage Roar and Exploit Weakness can contribute Insignias, but passive action ordering does not prove the target has the full stack state needed for an optimal Insignia Explosion. Keep InsigniaReady fail-closed until stack count/readiness is decoded reliably.
+- Ambush Stance and Doppelganger Attack are passive/proc behavior rather than player-pressed rotation actions, so they are observed for damage accounting but are not emitted as recommendations.
 
 ### Sorcerer
 - Confirmed Global captures directly observe Blaze, Ice Chain, Cold Wave, Cold Snap, Burst and Cold Storm.
