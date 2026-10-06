@@ -41,10 +41,15 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
+                new RotationRule("Heart Gore",760,new[]
+                {
+                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit enables Heart Gore"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"AssassinBurstWindow",Reason:"observed Illusive Clone removes Heart Gore's normal cooldown for its 20s base burst window")
+                }),
                 new RotationRule("Heart Gore",700,new[]
                 {
-                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit can enable Heart Gore"),
-                    new RotationCondition(RotationConditionKind.CooldownReady,"Heart Gore",Reason:"validated 5s base cooldown is ready; specialization resets are not assumed")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"CriticalHitWindow",Reason:"passively observed critical hit can enable Heart Gore outside Illusive Clone"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Heart Gore",Reason:"validated 5s base cooldown is ready outside Illusive Clone; specialization resets are not assumed")
                 }),
                 new RotationRule("Insignia Explosion",600,new[]
                 {
@@ -64,7 +69,7 @@ public static class RotationProfileCatalog
                 new RotationRule("Exploit Weakness",350,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"include the repeatedly observed Global damage action without inferring hidden Insignia state")}),
                 new RotationRule("Quick Slice",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"weave Quick Slice while core spenders are unavailable")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Heart Gore and Insignia Explosion are gated on passive signals; until those signals can be proven by the live decoder, the profile intentionally emits no recommendation.");
+            "PROVISIONAL Global Season 1 single-target fixture. Heart Gore is critical-gated, with observed Illusive Clone bypassing only its normal cooldown for the documented 20s window. Insignia Explosion remains fail-closed until stack readiness is decoded; passive Ambush/Doppelganger effects are not emitted as player actions.");
     }
 
     public static RotationProfile CreateProvisionalGladiatorSingleTarget()
