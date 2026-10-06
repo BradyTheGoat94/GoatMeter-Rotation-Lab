@@ -1452,4 +1452,25 @@ var caseDuplicateDecision=rotationEngine.Evaluate(new RotationState(t,AionClass.
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95),caseDuplicateProfile);
 True(caseDuplicateDecision.Next?.Score==200&&caseDuplicateDecision.Alternatives.Single().Skill=="Other Skill",
     "skill deduplication is case-insensitive and preserves the highest eligible score");
+// Delayed different-skill events must not replace newer observed proc windows.
+var orderedCriticalTracker=new PassiveRotationStateTracker();
+orderedCriticalTracker.Observe(new(t,CombatKind.PlayerName,2201,"Self",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
+orderedCriticalTracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,2201,"Self",2301,"Target","Swift Edge",100,DamageFlags:DamageFlags.Critical));
+orderedCriticalTracker.Observe(new(t,CombatKind.Damage,2201,"Self",2301,"Target","Quick Slice",100,DamageFlags:DamageFlags.Critical));
+True(orderedCriticalTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3)),
+    "late different-skill critical cannot shorten a newer Assassin critical window");
+True(!orderedCriticalTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(4.1)),
+    "ordered critical window still expires two seconds after actual latest evidence");
+var orderedShieldTracker=new PassiveRotationStateTracker();
+orderedShieldTracker.Observe(new(t,CombatKind.PlayerName,2401,"Self",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
+orderedShieldTracker.Observe(new(t.AddSeconds(2),CombatKind.Cast,2401,"Self",2501,"Target","Shield Smite"));
+orderedShieldTracker.Observe(new(t,CombatKind.Cast,2401,"Self",2501,"Target","Doom Shield"));
+True(orderedShieldTracker.Snapshot().JudgmentTrigger=="Shield Smite"&&orderedShieldTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),
+    "late different-skill shield event preserves newer Templar opportunity and trigger");
+True(!orderedShieldTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(4.1)),
+    "newer shield window retains its evidenced duration");
+orderedShieldTracker.Observe(new(t.AddSeconds(3),CombatKind.Cast,2401,"Self",2501,"Target","Judgment"));
+orderedShieldTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,2401,"Self",2501,"Target","Shield Rush"));
+True(!orderedShieldTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),
+    "delayed different-skill shield opener cannot revive a consumed Judgment");
 Console.WriteLine($"PASS: {checks} regression assertions");

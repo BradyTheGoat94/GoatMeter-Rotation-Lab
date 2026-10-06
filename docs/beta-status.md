@@ -9,6 +9,7 @@
 - Explicit self-buff removals override cast-derived burst estimates, including Illusive Clone's Heart Gore cooldown bypass. Late and equal-timestamp effect applications cannot revive removed self/target state.
 - Mismatched class or unbound actor observations cannot generate any recommendation signals.
 - Self buffs use their recipient; party buffs on self are accepted, while buffs cast on allies do not become self buffs.
+- Late different-skill critical and shield events cannot replace newer Assassin/Templar proc windows or revive consumed Judgment.
 - Late skill events cannot roll back player cooldown timestamps. Target switches preserve player cooldown/loadout history.
 - Lab settings, history, validation files, window title, and installer identity are separate from production.
 

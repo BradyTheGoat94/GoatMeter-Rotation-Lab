@@ -95,8 +95,10 @@ public sealed class PassiveRotationStateTracker
                         judgmentTrigger="";
                     }
                     if(playerClass==AionClass.Assassin && e.Kind==CombatKind.Damage && e.DamageFlags.HasFlag(DamageFlags.Critical))
-                        criticalHitWindowUntil=e.Utc.AddSeconds(2);
-                    if(playerClass==AionClass.Templar && JudgmentWindowSeconds.TryGetValue(e.Skill,out var seconds))
+                        criticalHitWindowUntil=criticalHitWindowUntil is DateTime priorCritical && priorCritical>e.Utc.AddSeconds(2)
+                            ? priorCritical : e.Utc.AddSeconds(2);
+                    if(playerClass==AionClass.Templar && JudgmentWindowSeconds.TryGetValue(e.Skill,out var seconds)
+                        && (judgmentWindowUntil is null || !lastSkillUse.TryGetValue(judgmentTrigger,out var priorShield) || e.Utc>=priorShield))
                     {
                         judgmentWindowUntil=e.Utc.AddSeconds(seconds);
                         judgmentTrigger=e.Skill;
