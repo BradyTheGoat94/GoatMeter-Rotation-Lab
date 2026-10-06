@@ -736,9 +736,13 @@ var spiritmasterCorrode=rotationEngine.Evaluate(new RotationState(t,AionClass.Sp
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
 var spiritmasterCorrodeMissingSignals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterCorrodeMissingWindow","SpiritmasterFillerWindow"};
 var spiritmasterCorrodeMissing=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=spiritmasterCorrodeMissingSignals},spiritmasterProvisional);
-True(spiritmasterCorrodeMissing.Next?.Skill=="Jointstrike: Corrode","observed Ancient Spirit sequence advances to Corrode only when Corrode is missing");
+True(spiritmasterCorrodeMissing.Next?.Skill=="Jointstrike: Corrode","observed Ancient Spirit sequence advances to Corrode only when Corrode is missing and its validated Global cooldown is ready");
+var spiritmasterCorrodeMissingRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",25}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=spiritmasterCorrodeMissingSignals},spiritmasterProvisional);
+True(spiritmasterCorrodeMissingRecovering.Next?.Skill!="Jointstrike: Corrode","missing Corrode target state cannot bypass its validated 45s Global cooldown");
 var spiritmasterCorrodeObservation=new PassiveRotationObservation(88,AionClass.Spiritmaster,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",t}},new HashSet<string>(),new HashSet<string>());
 var spiritmasterCorrodeActiveSignals=PassiveRotationSignalDeriver.Derive(spiritmasterCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(19.9));
