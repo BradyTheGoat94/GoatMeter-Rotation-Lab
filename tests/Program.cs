@@ -585,6 +585,10 @@ True(rangerBurstRecovering.Next?.Skill!="Burst Arrow","Ranger Burst Arrow fails 
 True(!rangerProvisional.Rules.Any(r=>r.Skill=="Rupture Arrow"||r.Skill=="Destruction Trap"),"unreconciled Ranger Rupture Arrow and Destruction Trap hooks stay out of actionable Global profile");
 var sorcererProvisional=RotationProfileCatalog.CreateProvisionalSorcererSingleTarget();
 True(sorcererProvisional.Validation==ProfileValidation.Provisional,"Sorcerer fixture remains provisional");
+True(!sorcererProvisional.Rules.SelectMany(r=>r.Conditions).Any(x=>x.Key=="SorcererOpenerWindow"||x.Key=="SorcererDotWindow"),
+    "Sorcerer profile contains no unreachable legacy opener/DoT signal gates");
+True(!sorcererProvisional.Rules.Any(r=>r.Skill=="Flame Cage"||r.Skill=="Flame Harpoon"),
+    "unreconciled Sorcerer Flame Cage/Flame Harpoon hooks remain outside the actionable Global profile");
 var sorcererChainObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Ice Chain",t}},new HashSet<string>(),new HashSet<string>());
 var sorcererChainSignals=PassiveRotationSignalDeriver.Derive(sorcererChainObservation,AionClass.Sorcerer,t.AddSeconds(2.9));
@@ -604,7 +608,58 @@ True(sorcererBurst.Next?.Skill=="Hellfire"&&!sorcererBurst.Next.Actionable,"obse
 var sorcererBurstRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Hellfire",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow"}},sorcererProvisional);
-True(sorcererBurstRecovering.Next?.Skill=="Fire Wall","recovering Hellfire fails closed and falls through to the next proven Sorcerer burst action");
+True(sorcererBurstRecovering.Next is null,"recovering Hellfire fails closed when no burst stigma loadout has been passively proven");
+var sorcererUnknownElement=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Element Enhancement",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}},sorcererProvisional);
+True(sorcererUnknownElement.Next?.Skill!="Element Enhancement","unproven Element Enhancement loadout remains fail-closed even if synthetic cooldown is ready");
+var sorcererKnownElementObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Element Enhancement",t.AddSeconds(-61)},{"Flame Arrow",t}},
+    new HashSet<string>(),new HashSet<string>());
+var sorcererKnownElementSignals=PassiveRotationSignalDeriver.Derive(sorcererKnownElementObservation,AionClass.Sorcerer,t);
+True(sorcererKnownElementSignals.Contains("SorcererElementEnhancementKnownWindow")&&!sorcererKnownElementSignals.Contains("SorcererBurstWindow"),
+    "previously observed Element Enhancement proves stigma loadout without inventing an active buff");
+var sorcererElementReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Element Enhancement",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=sorcererKnownElementSignals},sorcererProvisional);
+True(sorcererElementReady.Next?.Skill=="Element Enhancement","proven Element Enhancement can be recommended on its validated base cooldown");
+var sorcererElementCastObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Element Enhancement",t}},new HashSet<string>(),new HashSet<string>());
+var sorcererElementBurstSignals=PassiveRotationSignalDeriver.Derive(sorcererElementCastObservation,AionClass.Sorcerer,t.AddSeconds(9.9));
+True(sorcererElementBurstSignals.Contains("SorcererBurstWindow")&&sorcererElementBurstSignals.Contains("SorcererElementEnhancementKnownWindow"),
+    "observed Element Enhancement opens the 10s base Sorcerer burst window");
+var sorcererElementExpiredSignals=PassiveRotationSignalDeriver.Derive(sorcererElementCastObservation,AionClass.Sorcerer,t.AddSeconds(10.1));
+True(!sorcererElementExpiredSignals.Contains("SorcererBurstWindow")&&sorcererElementExpiredSignals.Contains("SorcererElementEnhancementKnownWindow"),
+    "Element Enhancement base burst window expires after 10s while loadout knowledge persists");
+var sorcererDelayedObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Delayed Explosion",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(sorcererDelayedObservation,AionClass.Sorcerer,t.AddSeconds(3.9)).Contains("SorcererBurstWindow"),
+    "observed Delayed Explosion proves its 4s self-damage-amplification burst window");
+True(!PassiveRotationSignalDeriver.Derive(sorcererDelayedObservation,AionClass.Sorcerer,t.AddSeconds(4.1)).Contains("SorcererBurstWindow"),
+    "Delayed Explosion burst window expires after its 4s base delay");
+var sorcererDelayedReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Delayed Explosion",0},{"Hellfire",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow","SorcererDelayedExplosionKnownWindow"}},sorcererProvisional);
+True(sorcererDelayedReady.Next?.Skill=="Delayed Explosion","proven ready Delayed Explosion leads Hellfire inside a Sorcerer burst window");
+var sorcererFireWallReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Hellfire",12},{"Fire Wall",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow","SorcererFireWallKnownWindow"}},sorcererProvisional);
+True(sorcererFireWallReady.Next?.Skill=="Fire Wall","proven ready Fire Wall becomes the next Sorcerer burst action when Hellfire is recovering");
+var sorcererColdStormObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Cold Storm",t.AddSeconds(-61)},{"Fire Wall",t.AddSeconds(-61)}},
+    new HashSet<string>(),new HashSet<string>());
+var sorcererKnownStigmaSignals=PassiveRotationSignalDeriver.Derive(sorcererColdStormObservation,AionClass.Sorcerer,t);
+True(sorcererKnownStigmaSignals.Contains("SorcererColdStormKnownWindow")&&sorcererKnownStigmaSignals.Contains("SorcererFireWallKnownWindow"),
+    "observed Sorcerer stigmas remain loadout-known after their active windows expire");
+var sorcererStigmaCooldownObservation=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){
+        {"Element Enhancement",t},{"Delayed Explosion",t},{"Fire Wall",t},{"Cold Storm",t}},
+    new HashSet<string>(),new HashSet<string>());
+var sorcererStigmaRemaining=ValidatedCooldownCatalog.Remaining(sorcererStigmaCooldownObservation,AionClass.Sorcerer,t.AddSeconds(20));
+Equal(sorcererStigmaRemaining["Element Enhancement"],40,"Element Enhancement reconstructs its validated 60s base cooldown");
+Equal(sorcererStigmaRemaining["Delayed Explosion"],10,"Delayed Explosion reconstructs its validated 30s base cooldown");
+Equal(sorcererStigmaRemaining["Fire Wall"],40,"Fire Wall reconstructs its validated 60s base cooldown");
+Equal(sorcererStigmaRemaining["Cold Storm"],40,"Cold Storm reconstructs its validated 60s base cooldown");
 var sorcererFillerState=new RotationState(t,AionClass.Sorcerer,"global-sorcerer-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Blaze",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SorcererFillerWindow"}};
@@ -629,6 +684,10 @@ var sorcererObservedFire=new PassiveRotationObservation(66,AionClass.Sorcerer,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Arrow",t}},new HashSet<string>(),new HashSet<string>());
 var sorcererObservedFireSignals=PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(2));
 True(sorcererObservedFireSignals.Contains("SorcererFireMarkWindow"),"observed Global fire hit reconstructs Sorcerer Fire Mark window");
+var sorcererObservedBurstFire=new PassiveRotationObservation(66,AionClass.Sorcerer,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Burst",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(sorcererObservedBurstFire,AionClass.Sorcerer,t.AddSeconds(2)).Contains("SorcererFireMarkWindow"),
+    "current-Global Flame Arrow chain fire hit also reconstructs guaranteed Fire Mark");
 var sorcererFireHitState=sorcererFillerState with {Signals=sorcererObservedFireSignals};
 True(rotationEngine.Evaluate(sorcererFireHitState,sorcererProvisional).Next?.Skill=="Blaze","reconstructed Fire Mark makes Blaze eligible without inventing a debuff packet");
 var sorcererIceOnly=new PassiveRotationObservation(66,AionClass.Sorcerer,
