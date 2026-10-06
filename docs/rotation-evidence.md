@@ -6,8 +6,11 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Templar
 - Confirmed Global captures observe Shield Smite followed by Judgment inside the existing short Judgment reaction window.
-- Pummel, Vicious Strike, Shield Smite, Punishing Benediction and Judgment all occur in live Templar traffic.
-- Filler ordering varies in captures, so Pummel/Vicious remain priority-style filler rather than a hard-coded combo.
+- Current Global Judgment activates after shield attacks; the lab preserves only the observed 2–3s trigger windows. Annihilate remains separately gated on a directly observed target Stun or Knockdown and uses its 20s base cooldown; the low-chance Incapacitated-Immunity activation and -10s specialization are not inferred.
+- Pummel has a guaranteed Punishing Strike chain activation for 3s, so an observed Pummel opens that short continuation and it is consumed before longer cooldown actions.
+- Punishment uses its validated 30s base cooldown during observed combat and its directly observed cast reconstructs the 20s Executor base window.
+- Empyrean Lord's Punishment is a loadout-dependent stigma with a 60s base cooldown. It is not proactively recommended until the current session has passively observed it at least once.
+- Vicious Strike remains a passive-observation chain starter; filler ordering varies in captures, so unsupported specialization routing is not invented.
 
 ### Ranger
 - Confirmed Global captures observe Tempest Shot, Concentrated Fire, Drill Dart, Griffon Arrow and Hunter's Soul.
