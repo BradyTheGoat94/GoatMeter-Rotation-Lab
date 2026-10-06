@@ -134,7 +134,7 @@ public static class PassiveRotationSignalDeriver
             // for 5s and Blaze no longer consumes it. Reconstruct only from named Fire
             // actions; generic combat still cannot manufacture the target mark.
             string[] fireMarkSources={"Flame Arrow","Burst","Pyroclasm","Flame Harpoon","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"};
-            if(fireMarkSources.Any(skill=>observed.UsedRecentlyOnTarget(skill,now,5,"Fire Mark")))
+            if(fireMarkSources.Any(skill=>observed.LandedRecentlyOnTarget(skill,now,5,"Fire Mark")))
                 signals.Add("SorcererFireMarkWindow");
         }
         if(observedClass==AionClass.Cleric)

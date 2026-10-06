@@ -1496,4 +1496,22 @@ foreach(var despawnClass in Enum.GetValues<AionClass>())
     True(despawnOrderTracker.Snapshot().TargetId==2901,
         $"{despawnClass} full session reset also resets target ordering");
 }
+// Every modeled Fire Mark source needs a hit, not just an attempted cast.
+foreach(var fireHitSkill in new[]{"Flame Arrow","Burst","Pyroclasm","Flame Harpoon","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"})
+{
+    var fireHitTracker=new PassiveRotationStateTracker();
+    fireHitTracker.Observe(new(t,CombatKind.PlayerName,3001,"Self",SourceClass:"Sorcerer",SourceIdentityConfirmed:true,SourceIsLocal:true));
+    fireHitTracker.Observe(new(t,CombatKind.Cast,3001,"Self",3101,"Target",fireHitSkill));
+    True(!PassiveRotationSignalDeriver.Derive(fireHitTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(1)).Contains("SorcererFireMarkWindow"),
+        $"{fireHitSkill} cast alone does not prove a landed Fire Mark");
+    fireHitTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,3001,"Self",3101,"Target",fireHitSkill,100));
+    True(PassiveRotationSignalDeriver.Derive(fireHitTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(2)).Contains("SorcererFireMarkWindow"),
+        $"{fireHitSkill} observed target damage proves the base mark window");
+    fireHitTracker.Observe(new(t.AddSeconds(5),CombatKind.Cast,3001,"Self",3101,"Target",fireHitSkill));
+    True(!PassiveRotationSignalDeriver.Derive(fireHitTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(6.1)).Contains("SorcererFireMarkWindow"),
+        $"{fireHitSkill} later cast cannot extend a prior landed mark");
+    fireHitTracker.Observe(new(t.AddSeconds(7),CombatKind.Damage,3001,"Self",3201,"Other target","Ice Chain",100));
+    True(!PassiveRotationSignalDeriver.Derive(fireHitTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(7)).Contains("SorcererFireMarkWindow"),
+        $"{fireHitSkill} landed history stays scoped to its target");
+}
 Console.WriteLine($"PASS: {checks} regression assertions");

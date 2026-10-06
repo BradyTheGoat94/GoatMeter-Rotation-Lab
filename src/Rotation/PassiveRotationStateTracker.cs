@@ -11,6 +11,7 @@ public sealed class PassiveRotationStateTracker
     readonly Dictionary<string,DateTime> lastSkillUse=new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> buffs=new(StringComparer.OrdinalIgnoreCase);
     readonly HashSet<string> debuffs=new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string,DateTime> targetDamageSkillUse=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetSkillUse=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetEffectRemovals=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> selfEffectRemovals=new(StringComparer.OrdinalIgnoreCase);
@@ -84,6 +85,9 @@ public sealed class PassiveRotationStateTracker
                 target=new(e.Target,e.CurrentHp,e.MaxHp,Math.Clamp(e.CurrentHp*100.0/e.MaxHp,0,100),0) {EntityId=targetId};
             }
             if(e.SourceId!=playerId)return;
+            if(e.Kind==CombatKind.Damage && e.Amount>0 && targetId!=0 && e.TargetId==targetId && !string.IsNullOrWhiteSpace(e.Skill)
+                && (!targetDamageSkillUse.TryGetValue(e.Skill,out var priorDamage) || e.Utc>priorDamage))
+                targetDamageSkillUse[e.Skill]=e.Utc;
             if(e.Kind is CombatKind.Damage or CombatKind.Heal or CombatKind.Cast)
                 if(!string.IsNullOrWhiteSpace(e.Skill))
                 {
@@ -121,6 +125,7 @@ public sealed class PassiveRotationStateTracker
             judgmentWindowUntil,judgmentTrigger,criticalHitWindowUntil)
             {
                 SelfEffectRemovals=new Dictionary<string,DateTime>(selfEffectRemovals,StringComparer.OrdinalIgnoreCase),
+                TargetDamageSkillUse=new Dictionary<string,DateTime>(targetDamageSkillUse,StringComparer.OrdinalIgnoreCase),
                 TargetId=targetId,
                 Target=target,
                 TargetSkillUse=new Dictionary<string,DateTime>(targetSkillUse,StringComparer.OrdinalIgnoreCase),
@@ -138,7 +143,7 @@ public sealed class PassiveRotationStateTracker
 
     void ClearTarget()
     {
-        target=null;targetId=0;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();targetEffectSeen.Clear();debuffs.Clear();
+        target=null;targetId=0;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetDamageSkillUse.Clear();targetEffectRemovals.Clear();targetEffectSeen.Clear();debuffs.Clear();
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
@@ -159,6 +164,16 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
     public bool UsedRecentlyWithEffect(string skill,DateTime utc,double seconds,string effect)=>
         UsedRecently(skill,utc,seconds)
         && (!SelfEffectRemovals.TryGetValue(effect,out var removed) || removed<LastSkillUse[skill]);
+
+    // Live observations distinguish landed damage from cast attempts. Null is only
+    // for standalone fixtures whose supplied history explicitly represents hits.
+    public IReadOnlyDictionary<string,DateTime>? TargetDamageSkillUse {get;init;}
+    public bool LandedRecentlyOnTarget(string skill,DateTime utc,double seconds,string effect)
+    {
+        var hits=TargetDamageSkillUse??TargetSkillUse??LastSkillUse;
+        return hits.TryGetValue(skill,out var hit) && utc>=hit && utc-hit<=TimeSpan.FromSeconds(seconds)
+            && (!TargetEffectRemovals.TryGetValue(effect,out var removed) || removed<hit);
+    }
 
     public long TargetId {get;init;}
     public TargetStats? Target {get;init;}

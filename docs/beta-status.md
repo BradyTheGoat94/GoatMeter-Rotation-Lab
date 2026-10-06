@@ -5,6 +5,7 @@
 - One observed opener now grants one pending continuation across 18 existing short chains in six class profiles; an observed Judgment consumes its shield opportunity.
 - All eight classes bind rotation state to explicit selfInfo local-player proof. Confirmed party names do not prove local identity.
 - Capture reconnect, zone reset, self despawn, and local-entity changes invalidate previous rotation state.
+- Sorcerer Fire Mark reconstruction requires observed positive target damage; cast attempts cannot create or extend a landed-hit mark.
 - Target-scoped Cleric marks, Spiritmaster Corrode, and Sorcerer Fire Mark stop carrying to a new target. Explicit removal overrides cast-derived effect duration.
 - Explicit self-buff removals override cast-derived burst estimates, including Illusive Clone's Heart Gore cooldown bypass. Late and equal-timestamp effect applications cannot revive removed self/target state.
 - Mismatched class or unbound actor observations cannot generate any recommendation signals.
