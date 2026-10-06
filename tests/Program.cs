@@ -1347,4 +1347,79 @@ lateHpTracker.Observe(new(t,CombatKind.Damage,1503,"Self",1601,"Target","Judgmen
 lateHpTracker.Observe(new(t.AddSeconds(2),CombatKind.TargetHp,TargetId:1601,Target:"Target",CurrentHp:0,MaxHp:1000));
 lateHpTracker.Observe(new(t.AddSeconds(1),CombatKind.TargetHp,TargetId:1601,Target:"Target",CurrentHp:900,MaxHp:1000));
 True(lateHpTracker.Snapshot().Target?.CurrentHp==0,"late positive HP cannot resurrect an observed dead target");
+
+var selfRemovalCases=new (AionClass Class,string Skill,double Duration,string Effect,string Signal)[]
+{
+    (AionClass.Templar,"Punishment",20,"Executor","TemplarExecutorWindow"),
+    (AionClass.Gladiator,"Ruinous Blow",20,"Prepare for Battle","GladiatorPrepareForBattleWindow"),
+    (AionClass.Assassin,"Illusive Clone",20,"Illusive Clone","AssassinBurstWindow"),
+    (AionClass.Sorcerer,"Wish of Concentration",10,"Wish of Concentration","SorcererBurstWindow"),
+    (AionClass.Sorcerer,"Element Enhancement",10,"Element Enhancement","SorcererBurstWindow"),
+    (AionClass.Sorcerer,"Delayed Explosion",4,"Delayed Explosion","SorcererBurstWindow"),
+    (AionClass.Spiritmaster,"Flame Blessing",8,"Flame Blessing","SpiritmasterAncientWindow"),
+    (AionClass.Spiritmaster,"Spirit's Benediction",8,"Spirit's Benediction","SpiritmasterAncientWindow"),
+};
+foreach(var removalCase in selfRemovalCases)
+{
+    var buffTracker=new PassiveRotationStateTracker();
+    buffTracker.Observe(new(t,CombatKind.PlayerName,1701,"Self",SourceClass:removalCase.Class.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    buffTracker.Observe(new(t,CombatKind.Cast,1701,"Self",Skill:removalCase.Skill));
+    True(PassiveRotationSignalDeriver.Derive(buffTracker.Snapshot(),removalCase.Class,t.AddSeconds(.5)).Contains(removalCase.Signal),
+        $"{removalCase.Skill} starts its existing bounded window");
+    buffTracker.Observe(new(t.AddSeconds(1),CombatKind.BuffRemove,1702,"Party",1701,"Self",Effect:removalCase.Effect));
+    True(!PassiveRotationSignalDeriver.Derive(buffTracker.Snapshot(),removalCase.Class,t.AddSeconds(1.5)).Contains(removalCase.Signal),
+        $"explicit self {removalCase.Effect} removal overrides cast-derived duration");
+    buffTracker.Observe(new(t.AddSeconds(.5),CombatKind.BuffApply,1701,"Self",1701,"Self",Effect:removalCase.Effect));
+    True(!buffTracker.Snapshot().Buffs.Contains(removalCase.Effect),
+        $"late {removalCase.Effect} application cannot revive a removed buff");
+    buffTracker.Observe(new(t.AddSeconds(1),CombatKind.BuffApply,1701,"Self",1701,"Self",Effect:removalCase.Effect));
+    True(!buffTracker.Snapshot().Buffs.Contains(removalCase.Effect),
+        $"ambiguous equal-timestamp {removalCase.Effect} application fails closed after removal");
+    buffTracker.Observe(new(t.AddSeconds(2),CombatKind.Cast,1701,"Self",Skill:removalCase.Skill));
+    True(PassiveRotationSignalDeriver.Derive(buffTracker.Snapshot(),removalCase.Class,t.AddSeconds(2.5)).Contains(removalCase.Signal),
+        $"new {removalCase.Skill} cast after removal legitimately reopens its base window");
+    buffTracker.Observe(new(t.AddSeconds(2.5),CombatKind.BuffRemove,1701,"Self",1702,"Ally",Effect:removalCase.Effect));
+    True(PassiveRotationSignalDeriver.Derive(buffTracker.Snapshot(),removalCase.Class,t.AddSeconds(3)).Contains(removalCase.Signal),
+        $"ally {removalCase.Effect} removal cannot close a self window");
+    True(!PassiveRotationSignalDeriver.Derive(buffTracker.Snapshot(),removalCase.Class,t.AddSeconds(2+removalCase.Duration+.1)).Contains(removalCase.Signal),
+        $"{removalCase.Skill} still expires at its unextended base duration");
+}
+var cloneRemovalTracker=new PassiveRotationStateTracker();
+cloneRemovalTracker.Observe(new(t,CombatKind.PlayerName,1801,"Self",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
+cloneRemovalTracker.Observe(new(t,CombatKind.Cast,1801,"Self",Skill:"Illusive Clone"));
+cloneRemovalTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,1801,"Self",99,"Target","Heart Gore",100,DamageFlags:DamageFlags.Critical));
+cloneRemovalTracker.Observe(new(t.AddSeconds(1.5),CombatKind.BuffRemove,1801,"Self",1801,"Self",Effect:"Illusive Clone"));
+var removedCloneObservation=cloneRemovalTracker.Snapshot();
+var removedCloneDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,assassinProvisional.BuildId,RotationMode.SingleTarget,
+    ValidatedCooldownCatalog.Remaining(removedCloneObservation,AionClass.Assassin,t.AddSeconds(2)),removedCloneObservation.Buffs,removedCloneObservation.Debuffs,100,100,1,false,true,.95)
+    {Signals=PassiveRotationSignalDeriver.Derive(removedCloneObservation,AionClass.Assassin,t.AddSeconds(2))},assassinProvisional);
+True(removedCloneDecision.Next?.Skill!="Heart Gore"&&removedCloneDecision.Alternatives.All(option=>option.Skill!="Heart Gore"),
+    "removed Clone restores normal Heart Gore cooldown despite the still-observed critical");
+foreach(var gateClass in Enum.GetValues<AionClass>())
+{
+    var mismatchedObservation=new PassiveRotationObservation(1901,gateClass,new Dictionary<string,DateTime>{{"Any action",t}},
+        new HashSet<string>{"Precision","Four Elements"},new HashSet<string>{"Stun","Chain of Torment"});
+    var otherClass=Enum.GetValues<AionClass>().First(cls=>cls!=gateClass);
+    True(PassiveRotationSignalDeriver.Derive(mismatchedObservation,otherClass,t).Count==0,
+        $"{gateClass} facts cannot produce signals for a mismatched profile class");
+    True(PassiveRotationSignalDeriver.Derive(mismatchedObservation with {PlayerId=0},gateClass,t).Count==0,
+        $"{gateClass} unbound actor cannot manufacture filler or buff state");
+}
+
+var orderedTargetEffects=new PassiveRotationStateTracker();
+orderedTargetEffects.Observe(new(t,CombatKind.PlayerName,2001,"Self",SourceClass:"Cleric",SourceIdentityConfirmed:true,SourceIsLocal:true));
+orderedTargetEffects.Observe(new(t,CombatKind.Damage,2001,"Self",2101,"Target","Chain of Torment",100));
+orderedTargetEffects.Observe(new(t.AddSeconds(2),CombatKind.DebuffRemove,2001,"Self",2101,"Target",Effect:"Chain of Torment"));
+orderedTargetEffects.Observe(new(t.AddSeconds(1),CombatKind.DebuffApply,2001,"Self",2101,"Target",Effect:"Chain of Torment"));
+True(!orderedTargetEffects.Snapshot().Debuffs.Contains("Chain of Torment"),
+    "late target effect application cannot resurrect removed Chain of Torment");
+orderedTargetEffects.Observe(new(t.AddSeconds(2),CombatKind.DebuffApply,2001,"Self",2101,"Target",Effect:"Chain of Torment"));
+True(!orderedTargetEffects.Snapshot().Debuffs.Contains("Chain of Torment"),
+    "equal-timestamp target removal wins over ambiguous application");
+orderedTargetEffects.Observe(new(t.AddSeconds(3),CombatKind.DebuffApply,2002,"Ally",2101,"Target",Effect:"Chain of Torment"));
+True(PassiveRotationSignalDeriver.Derive(orderedTargetEffects.Snapshot(),AionClass.Cleric,t.AddSeconds(3.5)).Contains("ClericCondemnationWindow"),
+    "a newer explicitly observed target application can restore the prerequisite");
+orderedTargetEffects.Observe(new(t.AddSeconds(4),CombatKind.DebuffRemove,2002,"Ally",2101,"Target",Effect:"Chain of Torment"));
+True(!PassiveRotationSignalDeriver.Derive(orderedTargetEffects.Snapshot(),AionClass.Cleric,t.AddSeconds(4.5)).Contains("ClericCondemnationWindow"),
+    "new target removal suppresses both decoded and reconstructed prerequisite state");
 Console.WriteLine($"PASS: {checks} regression assertions");

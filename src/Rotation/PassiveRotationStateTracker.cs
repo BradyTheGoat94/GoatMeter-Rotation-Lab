@@ -13,6 +13,9 @@ public sealed class PassiveRotationStateTracker
     readonly HashSet<string> debuffs=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetSkillUse=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetEffectRemovals=new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string,DateTime> selfEffectRemovals=new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string,DateTime> selfEffectSeen=new(StringComparer.OrdinalIgnoreCase);
+    readonly Dictionary<string,DateTime> targetEffectSeen=new(StringComparer.OrdinalIgnoreCase);
     TargetStats? target;
     long targetId;
     DateTime lastTargetActionUtc=DateTime.MinValue;
@@ -45,8 +48,13 @@ public sealed class PassiveRotationStateTracker
             // while a local buff cast on an ally says nothing about our own state.
             if(e.TargetId==playerId && !string.IsNullOrWhiteSpace(e.Effect))
             {
-                if(e.Kind==CombatKind.BuffApply)buffs.Add(e.Effect);
-                if(e.Kind==CombatKind.BuffRemove)buffs.Remove(e.Effect);
+                if((e.Kind is CombatKind.BuffApply or CombatKind.BuffRemove)
+                    && (!selfEffectSeen.TryGetValue(e.Effect,out var seen) || e.Utc>seen || (e.Utc==seen && e.Kind==CombatKind.BuffRemove)))
+                {
+                    selfEffectSeen[e.Effect]=e.Utc;
+                    if(e.Kind==CombatKind.BuffApply) {buffs.Add(e.Effect);selfEffectRemovals.Remove(e.Effect);}
+                    else {buffs.Remove(e.Effect);selfEffectRemovals[e.Effect]=e.Utc;}
+                }
             }
             // Only local offensive actions establish the active target. Late events
             // cannot move the assistant back to a previous target.
@@ -58,11 +66,12 @@ public sealed class PassiveRotationStateTracker
             }
             if(targetId!=0 && e.TargetId==targetId && !string.IsNullOrWhiteSpace(e.Effect))
             {
-                if(e.Kind==CombatKind.DebuffApply)debuffs.Add(e.Effect);
-                if(e.Kind==CombatKind.DebuffRemove)
+                if((e.Kind is CombatKind.DebuffApply or CombatKind.DebuffRemove)
+                    && (!targetEffectSeen.TryGetValue(e.Effect,out var seen) || e.Utc>seen || (e.Utc==seen && e.Kind==CombatKind.DebuffRemove)))
                 {
-                    debuffs.Remove(e.Effect);
-                    targetEffectRemovals[e.Effect]=e.Utc;
+                    targetEffectSeen[e.Effect]=e.Utc;
+                    if(e.Kind==CombatKind.DebuffApply) {debuffs.Add(e.Effect);targetEffectRemovals.Remove(e.Effect);}
+                    else {debuffs.Remove(e.Effect);targetEffectRemovals[e.Effect]=e.Utc;}
                 }
             }
             if(e.Kind==CombatKind.TargetHp && e.TargetId==targetId && targetId!=0 && e.MaxHp>0 && e.Utc>=lastTargetHpUtc)
@@ -105,6 +114,7 @@ public sealed class PassiveRotationStateTracker
             new HashSet<string>(debuffs,StringComparer.OrdinalIgnoreCase),
             judgmentWindowUntil,judgmentTrigger,criticalHitWindowUntil)
             {
+                SelfEffectRemovals=new Dictionary<string,DateTime>(selfEffectRemovals,StringComparer.OrdinalIgnoreCase),
                 TargetId=targetId,
                 Target=target,
                 TargetSkillUse=new Dictionary<string,DateTime>(targetSkillUse,StringComparer.OrdinalIgnoreCase),
@@ -116,13 +126,13 @@ public sealed class PassiveRotationStateTracker
     {
         lock(gate)
         {
-            ClearTarget();playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";criticalHitWindowUntil=null;
+            ClearTarget();selfEffectRemovals.Clear();selfEffectSeen.Clear();playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";criticalHitWindowUntil=null;
         }
     }
 
     void ClearTarget()
     {
-        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();debuffs.Clear();
+        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();targetEffectSeen.Clear();debuffs.Clear();
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
@@ -139,6 +149,11 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
     IReadOnlyDictionary<string,DateTime> LastSkillUse,IReadOnlySet<string> Buffs,IReadOnlySet<string> Debuffs,
     DateTime? JudgmentWindowUntil=null,string JudgmentTrigger="",DateTime? CriticalHitWindowUntil=null)
 {
+    public IReadOnlyDictionary<string,DateTime> SelfEffectRemovals {get;init;}=new Dictionary<string,DateTime>();
+    public bool UsedRecentlyWithEffect(string skill,DateTime utc,double seconds,string effect)=>
+        UsedRecently(skill,utc,seconds)
+        && (!SelfEffectRemovals.TryGetValue(effect,out var removed) || removed<LastSkillUse[skill]);
+
     public long TargetId {get;init;}
     public TargetStats? Target {get;init;}
     // Null supports standalone fixtures with explicitly supplied current-target

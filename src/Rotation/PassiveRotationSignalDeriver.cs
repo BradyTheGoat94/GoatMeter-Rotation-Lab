@@ -10,8 +10,9 @@ public static class PassiveRotationSignalDeriver
     public static HashSet<string> Derive(PassiveRotationObservation observed,AionClass observedClass,DateTime now)
     {
         var signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if(observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
-        if(observed.CriticalHitWindowActive(now))signals.Add("CriticalHitWindow");
+        if(observed.PlayerId==0 || observed.ClassName!=observedClass)return signals;
+        if(observedClass==AionClass.Templar && observed.JudgmentWindowActive(now))signals.Add("JudgmentWindow");
+        if(observedClass==AionClass.Assassin && observed.CriticalHitWindowActive(now))signals.Add("CriticalHitWindow");
 
         bool observedCombatAction=observed.LastSkillUse.Values.Any(used=>now-used>=TimeSpan.Zero && now-used<=TimeSpan.FromSeconds(8));
         if(observedCombatAction)
@@ -53,7 +54,7 @@ public static class PassiveRotationSignalDeriver
 
             // Current Global Punishment grants Executor for 20s. Reconstruct only
             // the base duration from a directly observed local cast.
-            if(observed.UsedRecently("Punishment",now,20))
+            if(observed.UsedRecentlyWithEffect("Punishment",now,20,"Executor"))
                 signals.Add("TemplarExecutorWindow");
 
             // Current Global Annihilate is enabled by observed target Stun or Knockdown.
@@ -77,7 +78,7 @@ public static class PassiveRotationSignalDeriver
 
             // Current Global Ruinous Blow grants Prepare for Battle for 20s.
             // Preserve only the base window from a directly observed local cast.
-            if(observed.UsedRecently("Ruinous Blow",now,20))
+            if(observed.UsedRecentlyWithEffect("Ruinous Blow",now,20,"Prepare for Battle"))
                 signals.Add("GladiatorPrepareForBattleWindow");
         }
         if(observedClass==AionClass.Assassin)
@@ -88,7 +89,7 @@ public static class PassiveRotationSignalDeriver
             if(observed.PendingFollowUp("Savage Back Kick","Savage Smash",now,3))signals.Add("AssassinSavageSmashWindow");
             // Illusive Clone is a directly observed burst activation. Current Global
             // guidance gives it a 20s burst duration; do not infer specialty effects.
-            if(observed.UsedRecently("Illusive Clone",now,20))signals.Add("AssassinBurstWindow");
+            if(observed.UsedRecentlyWithEffect("Illusive Clone",now,20,"Illusive Clone"))signals.Add("AssassinBurstWindow");
         }
         if(observedClass==AionClass.Ranger)
         {
@@ -110,9 +111,9 @@ public static class PassiveRotationSignalDeriver
             // Current Global Wish and Element Enhancement each create a 10s personal
             // burst window. Delayed Explosion proves a shorter 4s self-damage-amplification
             // window. Specialty cooldown reductions are never inferred.
-            if(observed.UsedRecently("Wish of Concentration",now,10)
-                || observed.UsedRecently("Element Enhancement",now,10)
-                || observed.UsedRecently("Delayed Explosion",now,4))
+            if(observed.UsedRecentlyWithEffect("Wish of Concentration",now,10,"Wish of Concentration")
+                || observed.UsedRecentlyWithEffect("Element Enhancement",now,10,"Element Enhancement")
+                || observed.UsedRecentlyWithEffect("Delayed Explosion",now,4,"Delayed Explosion"))
                 signals.Add("SorcererBurstWindow");
 
             if(observed.PendingFollowUp("Ice Chain","Cold Wave",now,3))
@@ -180,7 +181,7 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Spiritmaster)
         {
-            if(observed.UsedRecently("Flame Blessing",now,8)||observed.UsedRecently("Spirit's Benediction",now,8))
+            if(observed.UsedRecentlyWithEffect("Flame Blessing",now,8,"Flame Blessing")||observed.UsedRecentlyWithEffect("Spirit's Benediction",now,8,"Spirit's Benediction"))
                 signals.Add("SpiritmasterAncientWindow");
             if(observed.UsedRecently("Summon: Ancient Spirit",now,8))
                 signals.Add("SpiritmasterCorrodeWindow");

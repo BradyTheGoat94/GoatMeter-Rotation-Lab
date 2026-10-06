@@ -6,6 +6,8 @@
 - All eight classes bind rotation state to explicit selfInfo local-player proof. Confirmed party names do not prove local identity.
 - Capture reconnect, zone reset, self despawn, and local-entity changes invalidate previous rotation state.
 - Target-scoped Cleric marks, Spiritmaster Corrode, and Sorcerer Fire Mark stop carrying to a new target. Explicit removal overrides cast-derived effect duration.
+- Explicit self-buff removals override cast-derived burst estimates, including Illusive Clone's Heart Gore cooldown bypass. Late and equal-timestamp effect applications cannot revive removed self/target state.
+- Mismatched class or unbound actor observations cannot generate any recommendation signals.
 - Self buffs use their recipient; party buffs on self are accepted, while buffs cast on allies do not become self buffs.
 - Late skill events cannot roll back player cooldown timestamps. Target switches preserve player cooldown/loadout history.
 - Lab settings, history, validation files, window title, and installer identity are separate from production.
