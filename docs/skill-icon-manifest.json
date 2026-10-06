@@ -696,6 +696,26 @@
       "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_025.webp",
       "resource": "Assets/SkillIcons/16250000.png",
       "sha256": "6eb5f474c921dfa2f235540636c25415e07407a6e8189d8c95552ffb8991533d"
+    },
+    {
+      "class": "Templar",
+      "skill": "Threatening Blow",
+      "skillId": 12440000,
+      "evidence": "https://www.aion2pb.com/skills/12440000",
+      "source": "https://cdn.aion2pb.com/game/UI/Resource/Texture/Skill/ICON_TE_SKILL_044.webp",
+      "resource": "Assets/SkillIcons/12440000.png",
+      "sha256": "11686a772af546c6a9f65e0979f261084af57d00ce5177cefa27fe6b9488fc48",
+      "verification": "Aion2 PB visible Global selector; base skill entry identity and image inspected in browser. Display artwork only; no mechanics imported."
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Upward Strike",
+      "skillId": 11440000,
+      "evidence": "https://www.aion2pb.com/skills/11440000",
+      "source": "https://cdn.aion2pb.com/game/UI/Resource/Texture/Skill/ICON_TE_SKILL_016.webp",
+      "resource": "Assets/SkillIcons/11440000.png",
+      "sha256": "6ad826db81874f5a637cfd082e13f753c219c20ce76016e3a4ddf744c318fb22",
+      "verification": "Aion2 PB visible Global selector; base skill entry identity and image inspected in browser. Display artwork only; no mechanics imported."
     }
   ]
 }

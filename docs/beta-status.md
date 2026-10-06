@@ -1,5 +1,11 @@
 # Rotation Lab beta status
 
+## Aion2 PB source reconciliation
+
+- 79 icons now embed exact mapped artwork across all eight classes. Threatening Blow (12440000) and Upward Strike (11440000) were verified on Aion2 PB with the visible Global selector, including the base/variant Upward identity. Upward uses ICON_TE_SKILL_016.webp as actually linked by the source; icon filenames cannot be inferred from class or ID.
+- This batch changes display mappings only. No KR/TW mechanics, skill level, specialization, cooldown or loadout eligibility is inferred from artwork.
+- Healing Burst and Disenchant remain unresolved Global names with explicit fallbacks. They are not given original AION/Classic artwork as substitutes. Full icon coverage remains incomplete.
+
 ## All-class icon batch
 
 - 77 embedded display mappings now cover all eight classes. Every primary and alternative suggestion uses the existing local resource renderer; runtime icon networking remains absent.

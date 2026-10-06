@@ -124,7 +124,7 @@ tracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"Tester",Skill:"Observed 
 tracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,77,"Tester",99,"Dummy","Observed Strike",100,SourceClass:"Templar"));
 tracker.Observe(new(t.AddSeconds(3),CombatKind.BuffApply,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
 var observedRotation=tracker.Snapshot();
-True(observedRotation.PlayerId==77&&observedRotation.ClassName==AionClass.Templar,"passive tracker resolves confirmed class");
+True(observedRotation.PlayerId==79&&observedRotation.ClassName==AionClass.Templar,"passive tracker resolves confirmed class");
 True(observedRotation.LastSkillUse.ContainsKey("Observed Cast")&&observedRotation.LastSkillUse.ContainsKey("Observed Strike"),"passive tracker records observed skill use");
 True(observedRotation.UsedRecently("Observed Strike",t.AddSeconds(4),3),"recent-skill helper accepts an observed local skill inside its evidence window");
 True(!observedRotation.UsedRecently("Observed Strike",t.AddSeconds(6),3),"recent-skill helper expires an observed local skill after its evidence window");
@@ -1629,14 +1629,14 @@ True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assas
 var iconCoverageProfiles=new[]{RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),RotationProfileCatalog.CreateProvisionalRangerSingleTarget(),RotationProfileCatalog.CreateProvisionalSorcererSingleTarget(),RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget(),RotationProfileCatalog.CreateProvisionalClericSingleTarget(),RotationProfileCatalog.CreateProvisionalChanterSingleTarget()};
 var unresolvedIconMappings=new HashSet<string>(StringComparer.Ordinal)
 {
-    "Templar:Threatening Blow","Gladiator:Upward Strike","Chanter:Healing Burst","Spiritmaster:Disenchant"
+    "Chanter:Healing Burst","Spiritmaster:Disenchant"
 };
 foreach(var iconCoverageProfile in iconCoverageProfiles)
 foreach(var rule in iconCoverageProfile.Rules)
     True(SkillIconCatalog.Find(iconCoverageProfile.ClassName,rule.Skill) is not null || unresolvedIconMappings.Contains(iconCoverageProfile.ClassName+":"+rule.Skill),
         "every recommended skill has a verified icon or explicitly documented unresolved identity: "+iconCoverageProfile.ClassName+":"+rule.Skill);
-True(SkillIconCatalog.Entries.Count==77,"all-class icon batch has 77 explicit identities");
+True(SkillIconCatalog.Entries.Count==79,"all-class icon batch has 79 explicit identities");
 True(SkillIconCatalog.Entries.GroupBy(x=>x.ClassName).Count()==8,"embedded skill icons cover all eight classes");
-True(SkillIconCatalog.Entries.Select(x=>x.SkillId).Distinct().Count()==77,"embedded resource identities are unique");
+True(SkillIconCatalog.Entries.Select(x=>x.SkillId).Distinct().Count()==79,"embedded resource identities are unique");
 
 Console.WriteLine($"PASS: {checks} regression assertions");

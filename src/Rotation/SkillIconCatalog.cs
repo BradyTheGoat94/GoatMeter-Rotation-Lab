@@ -4,7 +4,8 @@ namespace Aion2DPSPro.Rotation;
 public sealed record SkillIconIdentity(AionClass ClassName, string Skill, int SkillId)
 {
     public string ResourcePath => $"Assets/SkillIcons/{SkillId}.png";
-    public string EvidenceUrl => $"https://aion2.gaming.tools/skills/{SkillId}";
+    public string EvidenceUrl => SkillId is 11440000 or 12440000
+        ? $"https://www.aion2pb.com/skills/{SkillId}" : $"https://aion2.gaming.tools/skills/{SkillId}";
 }
 public static class SkillIconCatalog
 {
@@ -87,6 +88,8 @@ public static class SkillIconCatalog
         new(AionClass.Spiritmaster,"Jointstrike: Curse",16140000),
         new(AionClass.Spiritmaster,"Jointstrike: Destructive Attack",16240000),
         new(AionClass.Spiritmaster,"Summon: Ancient Spirit",16250000),
+        new(AionClass.Templar,"Threatening Blow",12440000),
+        new(AionClass.Gladiator,"Upward Strike",11440000),
     };
     public static IReadOnlyList<SkillIconIdentity> Entries => entries;
     public static SkillIconIdentity? Find(AionClass? className, string? skill) =>

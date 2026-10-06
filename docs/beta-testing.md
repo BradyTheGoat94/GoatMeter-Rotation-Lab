@@ -1,3 +1,7 @@
+## Reconciled Templar and Gladiator icons
+
+79 icons are embedded. Threatening Blow and Upward Strike now show exact Aion2 PB artwork verified in the Global selector; display identity does not grant specialization or readiness. Only Healing Burst and Disenchant remain unresolved names with explicit fallbacks.
+
 ## All-class icon follow-up
 
 77 display mappings now cover all eight classes. Upward Strike, Threatening Blow, Healing Burst and Disenchant retain explicit fallbacks pending exact artwork or current Global identity reconciliation. This is partial icon coverage, not a measured DPS gain. Icons never prove learned/equipped skills or readiness.
