@@ -153,7 +153,7 @@ internal static class Program
   window.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting"));
   if(((Image)window.FindName("RotationSkillImage")).Source is not null || optionCards.Items.Count!=0 || ((TextBlock)window.FindName("RotationLearningHint")).Visibility!=Visibility.Collapsed)
    throw new Exception("Waiting state retained stale icons or learning guidance");
-  Console.WriteLine("PASS: all 30 embedded icons load; primary/alternatives/class switch/waiting lifecycle verified");
+  Console.WriteLine($"PASS: all {SkillIconCatalog.Entries.Count} embedded icons load; primary/alternatives/class switch/waiting lifecycle verified");
 
 
   foreach(var iconStyle in new[]{"Classic Dashboard","Details Inspired","Kagerou Inspired","Bars Only","Raid Compact","Glass Cards","Tournament"})
