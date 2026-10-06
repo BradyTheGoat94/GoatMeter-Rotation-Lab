@@ -86,23 +86,27 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorOverheadWindow",Reason:"consume the observed Rage Burst Overhead Slam opportunity"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Overhead Slam",Reason:"validated 5s Global base cooldown is ready; level-16 no-cooldown specialization excluded")
                 }),
-                new RotationRule("Ruinous Blow",700,new[]{
-                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorDamageWindow",Reason:"establish the enabling damage state"),
-                    new RotationCondition(RotationConditionKind.CooldownReady,"Ruinous Blow",Reason:"validated 45s Global base cooldown is ready; specialization reductions excluded")
+                new RotationRule("Ruinous Blow",790,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"establish current-Global Prepare for Battle during observed combat"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Ruinous Blow",Reason:"validated 45s Global base cooldown is ready; specialization/cooldown-reduction effects excluded")
                 }),
-                new RotationRule("Frenzied Wave",690,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFrenziedWaveWindow",Reason:"consume the current-Global 3s chain activation after observed Crushing Wave")}),
+                new RotationRule("Rage Burst",780,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"open the documented 10s Overhead Slam burst window during observed combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRageBurstKnownWindow",Reason:"the current loadout has passively proven Rage Burst is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Rage Burst",Reason:"validated 45s Global base cooldown is ready; level-5 30s specialization excluded")
+                }),
+                new RotationRule("Frenzied Wave",820,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFrenziedWaveWindow",Reason:"consume the current-Global 3s chain activation after observed Crushing Wave")}),
                 new RotationRule("Crushing Wave",610,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"current Global sustained damage action opens Frenzied Wave"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Crushing Wave",Reason:"validated 20s Global base cooldown is ready; rank-12 critical reset specialization excluded")
                 }),
                 new RotationRule("Rending Blow",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"core sustained single-target damage after conditional attacks")}),
-                new RotationRule("Smashing Blow",675,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
-                new RotationRule("Seismic Crash",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFinisherWindow",Reason:"passively observed chain state supports Seismic Crash")}),
-                new RotationRule("Wrathful Strike",670,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorWrathfulWindow",Reason:"observed Keen Strike chain state supports the later Global chain attack")}),
-                new RotationRule("Rupture Strike",665,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRuptureWindow",Reason:"observed Keen Strike chain state supports Rupture Strike")}),
+                new RotationRule("Smashing Blow",815,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorSmashingWindow",Reason:"observed Rending Blow chain state supports Smashing Blow")}),
+                new RotationRule("Wrathful Strike",810,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorWrathfulWindow",Reason:"observed Keen Strike chain state supports the later Global chain attack")}),
+                new RotationRule("Rupture Strike",805,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorRuptureWindow",Reason:"observed Keen Strike chain state supports Rupture Strike")}),
                 new RotationRule("Keen Strike",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"GladiatorFillerWindow",Reason:"resource-building weave while higher-priority attacks are unavailable")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. High-value finishers are represented only behind passive chain signals; until the live decoder proves those signals, the profile intentionally emits no recommendation.");
+            "PROVISIONAL Global Season 1 single-target fixture. Short observed chain continuations outrank longer cooldowns; Ruinous Blow uses its validated 45s base cooldown, and Rage Burst is recommended only after the current loadout has passively proven that stigma. Unreconciled Seismic Crash vocabulary is excluded.");
     }
 
     public static RotationProfile CreateProvisionalRangerSingleTarget()
