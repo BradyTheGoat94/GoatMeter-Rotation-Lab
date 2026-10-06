@@ -19,6 +19,12 @@
 
 - Duplicate conditional rules retain one strongest candidate per skill, preserving distinct alternatives. The overlay labels these as other current choices rather than a predicted future sequence.
 
+## First live beta issue
+
+A level-14 Chanter test reports no local damage row or recommendations. The screenshot shows other captured rows and unknown target HP (0/0); the local capture/identity cause remains unconfirmed pending the current test log. Missing skill icons do not gate recommendation text.
+
+Overlay preset code still addressed the old footer row after the assistant was inserted, clipping or hiding the assistant diagnostic. Presets now size the assistant automatically and apply footer sizes to the actual footer. Waiting diagnostics separately identify missing selfInfo/class, missing local damage row, missing offensive target, and unknown target HP. These changes reveal the gate; they do not claim to fix missing local capture.
+
 ## Class percentages
 
 **Optimized DPS % is not measured for any class.** No validated theoretical-DPS reference, fixed build/gear scenario, or controlled DPS comparison exists in the current project. Test counts and modeled priority rules cannot be converted into percentage of optimal DPS.

@@ -155,6 +155,22 @@ internal static class Program
   if(!((TextBlock)window.FindName("RotationDiagnostic")).Text.Contains("insufficient validated observations"))throw new Exception("Unknown readiness did not fail closed");
   Console.WriteLine("PASS: readiness context renders validated timers and explicit unknown state");
 
+  foreach(var diagnosticStyle in new[]{"Classic Dashboard","Details Inspired","Kagerou Inspired","Bars Only","Raid Compact","Glass Cards","Tournament"})
+  {
+   Invoke("ApplyOverlayStyle",diagnosticStyle);
+   window.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for selfInfo local-player identity and known class."));
+   window.UpdateLayout();
+   var assistantPanel=(FrameworkElement)window.FindName("RotationAssistant");
+   foreach(var diagnosticName in new[]{"RotationNextSkill","RotationReason","RotationDiagnostic"})
+   {
+    var diagnosticElement=(FrameworkElement)window.FindName(diagnosticName);
+    var diagnosticBounds=diagnosticElement.TransformToAncestor(assistantPanel)
+        .TransformBounds(new Rect(0,0,diagnosticElement.ActualWidth,diagnosticElement.ActualHeight));
+    if(!diagnosticElement.IsVisible||diagnosticBounds.Bottom>assistantPanel.ActualHeight+.5)
+        throw new Exception(diagnosticStyle+" clips assistant diagnostic "+diagnosticName);
+   }
+  }
+  Console.WriteLine("PASS: every overlay preset keeps assistant waiting diagnostics visible");
   window.Close();Console.WriteLine("PASS: WPF themes, styles, segment/category switching");app.Shutdown();
  }
 }

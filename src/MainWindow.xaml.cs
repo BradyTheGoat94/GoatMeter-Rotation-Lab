@@ -107,8 +107,10 @@ public partial class MainWindow : Window
             // eight profiles fail-closed until stronger passive evidence is validated.
             var observed=rotationTracker.Snapshot();
             var self=s.Players.FirstOrDefault(p=>p.EntityId==observed.PlayerId);
-            if(self is null || observed.ClassName is not AionClass observedClass)
-                overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for confirmed player class from passive combat."));
+            if(observed.PlayerId==0 || observed.ClassName is not AionClass observedClass)
+                overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting for selfInfo local-player identity and known class. Start Lab before character login."));
+            else if(self is null)
+                overlay.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Local identity observed; waiting for your confirmed damage row."));
             else
             {
                 var profile=observedClass switch
@@ -132,7 +134,11 @@ public partial class MainWindow : Window
                     cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
                     matchingTarget && observed.Target!.CurrentHp>0,0.25)
                     {Signals=signals};
-                var decision=rotationEngine.Evaluate(state,profile);
+                var decision=matchingTarget
+                    ?rotationEngine.Evaluate(state,profile)
+                    :new RotationDecision(null,Array.Empty<SkillRecommendation>(),observed.TargetId==0
+                        ?"Waiting for your observed offensive target."
+                        :"Waiting for matching target HP; unknown HP is not proof of death.");
                 var readiness=cooldowns.Count==0
                     ?"Cooldown readiness: insufficient validated observations"
                     :"Cooldown readiness: "+string.Join(" • ",cooldowns.OrderBy(x=>x.Key).Select(x=>$"{x.Key} {(x.Value<=0?"READY":$"{x.Value:0.0}s")}"));

@@ -224,7 +224,8 @@ public partial class OverlayWindow : Window
         MainGrid.RowDefinitions[0].Height=new GridLength(42);
         MainGrid.RowDefinitions[1].Height=new GridLength(42);
         MainGrid.RowDefinitions[2].Height=new GridLength(1,GridUnitType.Star);
-        MainGrid.RowDefinitions[3].Height=new GridLength(66);
+        MainGrid.RowDefinitions[3].Height=GridLength.Auto;
+        MainGrid.RowDefinitions[4].Height=new GridLength(66);
         HeaderBar.Visibility=Visibility.Visible;
         ToolbarGrid.Visibility=Visibility.Visible;
         FooterBar.Visibility=Visibility.Visible;
@@ -253,7 +254,7 @@ public partial class OverlayWindow : Window
                 CategoryPicker.SelectedIndex=Math.Max(0,Tabs.SelectedIndex);
                 MainGrid.RowDefinitions[0].Height=new GridLength(36);
                 MainGrid.RowDefinitions[1].Height=new GridLength(38);
-                MainGrid.RowDefinitions[3].Height=new GridLength(0);
+                MainGrid.RowDefinitions[4].Height=new GridLength(0);
                 FooterBar.Visibility=Visibility.Collapsed; DetailPanel.Visibility=Visibility.Collapsed;
                 ContentGrid.ColumnDefinitions[0].Width=new GridLength(1,GridUnitType.Star);
                 ContentGrid.ColumnDefinitions[1].Width=new GridLength(0);
@@ -265,7 +266,7 @@ public partial class OverlayWindow : Window
                 Width=540; Height=330; MinWidth=420; MinHeight=240;
                 MainGrid.RowDefinitions[0].Height=new GridLength(34);
                 MainGrid.RowDefinitions[1].Height=new GridLength(0);
-                MainGrid.RowDefinitions[3].Height=new GridLength(0);
+                MainGrid.RowDefinitions[4].Height=new GridLength(0);
                 ToolbarGrid.Visibility=Visibility.Collapsed;
                 FooterBar.Visibility=Visibility.Collapsed;
                 DetailPanel.Visibility=Visibility.Collapsed;
@@ -280,7 +281,7 @@ public partial class OverlayWindow : Window
                 Width=650; Height=410; MinWidth=500; MinHeight=300;
                 MainGrid.RowDefinitions[0].Height=new GridLength(36);
                 MainGrid.RowDefinitions[1].Height=new GridLength(34);
-                MainGrid.RowDefinitions[3].Height=new GridLength(38);
+                MainGrid.RowDefinitions[4].Height=new GridLength(38);
                 DetailPanel.Visibility=Visibility.Collapsed;
                 ContentGrid.ColumnDefinitions[0].Width=new GridLength(1,GridUnitType.Star);
                 ContentGrid.ColumnDefinitions[1].Width=new GridLength(0);
@@ -304,7 +305,7 @@ public partial class OverlayWindow : Window
                 Width=960; Height=640; MinWidth=720; MinHeight=460;
                 MainGrid.RowDefinitions[0].Height=new GridLength(52);
                 MainGrid.RowDefinitions[1].Height=new GridLength(46);
-                MainGrid.RowDefinitions[3].Height=new GridLength(72);
+                MainGrid.RowDefinitions[4].Height=new GridLength(72);
                 ContentGrid.ColumnDefinitions[0].Width=new GridLength(2.2,GridUnitType.Star);
                 ContentGrid.ColumnDefinitions[2].Width=new GridLength(.8,GridUnitType.Star);
                 Root.CornerRadius=new CornerRadius(0);
