@@ -1,5 +1,11 @@
 # Rotation Lab beta status
 
+## All-class icon batch
+
+- 77 embedded display mappings now cover all eight classes. Every primary and alternative suggestion uses the existing local resource renderer; runtime icon networking remains absent.
+- Upward Strike and Threatening Blow retain explicit fallbacks: their identity is corroborated, but their exact source artwork was unavailable (404). Healing Burst and Disenchant still require current Global identity reconciliation. Icon coverage is not complete and does not measure optimal DPS.
+- Every new asset is decoded by the existing WPF resource smoke check; catalog identity regressions apply to all mappings. All mechanics remain provisional and live gameplay validation is required.
+
 ## Assassin follow-up
 
 - Ten Assassin icons bring the embedded total to 30 across Templar, Chanter and Assassin.

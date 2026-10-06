@@ -1,3 +1,7 @@
+## All-class icon follow-up
+
+77 display mappings now cover all eight classes. Upward Strike, Threatening Blow, Healing Burst and Disenchant retain explicit fallbacks pending exact artwork or current Global identity reconciliation. This is partial icon coverage, not a measured DPS gain. Icons never prove learned/equipped skills or readiness.
+
 # GoatMeter Rotation Lab: closed beta test guide
 
 This package is for manual, passive testing of the isolated Rotation Lab. All eight rotation profiles remain provisional and recommendations are informational. CI verifies software behavior; live recommendation accuracy and optimal DPS still need controlled gameplay testing.

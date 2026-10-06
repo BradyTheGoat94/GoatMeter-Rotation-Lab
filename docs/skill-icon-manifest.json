@@ -273,6 +273,429 @@
       "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_007.webp",
       "resource": "Assets/SkillIcons/13070000.png",
       "sha256": "82a0204388fdf7058d19c92c20b58a34aaa024ea95b957091ca123060474b760"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Crushing Wave",
+      "skillId": 11050000,
+      "evidence": "https://aion2.gaming.tools/skills/11050000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_005.webp",
+      "resource": "Assets/SkillIcons/11050000.png",
+      "sha256": "1e263bb1ac283467406573e5a30f63e17857f391c878ff83cf47a87be3d45e28"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Frenzied Wave",
+      "skillId": 11060000,
+      "evidence": "https://aion2.gaming.tools/skills/11060000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_006.webp",
+      "resource": "Assets/SkillIcons/11060000.png",
+      "sha256": "dd32be160c46c44684e72570811ec6defc5cf3e1bab9436b99d9626ecbb3fb5b"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Keen Strike",
+      "skillId": 11020000,
+      "evidence": "https://aion2.gaming.tools/skills/11020000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_002.webp",
+      "resource": "Assets/SkillIcons/11020000.png",
+      "sha256": "869ea7e05123afc50e4983ea2206ce32a493b57642fe518a50a720da771fca95"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Overhead Slam",
+      "skillId": 11170000,
+      "evidence": "https://aion2.gaming.tools/skills/11170000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_017.webp",
+      "resource": "Assets/SkillIcons/11170000.png",
+      "sha256": "cf6c3d5ba7660cee1f5b0ac41d666ba116ece0d98cc25b9d596c6477f93f0c18"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Rage Burst",
+      "skillId": 11390000,
+      "evidence": "https://aion2.gaming.tools/skills/11390000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_039.webp",
+      "resource": "Assets/SkillIcons/11390000.png",
+      "sha256": "6641ac13d17821fbe8b447d6fb9f06bca5192a8fef81a82f3f0c76ced4a11ac9"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Rending Blow",
+      "skillId": 11010000,
+      "evidence": "https://aion2.gaming.tools/skills/11010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_001.webp",
+      "resource": "Assets/SkillIcons/11010000.png",
+      "sha256": "19e5ccfdd087b417a1ebdb14a21fbbe4ba32597c2dceb95723ffc3fcb8ef7b7a"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Ruinous Blow",
+      "skillId": 11100000,
+      "evidence": "https://aion2.gaming.tools/skills/11100000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_010.webp",
+      "resource": "Assets/SkillIcons/11100000.png",
+      "sha256": "cf8f6e3b95d7c3855450fcbab20c2507154d0682a8bde95007248be5da1b9a7b"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Rupture Strike",
+      "skillId": 11030000,
+      "evidence": "https://aion2.gaming.tools/skills/11030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_003.webp",
+      "resource": "Assets/SkillIcons/11030000.png",
+      "sha256": "697e8af6f1f4d99fcbf88940ee6ce0d9239165002a4052b6bf1ff9d945db4c02"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Smashing Blow",
+      "skillId": 11420000,
+      "evidence": "https://aion2.gaming.tools/skills/11420000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_042.webp",
+      "resource": "Assets/SkillIcons/11420000.png",
+      "sha256": "0f5ed99e395baa7e0e4492638cfd31b8f25fa9866b72fe7ed4ef6a02049b1721"
+    },
+    {
+      "class": "Gladiator",
+      "skill": "Wrathful Strike",
+      "skillId": 11040000,
+      "evidence": "https://aion2.gaming.tools/skills/11040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_gl_skill_004.webp",
+      "resource": "Assets/SkillIcons/11040000.png",
+      "sha256": "be7fcaf5d9583a23816e3326d8122543192ff15df0e02a50b2d6669845bba47f"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Burst Arrow",
+      "skillId": 14080000,
+      "evidence": "https://aion2.gaming.tools/skills/14080000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_008.webp",
+      "resource": "Assets/SkillIcons/14080000.png",
+      "sha256": "b57575c782f9f7eace9dd1d6f9b147b2d7dfb2c2be6b18cd0f213cf7e85d5989"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Deadshot",
+      "skillId": 14010000,
+      "evidence": "https://aion2.gaming.tools/skills/14010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_002.webp",
+      "resource": "Assets/SkillIcons/14010000.png",
+      "sha256": "8675c497e8b78a28dbc81c16341bdcce4ed1b44f0c51f5bf8db1e0cce43b7414"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Drill Dart",
+      "skillId": 14050000,
+      "evidence": "https://aion2.gaming.tools/skills/14050000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_005.webp",
+      "resource": "Assets/SkillIcons/14050000.png",
+      "sha256": "b01f325e62759665577e21a3e747473502bb5e87e8971c751b210593c95795da"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Gale Arrow",
+      "skillId": 14110000,
+      "evidence": "https://aion2.gaming.tools/skills/14110000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_011.webp",
+      "resource": "Assets/SkillIcons/14110000.png",
+      "sha256": "45d081a4b3fff4842cc7dd6202081b51181b87c01e030a0d12cafe6c70afad70"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Marking Shot",
+      "skillId": 14090000,
+      "evidence": "https://aion2.gaming.tools/skills/14090000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_031.webp",
+      "resource": "Assets/SkillIcons/14090000.png",
+      "sha256": "507ab85b8f85ac828e3fc69014ad26fabe9c994d9934563793aeeb3edf749c99"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Rapid Fire",
+      "skillId": 14030000,
+      "evidence": "https://aion2.gaming.tools/skills/14030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_003.webp",
+      "resource": "Assets/SkillIcons/14030000.png",
+      "sha256": "6e09e6ffb6aeb0eaebf37b7aee788106afe640d10ea2c8557704c85395445c7e"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Snipe",
+      "skillId": 14020000,
+      "evidence": "https://aion2.gaming.tools/skills/14020000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_001.webp",
+      "resource": "Assets/SkillIcons/14020000.png",
+      "sha256": "9e221505a21aba5c56c62d00d0744226d59649585c4099dbeba225d2e6703dec"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Spiral Arrow",
+      "skillId": 14040000,
+      "evidence": "https://aion2.gaming.tools/skills/14040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_004.webp",
+      "resource": "Assets/SkillIcons/14040000.png",
+      "sha256": "46d4a5dcceb6a151ec971ec32d79419606c7914f681474d802ee621bbc19bcbf"
+    },
+    {
+      "class": "Ranger",
+      "skill": "Tempest Shot",
+      "skillId": 14340000,
+      "evidence": "https://aion2.gaming.tools/skills/14340000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ra_skill_034.webp",
+      "resource": "Assets/SkillIcons/14340000.png",
+      "sha256": "2861758faea126ed79ec9e066d7ce0cdebbb62c22d06191882e63a6de2cf29f1"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Wish of Concentration",
+      "skillId": 15310000,
+      "evidence": "https://aion2.gaming.tools/skills/15310000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_028.webp",
+      "resource": "Assets/SkillIcons/15310000.png",
+      "sha256": "93115024b73477e40d5e10857a00cd7a1b52a03eb66634893ad2145532e18c7b"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Bittercold Wind",
+      "skillId": 15280000,
+      "evidence": "https://aion2.gaming.tools/skills/15280000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_025.webp",
+      "resource": "Assets/SkillIcons/15280000.png",
+      "sha256": "c1e6b96e2b2d9b1da08f1eaaa4e21c1242c3ea858ddd998962b5511dc9751ac3"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Blaze",
+      "skillId": 15050000,
+      "evidence": "https://aion2.gaming.tools/skills/15050000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_005.webp",
+      "resource": "Assets/SkillIcons/15050000.png",
+      "sha256": "85aee2b576a3d00f4835ff173d3a63628ab8436e003d5bd7d02503897bf4ea33"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Cold Storm",
+      "skillId": 15200000,
+      "evidence": "https://aion2.gaming.tools/skills/15200000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_019.webp",
+      "resource": "Assets/SkillIcons/15200000.png",
+      "sha256": "05acec636072d7ca5dc219cbed49359c024652bd6752f81b09d90ba3ca723155"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Cold Wave",
+      "skillId": 15100000,
+      "evidence": "https://aion2.gaming.tools/skills/15100000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_010.webp",
+      "resource": "Assets/SkillIcons/15100000.png",
+      "sha256": "8a9105b1ed7a1ff46a2ecab7533955206f44c39797ded2561947ee0100ad24fe"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Delayed Explosion",
+      "skillId": 15320000,
+      "evidence": "https://aion2.gaming.tools/skills/15320000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_032.webp",
+      "resource": "Assets/SkillIcons/15320000.png",
+      "sha256": "e2a9e85d4a7b397b011d083621e45c6f5feb45c11a7ade4b5a04e522728cb498"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Element Enhancement",
+      "skillId": 15400000,
+      "evidence": "https://aion2.gaming.tools/skills/15400000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_040.webp",
+      "resource": "Assets/SkillIcons/15400000.png",
+      "sha256": "bfb6f62b9220cb0d274bf3c1522fe90b95fac24c4f38d7e6f14d257b05d80433"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Fire Wall",
+      "skillId": 15390000,
+      "evidence": "https://aion2.gaming.tools/skills/15390000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_039.webp",
+      "resource": "Assets/SkillIcons/15390000.png",
+      "sha256": "a24d281019f047a9accb465105a49256a253af2412c439019c07f4e7aca032d4"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Firestorm",
+      "skillId": 15040000,
+      "evidence": "https://aion2.gaming.tools/skills/15040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_004.webp",
+      "resource": "Assets/SkillIcons/15040000.png",
+      "sha256": "a74faf91ab4f58d643f820139ca153342b18490d299e2c30577eac13de4ef419"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Flame Arrow",
+      "skillId": 15210000,
+      "evidence": "https://aion2.gaming.tools/skills/15210000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_020.webp",
+      "resource": "Assets/SkillIcons/15210000.png",
+      "sha256": "6b4a97f31b69ae5692fffe36bf828b6399b6ef86249dc4e39ff9fcdad27d06db"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Hellfire",
+      "skillId": 15060000,
+      "evidence": "https://aion2.gaming.tools/skills/15060000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_006.webp",
+      "resource": "Assets/SkillIcons/15060000.png",
+      "sha256": "6968cbcba2ec5636649d76a0e0137ac0ae58c59169e140ef042b79de07f47b4b"
+    },
+    {
+      "class": "Sorcerer",
+      "skill": "Ice Chain",
+      "skillId": 15090000,
+      "evidence": "https://aion2.gaming.tools/skills/15090000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_so_skill_009.webp",
+      "resource": "Assets/SkillIcons/15090000.png",
+      "sha256": "abe852ba8f80d7e954343ef02419ef292bbfb707e745f82d628cf4195dde9adf"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Bolt",
+      "skillId": 17060000,
+      "evidence": "https://aion2.gaming.tools/skills/17060000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_006.webp",
+      "resource": "Assets/SkillIcons/17060000.png",
+      "sha256": "e394ed58c0b3f5db5fec9333d87eab239adaa07ecf8dc5cf59ce16ebe64938fb"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Chain of Torment",
+      "skillId": 17070000,
+      "evidence": "https://aion2.gaming.tools/skills/17070000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_007.webp",
+      "resource": "Assets/SkillIcons/17070000.png",
+      "sha256": "4799213af5ae55888a91de248a38c601d221fc7106760550f749c46cf0e20589"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Condemnation",
+      "skillId": 17350000,
+      "evidence": "https://aion2.gaming.tools/skills/17350000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_035.webp",
+      "resource": "Assets/SkillIcons/17350000.png",
+      "sha256": "d654ac8709b0b1e1ced1f65a45f6d50bc2eb3f33d18833c7b3dc8499d799bcd1"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Divine Aura",
+      "skillId": 17150000,
+      "evidence": "https://aion2.gaming.tools/skills/17150000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_015.webp",
+      "resource": "Assets/SkillIcons/17150000.png",
+      "sha256": "364bb69354643848189c93b8b701c2c934866a3be25bc755001edfd55ca2f826"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Earth Punishment",
+      "skillId": 17400000,
+      "evidence": "https://aion2.gaming.tools/skills/17400000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_040.webp",
+      "resource": "Assets/SkillIcons/17400000.png",
+      "sha256": "5a41fa1fe4beca00280791fc820c268ed923ce8519cbd3dcc779403cb145ac84"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Earth's Retribution",
+      "skillId": 17010000,
+      "evidence": "https://aion2.gaming.tools/skills/17010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_001.webp",
+      "resource": "Assets/SkillIcons/17010000.png",
+      "sha256": "0e913575d200830b0408d4f04a339aec9648034211443d22b69d769bc8196452"
+    },
+    {
+      "class": "Cleric",
+      "skill": "Judgment Thunder",
+      "skillId": 17040000,
+      "evidence": "https://aion2.gaming.tools/skills/17040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_cl_skill_004.webp",
+      "resource": "Assets/SkillIcons/17040000.png",
+      "sha256": "b7f787ba8478ebe36f6c55725ee2f4fcdd4f6ad9e87d95afd803f5cf897f9071"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Cold Shock",
+      "skillId": 16010000,
+      "evidence": "https://aion2.gaming.tools/skills/16010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_001.webp",
+      "resource": "Assets/SkillIcons/16010000.png",
+      "sha256": "c3a627d8d4e21a5d8c196c3d19036602278d9ed581d3e025fadebcbb7647309f"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Combustion",
+      "skillId": 16040000,
+      "evidence": "https://aion2.gaming.tools/skills/16040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_004.webp",
+      "resource": "Assets/SkillIcons/16040000.png",
+      "sha256": "49d06a9ef8e6647f66bd3b4b67f79f2f1cf2c02c3a6a77f158994d815006ec7f"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Dimensional Control",
+      "skillId": 16330000,
+      "evidence": "https://aion2.gaming.tools/skills/16330000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_033.webp",
+      "resource": "Assets/SkillIcons/16330000.png",
+      "sha256": "97b4b1fec79cea1fab24dd2293aeb56c4d3991d75e2e20d025cfee3cea986f95"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Earth Tremor",
+      "skillId": 16030000,
+      "evidence": "https://aion2.gaming.tools/skills/16030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_003.webp",
+      "resource": "Assets/SkillIcons/16030000.png",
+      "sha256": "452c73fe67d2d55b84eb5404a4d2a1f8c3b7cd77ce4b79a0b7a5c55f9bce2c9d"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Elemental Fusion",
+      "skillId": 16300000,
+      "evidence": "https://aion2.gaming.tools/skills/16300000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_030.webp",
+      "resource": "Assets/SkillIcons/16300000.png",
+      "sha256": "93c5dbbaec886986ca1b1ed07d5e22df7df20ac5a38c5547a32dcc55c6d7be0a"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Jointstrike: Corrode",
+      "skillId": 16150000,
+      "evidence": "https://aion2.gaming.tools/skills/16150000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_015.webp",
+      "resource": "Assets/SkillIcons/16150000.png",
+      "sha256": "44a87b6e9252f7ba69c89a9b706b61cac2167889d991c2b701219e769959a570"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Jointstrike: Curse",
+      "skillId": 16140000,
+      "evidence": "https://aion2.gaming.tools/skills/16140000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_014.webp",
+      "resource": "Assets/SkillIcons/16140000.png",
+      "sha256": "e28a2b08eb3f119eee18c4a32f6f1c5ad39e2ceb8f9ade6086dbe4754eb764af"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Jointstrike: Destructive Attack",
+      "skillId": 16240000,
+      "evidence": "https://aion2.gaming.tools/skills/16240000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_024.webp",
+      "resource": "Assets/SkillIcons/16240000.png",
+      "sha256": "e64545228892b1525f96bbc985011071818798cd213a481e55b97c0427e4c64d"
+    },
+    {
+      "class": "Spiritmaster",
+      "skill": "Summon: Ancient Spirit",
+      "skillId": 16250000,
+      "evidence": "https://aion2.gaming.tools/skills/16250000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_el_skill_025.webp",
+      "resource": "Assets/SkillIcons/16250000.png",
+      "sha256": "6eb5f474c921dfa2f235540636c25415e07407a6e8189d8c95552ffb8991533d"
     }
   ]
 }
