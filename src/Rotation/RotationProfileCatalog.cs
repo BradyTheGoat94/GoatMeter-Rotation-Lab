@@ -218,7 +218,11 @@ public static class RotationProfileCatalog
             AionClass.Cleric,"global-cleric-provisional",RotationMode.SingleTarget,ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Earth Punishment",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"establish Earth Punishment before the Condemnation damage loop")}),
+                new RotationRule("Earth Punishment",800,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"maintain the proven current-Global damage loop during active combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentKnownWindow",Reason:"the current loadout has passively proven Earth Punishment is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Earth Punishment",Reason:"validated 30s Global base cooldown is ready; +10s duration specialization excluded")
+                }),
                 new RotationRule("Condemnation",825,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"target has the observed Chain of Torment prerequisite"),
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericEarthPunishmentWindow",Reason:"observed Earth Punishment state supports the high-value Condemnation damage window"),
@@ -228,20 +232,22 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"ClericCondemnationWindow",Reason:"Chain of Torment prerequisite is observed; do not infer specialty-dependent reset state"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Condemnation",Reason:"validated 3s Global base cooldown is ready unless an observed specialization reset proves otherwise")
                 }),
-                new RotationRule("Chain of Torment",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericMarkWindow",Reason:"maintain the mark required by the Condemnation loop")}),
+                new RotationRule("Chain of Torment",650,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"maintain the mark required by the Condemnation loop during observed combat"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Chain of Torment",Reason:"validated 20s Global base cooldown is ready; +3s duration specialization excluded")
+                }),
                 new RotationRule("Divine Aura",550,new[]{
-                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"use Divine Aura when its damage window is available"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"use Divine Aura on validated cooldown during observed combat"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Divine Aura",Reason:"validated 30s Global base cooldown is ready; level-16 -10s specialization excluded")
                 }),
                 new RotationRule("Bolt",525,new[]{
-                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericDamageWindow",Reason:"current Global PvE APL treats Bolt as a major damage action"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"current Global PvE APL treats Bolt as a major damage action during observed combat"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Bolt",Reason:"validated 45s Global base cooldown is ready; Discharge-driven cooldown reduction is not inferred")
                 }),
                 new RotationRule("Judgment Thunder",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"damage filler while higher priorities are unavailable")}),
                 new RotationRule("Earth's Retribution",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericFillerWindow",Reason:"weave the MP-restoring basic damage action")}),
-                new RotationRule("Healing Light",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ClericHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
             },
-            "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
+            "PROVISIONAL Global Season 1 single-target damage fixture. Base cooldowns and directly observed debuff state are passive-gated; stigma/loadout-dependent Earth Punishment is not recommended until observed in the current session, and healing remains outside this damage profile.");
     }
 
     public static RotationProfile CreateProvisionalChanterSingleTarget()
