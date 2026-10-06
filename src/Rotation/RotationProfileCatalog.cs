@@ -75,8 +75,10 @@ public static class RotationProfileCatalog
                 new RotationRule("Savage Back Kick",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageBackKickWindow",Reason:"complete the current Global Savage Roar chain after its observed opener")}),
                 new RotationRule("Savage Smash",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageSmashWindow",Reason:"complete the current Global Savage chain after observed Savage Back Kick")}),
                 new RotationRule("Savage Roar",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"build Insignias while core spenders are unavailable")}),
-                new RotationRule("Savage Fang",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"use the repeatedly observed Global sustained strike while spender state is unavailable")}),
-                new RotationRule("Exploit Weakness",350,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"include the repeatedly observed Global damage action without inferring hidden Insignia state")}),
+                new RotationRule("Savage Fang",375,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"use the observed equipped Global stigma during combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"AssassinSavageFangKnownWindow",Reason:"current session has directly observed Savage Fang use"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Savage Fang",Reason:"validated 60s Global base cooldown is ready; specialty effects excluded")}),
                 new RotationRule("Quick Slice",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"AssassinFillerWindow",Reason:"weave Quick Slice while core spenders are unavailable")})
             },
             "PROVISIONAL Global Season 1 single-target fixture. Heart Gore is critical-gated, with observed Illusive Clone bypassing only its normal cooldown for the documented 20s window. Insignia Explosion remains fail-closed until stack readiness is decoded; passive Ambush/Doppelganger effects are not emitted as player actions.");

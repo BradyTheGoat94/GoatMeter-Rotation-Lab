@@ -38,6 +38,7 @@ jobs:
         run: |
           Copy-Item -LiteralPath docs/beta-testing.md -Destination publish/BETA-TESTING.md
           Copy-Item -LiteralPath docs/beta-status.md -Destination publish/BETA-STATUS.md
+          Copy-Item -LiteralPath assistant-icons-preview.png -Destination publish/ASSISTANT-PREVIEW.png
           @(
             "Repository: $env:GITHUB_REPOSITORY"
             "Commit: $env:GITHUB_SHA"

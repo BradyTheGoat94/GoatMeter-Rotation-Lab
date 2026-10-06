@@ -14,13 +14,14 @@ Settings, fight history, and validation logs are stored under `%LOCALAPPDATA%\Go
 
 ## Icons and first-use guidance
 
-Templar and Chanter now have 20 packaged skill icons. Each alternative has its own icon and name. Unresolved names and other classes show a question mark. A picture does not prove a skill is learned, equipped or ready.
+Templar, Chanter and Assassin now have 30 packaged skill icons. Each alternative has its own icon and name. Unresolved names and other classes show a question mark. A picture does not prove a skill is learned, equipped or ready.
 
 When the amber line lists unknown cooldowns, manually use only skills you have learned/equipped once in your controlled dummy test. The assistant then tracks their conservative base timers. On Templar, pressing only Pummel and Punishing Strike will not establish Punishment readiness or open Judgment: manually use an available shield skill to observe Judgment's short follow-up. This is observation setup, not a command to cast unavailable skills or a promise of optimal DPS.
 
 ## Focused checks
 
 - **Solo:** Confirm your class and entity remain the rotation actor. Use each supported opener and follow-up once. The used follow-up must stop being recommended from that same opener.
+- **Assassin:** Exploit Weakness must never appear as a button to press. Savage Fang must be absent until your own current-session use is observed, and excluded until its conservative 60s base timer recovers.
 - **Chanter:** Incandescent Blow should offer Bursting Blow only during its unconsumed three-second chain. Fracturing Blow must be absent until manually observed in this session and remain excluded for its 45s base cooldown. Test Impactful Crush and Spinning Strike separately. Each opens Dark Crush for two seconds, only when its observed base cooldown is ready. Generic ranged activity must not open the window.
 - **Identity refresh:** Later conflicting combat class labels must not switch the local profile. Fresh confirmed selfInfo proving a new class must reset prior history.
 - **Party:** A party member joining, casting, or changing targets must not replace your local rotation identity or inject their skill history.

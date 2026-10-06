@@ -183,6 +183,96 @@
       "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_043.webp",
       "resource": "Assets/SkillIcons/18130000.png",
       "sha256": "5f403b102fa7fed497cffc639e9a7df48d591f36942c344257d0f5e19e302420"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Savage Fang",
+      "skillId": 13270000,
+      "evidence": "https://aion2.gaming.tools/skills/13270000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_025.webp",
+      "resource": "Assets/SkillIcons/13270000.png",
+      "sha256": "9cd612c492073006944abb0064f138c782e80e774bdfaa6d8b0e8dee34a762b5"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Breaking Slice",
+      "skillId": 13030000,
+      "evidence": "https://aion2.gaming.tools/skills/13030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_003.webp",
+      "resource": "Assets/SkillIcons/13030000.png",
+      "sha256": "03fe7dc924ce4d295d0d2917b407051c466588f1512d79a32c06de515c54c7c7"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Heart Gore",
+      "skillId": 13350000,
+      "evidence": "https://aion2.gaming.tools/skills/13350000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_035.webp",
+      "resource": "Assets/SkillIcons/13350000.png",
+      "sha256": "7bb0c9e7c1a637cdb023c499c85cb0d8ae37d548a9fa7613175469b9a5a974c9"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Insignia Explosion",
+      "skillId": 13130000,
+      "evidence": "https://aion2.gaming.tools/skills/13130000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_013.webp",
+      "resource": "Assets/SkillIcons/13130000.png",
+      "sha256": "4cfbf474207aff9f5f1d93cf0bd678f18ae811a1c755ce1aed700d08de4f940f"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Quick Slice",
+      "skillId": 13010000,
+      "evidence": "https://aion2.gaming.tools/skills/13010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_001.webp",
+      "resource": "Assets/SkillIcons/13010000.png",
+      "sha256": "3c570fb4a66bfbf69afb268ba8a10e0a4b64d8342c87a533af3ca9a857060fcc"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Savage Back Kick",
+      "skillId": 13110000,
+      "evidence": "https://aion2.gaming.tools/skills/13110000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_010.webp",
+      "resource": "Assets/SkillIcons/13110000.png",
+      "sha256": "71cefd699082241d542a913de0e3e046b4355e99a11eb0753f713eb26d972616"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Savage Roar",
+      "skillId": 13100000,
+      "evidence": "https://aion2.gaming.tools/skills/13100000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_009.webp",
+      "resource": "Assets/SkillIcons/13100000.png",
+      "sha256": "16d0ea80064feb70554d9a81947f2ec2ad20fb5ced2f901c3aa8e606ac6646d1"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Savage Smash",
+      "skillId": 13120000,
+      "evidence": "https://aion2.gaming.tools/skills/13120000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_011.webp",
+      "resource": "Assets/SkillIcons/13120000.png",
+      "sha256": "b357427320fb987fdca1b67a158d6e802ff3432b9bce1987500de3042ed9855c"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Swift Slice",
+      "skillId": 13040000,
+      "evidence": "https://aion2.gaming.tools/skills/13040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_004.webp",
+      "resource": "Assets/SkillIcons/13040000.png",
+      "sha256": "05930c73f7d85869a9a9d8792630c1b516a352c7eb1fe94d5dc7aaaca8d40a66"
+    },
+    {
+      "class": "Assassin",
+      "skill": "Shadowstrike",
+      "skillId": 13070000,
+      "evidence": "https://aion2.gaming.tools/skills/13070000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_as_skill_007.webp",
+      "resource": "Assets/SkillIcons/13070000.png",
+      "sha256": "82a0204388fdf7058d19c92c20b58a34aaa024ea95b957091ca123060474b760"
     }
   ]
 }

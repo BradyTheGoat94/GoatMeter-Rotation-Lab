@@ -29,6 +29,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
         new(AionClass.Cleric,"Divine Aura",30,"Global 1.0.21.0","current Global skill data; level-16 -10s cooldown specialization excluded"),
         new(AionClass.Cleric,"Bolt",45,"Global 1.0.21.0","AION 2 Global skill 17060000; Earths Retribution/Discharge cooldown reduction excluded"),
+        new(AionClass.Assassin,"Savage Fang",60,"Global 2.0.5.0","Global stigma skill 13270000; equipped loadout requires observed use"),
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
         new(AionClass.Assassin,"Shadowstrike",20,"Global 0.0.4387.0","current Global client extraction; 10s Critical Damage buff, positional safety remains player-controlled"),
         new(AionClass.Spiritmaster,"Summon: Ancient Spirit",90,"Global 1.0.21.0","current Global release skill 16250000; 30s summon duration, specialization effects excluded"),

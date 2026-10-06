@@ -1,5 +1,12 @@
 # Rotation Lab beta status
 
+## Assassin follow-up
+
+- Ten Assassin icons bring the embedded total to 30 across Templar, Chanter and Assassin.
+- Exploit Weakness is a Global passive effect, so it is no longer suggested as a skill to press.
+- Savage Fang requires observed local use proving the stigma loadout and its 60s base cooldown. Party casts and zone-reset history cannot grant readiness.
+- WPF checks exercise long skill names, both option icons and first-use guidance in every preset. The package includes ASSISTANT-PREVIEW.png.
+
 ## Live usability follow-up
 
 - Twenty embedded Templar/Chanter skill icons now appear on the next suggestion and each individual alternative. Other classes and unresolved names retain explicit fallbacks.

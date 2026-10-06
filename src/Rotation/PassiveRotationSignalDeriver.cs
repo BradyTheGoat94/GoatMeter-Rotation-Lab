@@ -83,6 +83,7 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Assassin)
         {
+            if(observed.LastSkillUse.ContainsKey("Savage Fang"))signals.Add("AssassinSavageFangKnownWindow");
             if(observed.PendingFollowUp("Quick Slice","Breaking Slice",now,3))signals.Add("AssassinBreakingSliceWindow");
             if(observed.PendingFollowUp("Breaking Slice","Swift Slice",now,3))signals.Add("AssassinSwiftSliceWindow");
             if(observed.PendingFollowUp("Savage Roar","Savage Back Kick",now,3))signals.Add("AssassinSavageBackKickWindow");

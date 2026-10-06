@@ -153,7 +153,32 @@ internal static class Program
   window.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting"));
   if(((Image)window.FindName("RotationSkillImage")).Source is not null || optionCards.Items.Count!=0 || ((TextBlock)window.FindName("RotationLearningHint")).Visibility!=Visibility.Collapsed)
    throw new Exception("Waiting state retained stale icons or learning guidance");
-  Console.WriteLine("PASS: all 20 embedded icons load; primary/alternatives/class switch/waiting lifecycle verified");
+  Console.WriteLine("PASS: all 30 embedded icons load; primary/alternatives/class switch/waiting lifecycle verified");
+
+
+  foreach(var iconStyle in new[]{"Classic Dashboard","Details Inspired","Kagerou Inspired","Bars Only","Raid Compact","Glass Cards","Tournament"})
+  {
+   Invoke("ApplyOverlayStyle",iconStyle);
+   window.RenderRotation(iconFixture with {Next=new SkillRecommendation("Empyrean Lord's Punishment",650,.25,false,new[]{"observed equipped stigma"}),
+    LearningHint="Readiness unknown: Punishment, Annihilate. Use only learned/equipped skills manually once. Pummel alone cannot open Judgment."});
+   window.UpdateLayout();
+   var panel=(FrameworkElement)window.FindName("RotationAssistant");
+   foreach(var name in new[]{"RotationSkillImage","RotationNextSkill","RotationOptionCards","RotationLearningHint"})
+   {
+    var child=(FrameworkElement)window.FindName(name);
+    var bounds=child.TransformToAncestor(panel).TransformBounds(new Rect(0,0,child.ActualWidth,child.ActualHeight));
+    if(!child.IsVisible||bounds.Bottom>panel.ActualHeight+.5||bounds.Right>panel.ActualWidth+.5)
+     throw new Exception(iconStyle+" clips icons/long skill name/guidance "+name);
+   }
+  }
+  Invoke("ApplyOverlayStyle","Classic Dashboard");
+  window.RenderRotation(iconFixture);window.UpdateLayout();
+  var assistantPreview=new System.Windows.Media.Imaging.RenderTargetBitmap((int)window.ActualWidth,(int)window.ActualHeight,96,96,PixelFormats.Pbgra32);
+  assistantPreview.Render(window);
+  var assistantEncoder=new System.Windows.Media.Imaging.PngBitmapEncoder();
+  assistantEncoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(assistantPreview));
+  using(var output=System.IO.File.Create("assistant-icons-preview.png"))assistantEncoder.Save(output);
+  Console.WriteLine("PASS: icons, long names and first-use guidance stay visible in every preset");
 
   var optionFixture=assistantFixture with {Alternatives=new[]{
    new SkillRecommendation("Option A",110,.94,true,new[]{"fixture"}),

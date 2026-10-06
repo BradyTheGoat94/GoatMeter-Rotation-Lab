@@ -30,6 +30,16 @@ public static class SkillIconCatalog
         new(AionClass.Chanter,"Wave Blow",18080000),
         new(AionClass.Chanter,"Heat Wave Blow",18150000),
         new(AionClass.Chanter,"Fracturing Blow",18130000),
+        new(AionClass.Assassin,"Savage Fang",13270000),
+        new(AionClass.Assassin,"Breaking Slice",13030000),
+        new(AionClass.Assassin,"Heart Gore",13350000),
+        new(AionClass.Assassin,"Insignia Explosion",13130000),
+        new(AionClass.Assassin,"Quick Slice",13010000),
+        new(AionClass.Assassin,"Savage Back Kick",13110000),
+        new(AionClass.Assassin,"Savage Roar",13100000),
+        new(AionClass.Assassin,"Savage Smash",13120000),
+        new(AionClass.Assassin,"Swift Slice",13040000),
+        new(AionClass.Assassin,"Shadowstrike",13070000),
     };
     public static IReadOnlyList<SkillIconIdentity> Entries => entries;
     public static SkillIconIdentity? Find(AionClass? className, string? skill) =>

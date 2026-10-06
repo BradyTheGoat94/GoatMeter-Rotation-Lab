@@ -1601,4 +1601,28 @@ var wrongClassObservation=stigmaIconObservation with {ClassName=AionClass.Templa
 True(!PassiveRotationSignalDeriver.Derive(wrongClassObservation,AionClass.Chanter,t.AddSeconds(45)).Contains("ChanterFracturingKnownWindow"),"wrong class cannot grant Chanter stigma");
 
 
+
+var assassinReviewProfile=RotationProfileCatalog.CreateProvisionalAssassinSingleTarget();
+True(assassinReviewProfile.Rules.All(r=>r.Skill!="Exploit Weakness"),"passive Exploit Weakness cannot be emitted as a button to press");
+RotationDecision AssassinReviewDecision(PassiveRotationObservation observation,DateTime utc)=>
+    rotationEngine.Evaluate(new RotationState(utc,AionClass.Assassin,assassinReviewProfile.BuildId,RotationMode.SingleTarget,
+        ValidatedCooldownCatalog.Remaining(observation,AionClass.Assassin,utc),observation.Buffs,observation.Debuffs,100,100,1,false,true,.95)
+        {Signals=PassiveRotationSignalDeriver.Derive(observation,AionClass.Assassin,utc)},assassinReviewProfile);
+bool HasReviewSkill(RotationDecision decision,string skill)=>decision.Next?.Skill==skill||decision.Alternatives.Any(o=>o.Skill==skill);
+var unknownFang=new PassiveRotationObservation(601,AionClass.Assassin,new Dictionary<string,DateTime>{{"Savage Roar",t}},new HashSet<string>(),new HashSet<string>());
+True(!HasReviewSkill(AssassinReviewDecision(unknownFang,t.AddSeconds(1)),"Savage Fang"),"unknown Savage Fang loadout cannot be filler");
+foreach(var elapsed in new[]{59d,60d})
+{
+    var observation=unknownFang with {LastSkillUse=new Dictionary<string,DateTime>{{"Savage Fang",t},{"Savage Roar",t.AddSeconds(55)}}};
+    True(HasReviewSkill(AssassinReviewDecision(observation,t.AddSeconds(elapsed)),"Savage Fang")== (elapsed>=60),"Savage Fang enforces complete observed 60s base cooldown");
+}
+var fangTracker=new PassiveRotationStateTracker();
+fangTracker.Observe(new(t,CombatKind.PlayerName,601,"Self",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
+fangTracker.Observe(new(t,CombatKind.Cast,602,"Party",699,"Target","Savage Fang",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t).Contains("AssassinSavageFangKnownWindow"),"party stigma cannot prove local loadout");
+fangTracker.Observe(new(t,CombatKind.Cast,601,"Self",699,"Target","Savage Fang",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
+True(PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(1)).Contains("AssassinSavageFangKnownWindow"),"exact local stigma use proves current session loadout");
+fangTracker.Observe(new(t.AddSeconds(2),CombatKind.ZoneReset,0,""));
+True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(61)).Contains("AssassinSavageFangKnownWindow"),"zone reset invalidates equipped stigma observation");
+
 Console.WriteLine($"PASS: {checks} regression assertions");
