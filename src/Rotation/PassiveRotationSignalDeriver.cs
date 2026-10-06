@@ -98,14 +98,21 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Cleric)
         {
-            // Condemnation itself requires Chain of Torment on the target.
-            if(observed.UsedRecently("Chain of Torment",now,10))
+            // Base Chain of Torment lasts 10s. A directly observed debuff remains
+            // authoritative beyond that window (for example a specialization extension),
+            // but the +3s specialization is never inferred from the cast alone.
+            if(observed.Debuffs.Contains("Chain of Torment") || observed.UsedRecently("Chain of Torment",now,10))
                 signals.Add("ClericCondemnationWindow");
 
-            // Earth's Punishment is a separate, directly observable target state.
-            // It materially changes the Condemnation loop in current Global builds,
-            // but specialty-dependent guaranteed-crit/reset behavior is not inferred here.
-            if(observed.Debuffs.Contains("Earth Punishment"))
+            // Earth Punishment is a stigma, so only recommend future casts after this
+            // loadout has been proven by an observed local use in the current zone/session.
+            if(observed.LastSkillUse.ContainsKey("Earth Punishment"))
+                signals.Add("ClericEarthPunishmentKnownWindow");
+
+            // Base Earth Punishment lasts 10s. Preserve that state from an observed
+            // local cast when a separate debuff event is unavailable. A longer directly
+            // observed debuff is honored, but the +10s specialization is not inferred.
+            if(observed.Debuffs.Contains("Earth Punishment") || observed.UsedRecently("Earth Punishment",now,10))
                 signals.Add("ClericEarthPunishmentWindow");
         }
         if(observedClass==AionClass.Chanter)
