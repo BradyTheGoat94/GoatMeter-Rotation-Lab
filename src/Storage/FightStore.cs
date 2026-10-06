@@ -8,7 +8,7 @@ public sealed class FightStore
     private readonly string folder;
     public FightStore(string? folder = null)
     {
-        this.folder = folder ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aion2DPSPro", "History");
+        this.folder = folder ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GoatMeterRotationLab", "History");
         Directory.CreateDirectory(this.folder);
     }
     public async Task SaveAsync(MeterSnapshot snapshot)

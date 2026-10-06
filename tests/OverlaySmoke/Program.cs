@@ -13,6 +13,11 @@ internal static class Program
  {
   var app=new Application {ShutdownMode=ShutdownMode.OnExplicitShutdown};
   var window=new OverlayWindow();
+  var preferencePath=(string)typeof(OverlayWindow).GetProperty("PreferencesPath",BindingFlags.NonPublic|BindingFlags.Static)!.GetValue(null)!;
+  var expectedLabRoot=System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"GoatMeterRotationLab");
+  if(!preferencePath.StartsWith(expectedLabRoot+System.IO.Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
+   throw new Exception("Lab overlay settings must be isolated from production");
+  Console.WriteLine("PASS: lab preferences use an isolated data directory");
   void Invoke(string name,string value)=>typeof(OverlayWindow).GetMethod(name,BindingFlags.NonPublic|BindingFlags.Instance)!.Invoke(window,new object[]{value});
   string? previous=null;
   foreach(var theme in new[]{"Aion Blue/Red","Neon Spectrum","Void Purple","Emerald Glass","Solar Flare","Ice Crystal"})

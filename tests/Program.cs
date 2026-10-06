@@ -1188,4 +1188,23 @@ True(consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.5)),
 consumedJudgmentTracker.Observe(new(t.AddSeconds(3),CombatKind.Zone));
 True(!consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),"zone reset clears consumed and rearmed chain state");
 
+
+var labHistoryStore=new FightStore();
+var labHistoryFolder=(string)typeof(FightStore).GetField("folder",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance)!.GetValue(labHistoryStore)!;
+True(labHistoryFolder==System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"GoatMeterRotationLab","History"),
+    "default lab history must never use production data folder");
+foreach(var resetClass in Enum.GetValues<AionClass>())
+{
+    var resetTracker=new PassiveRotationStateTracker();
+    resetTracker.Observe(new(t,CombatKind.PlayerName,801,"Local",SourceClass:resetClass.ToString(),SourceIdentityConfirmed:true));
+    resetTracker.Observe(new(t,CombatKind.Cast,801,"Local",99,"Boss","Known Skill"));
+    resetTracker.Observe(new(t,CombatKind.BuffApply,801,"Local",801,"Local",Effect:"Known Buff"));
+    resetTracker.Observe(new(t,CombatKind.DebuffApply,801,"Local",99,"Boss",Effect:"Known Debuff"));
+    resetTracker.Observe(new(t.AddSeconds(1),CombatKind.Zone));
+    var cleared=resetTracker.Snapshot();
+    True(cleared.PlayerId==0&&cleared.ClassName is null&&cleared.LastSkillUse.Count==0&&cleared.Buffs.Count==0&&cleared.Debuffs.Count==0,
+        $"{resetClass} reconnect clears passive identity, skill, buff and target state");
+    True(PassiveRotationSignalDeriver.Derive(cleared,resetClass,t.AddSeconds(1)).All(signal=>signal=="SpiritmasterCorrodeMissingWindow"),
+        $"{resetClass} reconnect cannot retain actionable rotation windows");
+}
 Console.WriteLine($"PASS: {checks} regression assertions");

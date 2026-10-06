@@ -36,7 +36,7 @@ public partial class MainWindow : Window
         ProtocolProfile profile;
         try {profile=ProtocolProfile.Load(path);} catch {profile=ProtocolProfile.SafeGlobalScaffold();}
         var decoder=new CurrentClientDecoder(profile); profileId=decoder.ProfileId;
-        var validationDir=System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"Aion2DPSPro","Validation");
+        var validationDir=System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"GoatMeterRotationLab","Validation");
         System.IO.Directory.CreateDirectory(validationDir);
         validationPath=System.IO.Path.Combine(validationDir,$"combat-{DateTime.Now:yyyyMMdd-HHmmss}.log");
         int verboseValidationCount=0;
@@ -73,7 +73,12 @@ public partial class MainWindow : Window
         capture.PacketCaptured += ()=>Interlocked.Increment(ref packets);
         capture.DuplicateSuppressed += ()=>Interlocked.Increment(ref duplicates);
         capture.FlowLocked += s=> {lock(diagnosticsGate)activeFlow=s;};
-        capture.ConnectionReset += ()=>engine.Apply(new(DateTime.UtcNow,CombatKind.Zone));
+        capture.ConnectionReset += ()=>
+        {
+            var resetEvent=new CombatEvent(DateTime.UtcNow,CombatKind.Zone);
+            engine.Apply(resetEvent);
+            rotationTracker.Observe(resetEvent);
+        };
         capture.StatusChanged += s=> {lock(diagnosticsGate)captureStatus=s;};
         capture.EventReceived += e=>
         {
