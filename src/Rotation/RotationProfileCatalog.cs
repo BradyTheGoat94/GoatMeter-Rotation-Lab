@@ -194,7 +194,8 @@ public static class RotationProfileCatalog
                 }),
                 new RotationRule("Jointstrike: Corrode",700,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeWindow",Reason:"apply the current-Global Corrode target state after observed Ancient Spirit setup"),
-                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeMissingWindow",Reason:"do not reapply while the proven base 20s Corrode window remains active")
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterCorrodeMissingWindow",Reason:"do not reapply while the proven base 20s Corrode window remains active"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Jointstrike: Corrode",Reason:"validated 45s current-Global base cooldown is ready; cooldown reduction is not inferred")
                 }),
                 new RotationRule("Elemental Fusion",650,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterBurstWindow",Reason:"fire Elemental Fusion when its proc/state is available")}),
                 new RotationRule("Dimensional Control",625,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDimensionalControlWindow",Reason:"consume the brief observed post-summon activation before returning to filler")}),
