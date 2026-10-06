@@ -8,6 +8,8 @@ on:
       - "src/**"
       - "tests/**"
       - ".github/workflows/build-lab.yml"
+      - "docs/beta-*.md"
+      - "installer/**"
   pull_request:
     branches: [main]
 
@@ -31,6 +33,18 @@ jobs:
         run: dotnet run --project tests/OverlaySmoke/OverlaySmoke.csproj -c Release
       - name: Publish isolated Windows x64 lab build
         run: dotnet publish src/Aion2DPSPro.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+      - name: Package beta guide and build identity
+        shell: pwsh
+        run: |
+          Copy-Item -LiteralPath docs/beta-testing.md -Destination publish/BETA-TESTING.md
+          Copy-Item -LiteralPath docs/beta-status.md -Destination publish/BETA-STATUS.md
+          @(
+            "Repository: $env:GITHUB_REPOSITORY"
+            "Commit: $env:GITHUB_SHA"
+            "Run: $env:GITHUB_RUN_ID"
+            "Data directory: %LOCALAPPDATA%\\GoatMeterRotationLab"
+            "Rotation profiles: provisional; informational only"
+          ) | Set-Content -LiteralPath publish/BUILD-INFO.txt
       - name: Upload lab artifact only
         uses: actions/upload-artifact@v4
         with:

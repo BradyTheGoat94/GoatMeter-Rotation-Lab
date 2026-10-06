@@ -123,14 +123,14 @@ public partial class MainWindow : Window
                     AionClass.Chanter=>RotationProfileCatalog.CreateProvisionalChanterSingleTarget(),
                     _=>rotationProfiles.First(p=>p.ClassName==observedClass)
                 };
-                var matchingTarget=s.Target is not null && observed.TargetId!=0 && s.Target.EntityId==observed.TargetId;
-                var targetHp=matchingTarget?s.Target!.Percent:100;
+                var matchingTarget=observed.Target is not null && observed.TargetId!=0 && observed.Target.EntityId==observed.TargetId;
+                var targetHp=matchingTarget?observed.Target!.Percent:100;
                 var now=DateTime.UtcNow;
                 var cooldowns=ValidatedCooldownCatalog.Remaining(observed,observedClass,now);
                 var signals=PassiveRotationSignalDeriver.Derive(observed,observedClass,now);
                 var state=new RotationState(now,observedClass,profile.BuildId,profile.Mode,
                     cooldowns,observed.Buffs,observed.Debuffs,0,targetHp,1,false,
-                    matchingTarget && (s.Target!.MaxHp<=0 || s.Target.CurrentHp>0),0.25)
+                    matchingTarget && observed.Target!.CurrentHp>0,0.25)
                     {Signals=signals};
                 var decision=rotationEngine.Evaluate(state,profile);
                 var readiness=cooldowns.Count==0

@@ -1301,4 +1301,20 @@ recipientTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,1201,"Self",Skill:"
 True(recipientTracker.Snapshot().LastSkillUse["Wish of Concentration"]==t.AddSeconds(3),"late skill events cannot roll back observed cooldown timestamps");
 recipientTracker.Observe(new(t.AddSeconds(4),CombatKind.Despawn,1201,"Self"));
 True(recipientTracker.Snapshot().PlayerId==0,"local entity removal clears rotation identity");
+
+var hpScopeTracker=new PassiveRotationStateTracker();
+hpScopeTracker.Observe(new(t,CombatKind.PlayerName,1301,"Self",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
+hpScopeTracker.Observe(new(t,CombatKind.Damage,1301,"Self",1401,"My target","Pummel",100));
+hpScopeTracker.Observe(new(t,CombatKind.TargetHp,TargetId:1401,Target:"My target",CurrentHp:500,MaxHp:1000));
+True(hpScopeTracker.Snapshot().Target?.EntityId==1401&&hpScopeTracker.Snapshot().Target?.Percent==50,
+    "rotation HP belongs to the exact observed local target");
+hpScopeTracker.Observe(new(t.AddSeconds(1),CombatKind.TargetHp,TargetId:1402,Target:"Party target",CurrentHp:1,MaxHp:1000));
+True(hpScopeTracker.Snapshot().Target?.EntityId==1401&&hpScopeTracker.Snapshot().Target?.Percent==50,
+    "party target HP updates cannot replace local target HP");
+hpScopeTracker.Observe(new(t.AddSeconds(2),CombatKind.TargetHp,TargetId:1401,Target:"My target",CurrentHp:0,MaxHp:1000));
+True(hpScopeTracker.Snapshot().Target?.CurrentHp==0,"observed target death HP remains zero for the recommendation gate");
+hpScopeTracker.Observe(new(t.AddSeconds(3),CombatKind.Damage,1301,"Self",1403,"New target","Pummel",100));
+True(hpScopeTracker.Snapshot().Target is null,"new local target waits for its own HP evidence");
+hpScopeTracker.Observe(new(t.AddSeconds(4),CombatKind.Zone));
+True(hpScopeTracker.Snapshot().TargetId==0&&hpScopeTracker.Snapshot().Target is null,"zone reset clears exact target HP");
 Console.WriteLine($"PASS: {checks} regression assertions");

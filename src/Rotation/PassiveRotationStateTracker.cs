@@ -13,6 +13,7 @@ public sealed class PassiveRotationStateTracker
     readonly HashSet<string> debuffs=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetSkillUse=new(StringComparer.OrdinalIgnoreCase);
     readonly Dictionary<string,DateTime> targetEffectRemovals=new(StringComparer.OrdinalIgnoreCase);
+    TargetStats? target;
     long targetId;
     DateTime lastTargetActionUtc=DateTime.MinValue;
     long playerId;
@@ -63,6 +64,8 @@ public sealed class PassiveRotationStateTracker
                     targetEffectRemovals[e.Effect]=e.Utc;
                 }
             }
+            if(e.Kind==CombatKind.TargetHp && e.TargetId==targetId && targetId!=0 && e.MaxHp>0)
+                target=new(e.Target,e.CurrentHp,e.MaxHp,Math.Clamp(e.CurrentHp*100.0/e.MaxHp,0,100),0) {EntityId=targetId};
             if(e.SourceId!=playerId)return;
             if(e.Kind is CombatKind.Damage or CombatKind.Heal or CombatKind.Cast)
                 if(!string.IsNullOrWhiteSpace(e.Skill))
@@ -99,6 +102,7 @@ public sealed class PassiveRotationStateTracker
             judgmentWindowUntil,judgmentTrigger,criticalHitWindowUntil)
             {
                 TargetId=targetId,
+                Target=target,
                 TargetSkillUse=new Dictionary<string,DateTime>(targetSkillUse,StringComparer.OrdinalIgnoreCase),
                 TargetEffectRemovals=new Dictionary<string,DateTime>(targetEffectRemovals,StringComparer.OrdinalIgnoreCase)
             };
@@ -114,7 +118,7 @@ public sealed class PassiveRotationStateTracker
 
     void ClearTarget()
     {
-        targetId=0;lastTargetActionUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();debuffs.Clear();
+        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();debuffs.Clear();
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
@@ -132,6 +136,7 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
     DateTime? JudgmentWindowUntil=null,string JudgmentTrigger="",DateTime? CriticalHitWindowUntil=null)
 {
     public long TargetId {get;init;}
+    public TargetStats? Target {get;init;}
     // Null supports standalone fixtures with explicitly supplied current-target
     // history. Live snapshots always supply a separate target-scoped dictionary.
     public IReadOnlyDictionary<string,DateTime>? TargetSkillUse {get;init;}

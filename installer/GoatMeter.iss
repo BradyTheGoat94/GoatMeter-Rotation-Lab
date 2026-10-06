@@ -1,16 +1,16 @@
 #define AppVersion GetEnv('GOATMETER_VERSION')
 [Setup]
-AppId={{A9EC39C0-6BCB-466B-92CE-E004CF7688BC}
-AppName=GoatMeter
+AppId={{42A95BCA-5E13-4DBE-96C5-3C420B0D0875}
+AppName=GoatMeter Rotation Lab
 AppVersion={#AppVersion}
 AppPublisher=GoatMeter
-DefaultDirName={localappdata}\Programs\GoatMeter
-DefaultGroupName=GoatMeter
+DefaultDirName={localappdata}\Programs\GoatMeter-Rotation-Lab
+DefaultGroupName=GoatMeter Rotation Lab
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=..\dist
-OutputBaseFilename=GoatMeter-Setup
+OutputBaseFilename=GoatMeter-Rotation-Lab-Setup
 SetupIconFile=..\src\Assets\Brand\GoatHead.ico
 UninstallDisplayIcon={app}\GoatMeter.exe
 Compression=lzma2
@@ -21,10 +21,10 @@ Name: desktopicon; Description: "Create a desktop shortcut"; Flags: unchecked
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
-Name: "{group}\GoatMeter"; Filename: "{app}\GoatMeter.exe"
-Name: "{autodesktop}\GoatMeter"; Filename: "{app}\GoatMeter.exe"; Tasks: desktopicon
+Name: "{group}\GoatMeter Rotation Lab"; Filename: "{app}\GoatMeter.exe"
+Name: "{autodesktop}\GoatMeter Rotation Lab"; Filename: "{app}\GoatMeter.exe"; Tasks: desktopicon
 [Run]
-Filename: "{app}\GoatMeter.exe"; Description: "Launch GoatMeter"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\GoatMeter.exe"; Description: "Launch GoatMeter Rotation Lab"; Flags: nowait postinstall skipifsilent
 [Code]
 function HasNpcap: Boolean;
 begin
