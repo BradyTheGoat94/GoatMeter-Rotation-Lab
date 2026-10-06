@@ -162,17 +162,11 @@ public static class PassiveRotationSignalDeriver
             // target status can open this path; generic Chanter activity cannot.
             if(observed.Debuffs.Contains("Stun"))
                 signals.Add("ChanterWaveBlowWindow");
-            // Current Global changed Dark Crush to activate after using a ranged skill.
-            // Spinning Strike and Impactful Crush are both observed base-kit ranged
-            // openers for the short Dark Crush window. Stigma-only ranged triggers
-            // remain excluded until the equipped loadout can be observed.
-            // Current Global Dark Crush activates after use of a ranged skill.
-            // These are named, documented ranged setup skills in the current PvE loop;
-            // do not infer activation from generic combat or melee activity.
-            // Current Global capture evidence currently proves Impactful Crush as the
-            // passive Dark Crush trigger. Do not broaden this to other ranged attacks
-            // until their activation relationship is directly corroborated.
-            if(observed.UsedRecently("Impactful Crush",now,3))
+            // Global 2.0.5.0 skill data explicitly grants a 2s Dark Crush
+            // opportunity from these two base skills. Other ranged actions,
+            // specialties and cooldown removal remain unproven.
+            if(observed.UsedRecently("Impactful Crush",now,2)
+                || observed.UsedRecently("Spinning Strike",now,2))
                 signals.Add("ChanterDarkCrushWindow");
             if(observed.PendingFollowUp("Onslaught","Resonance Crush",now,3))
                 signals.Add("ChanterResonanceCrushWindow");

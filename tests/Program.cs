@@ -304,13 +304,13 @@ True(!PassiveRotationSignalDeriver.Derive(wrathfulSignalObservation,AionClass.Gl
 True(!wrongClassSignals.Contains("GladiatorSmashingWindow"),"passive sequence signals remain isolated to the observed class");
 var chanterSignalObservation=new PassiveRotationObservation(88,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
-True(PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(2.9)).Contains("ChanterDarkCrushWindow"),"Impactful Crush opens observed Chanter Dark Crush window");
-True(!PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window expires after 3s");
+True(PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(1.9)).Contains("ChanterDarkCrushWindow"),"Impactful Crush opens observed Chanter Dark Crush window");
+True(!PassiveRotationSignalDeriver.Derive(chanterSignalObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window remains closed beyond its two-second base duration");
 var chanterGlobalSetupObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Spinning Strike",t}},
     new HashSet<string>(),new HashSet<string>());
-True(!PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(2.9)).Contains("ChanterDarkCrushWindow"),
-    "current Global Spinning Strike does not create Dark Crush state without corroborated activation evidence");
+True(PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(1.9)).Contains("ChanterDarkCrushWindow"),
+    "current Global Spinning Strike opens the documented two-second Dark Crush window");
 True(!PassiveRotationSignalDeriver.Derive(chanterGlobalSetupObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),
     "unsupported Chanter Dark Crush setup remains fail-closed outside the reaction window");
 var chanterMeleeOnlyObservation=new PassiveRotationObservation(90,AionClass.Chanter,
@@ -1085,12 +1085,12 @@ var chanterNoStunSignals=PassiveRotationSignalDeriver.Derive(chanterStunObservat
 True(!chanterNoStunSignals.Contains("ChanterWaveBlowWindow"),"Chanter Wave Blow fails closed without observed target Stun");
 var chanterImpactObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Impactful Crush",t}},new HashSet<string>(),new HashSet<string>());
-var chanterImpactSignals=PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(2.9));
+var chanterImpactSignals=PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(1.9));
 True(chanterImpactSignals.Contains("ChanterDarkCrushWindow"),"observed Impactful Crush opens evidence-backed Dark Crush window");
-True(!PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window expires after 3s");
+True(!PassiveRotationSignalDeriver.Derive(chanterImpactObservation,AionClass.Chanter,t.AddSeconds(3.1)).Contains("ChanterDarkCrushWindow"),"Chanter Dark Crush window remains closed beyond its two-second base duration");
 var chanterSpinningObservation=new PassiveRotationObservation(89,AionClass.Chanter,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Spinning Strike",t}},new HashSet<string>(),new HashSet<string>());
-True(!PassiveRotationSignalDeriver.Derive(chanterSpinningObservation,AionClass.Chanter,t.AddSeconds(2)).Contains("ChanterDarkCrushWindow"),"Spinning Strike does not invent Dark Crush state without current Global corroboration");
+True(PassiveRotationSignalDeriver.Derive(chanterSpinningObservation,AionClass.Chanter,t.AddSeconds(2)).Contains("ChanterDarkCrushWindow"),"Spinning Strike grants Dark Crush through the documented base window");
 var chanterImpactDarkReady=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Chanter,"global-chanter-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Dark Crush",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=chanterImpactSignals},chanterProvisional);
@@ -1513,5 +1513,41 @@ foreach(var fireHitSkill in new[]{"Flame Arrow","Burst","Pyroclasm","Flame Harpo
     fireHitTracker.Observe(new(t.AddSeconds(7),CombatKind.Damage,3001,"Self",3201,"Other target","Ice Chain",100));
     True(!PassiveRotationSignalDeriver.Derive(fireHitTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(7)).Contains("SorcererFireMarkWindow"),
         $"{fireHitSkill} landed history stays scoped to its target");
+}
+// Exact selfInfo class outranks conflicting later combat/party class labels.
+foreach(var authoritativeClass in Enum.GetValues<AionClass>())
+{
+    var authoritativeBridge=new Aion2DPSPro.Capture.CaptureIdentityBridge();
+    var conflictingClass=Enum.GetValues<AionClass>().First(c=>c!=authoritativeClass);
+    authoritativeBridge.Observe("test-scope",new(t,CombatKind.PlayerName,3301,"Self",SourceClass:authoritativeClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    var authoritativeTracker=new PassiveRotationStateTracker();
+    authoritativeTracker.Observe(authoritativeBridge.Identities("test-scope",t).Single());
+    authoritativeTracker.Observe(new(t,CombatKind.Cast,3301,"Self",3401,"Target","Observed action"));
+    authoritativeBridge.Observe("test-scope",new(t.AddSeconds(1),CombatKind.PlayerName,3301,"Self",SourceClass:conflictingClass.ToString(),SourceIdentityConfirmed:true));
+    var resolvedConflict=authoritativeBridge.Resolve("test-scope",new(t.AddSeconds(1),CombatKind.Damage,3301,"Self",3401,"Target","Later action",100,SourceClass:conflictingClass.ToString()));
+    authoritativeTracker.Observe(resolvedConflict);
+    True(resolvedConflict.SourceClass==authoritativeClass.ToString()&&resolvedConflict.SourceIsLocal,
+        $"{authoritativeClass} selfInfo class survives conflicting combat and non-local identity labels");
+    True(authoritativeTracker.Snapshot().LastSkillUse.ContainsKey("Observed action"),
+        $"{authoritativeClass} conflicting class label cannot reset local cooldown/skill history");
+    authoritativeBridge.Observe("test-scope",new(t.AddSeconds(2),CombatKind.PlayerName,3301,"Self",SourceClass:conflictingClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    authoritativeTracker.Observe(authoritativeBridge.Identities("test-scope",t.AddSeconds(2)).Single());
+    True(authoritativeTracker.Snapshot().ClassName==conflictingClass&&!authoritativeTracker.Snapshot().LastSkillUse.ContainsKey("Observed action"),
+        $"{authoritativeClass} fresh selfInfo can prove a class change and invalidate history");
+}
+foreach(var darkOpener in new[]{"Impactful Crush","Spinning Strike"})
+{
+    var darkObservation=new PassiveRotationObservation(3501,AionClass.Chanter,
+        new Dictionary<string,DateTime>{{darkOpener,t}},new HashSet<string>(),new HashSet<string>());
+    True(!PassiveRotationSignalDeriver.Derive(darkObservation,AionClass.Chanter,t.AddMilliseconds(-1)).Contains("ChanterDarkCrushWindow"),
+        $"{darkOpener} future event does not grant Dark Crush");
+    True(!PassiveRotationSignalDeriver.Derive(darkObservation,AionClass.Chanter,t.AddSeconds(2.01)).Contains("ChanterDarkCrushWindow"),
+        $"{darkOpener} old three-second estimate cannot extend current Global two-second availability");
+    var darkCooldowns=new Dictionary<string,double>{{"Dark Crush",1}};
+    var darkDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(1),AionClass.Chanter,chanterProvisional.BuildId,RotationMode.SingleTarget,
+        darkCooldowns,darkObservation.Buffs,darkObservation.Debuffs,100,100,1,false,true,.95)
+        {Signals=PassiveRotationSignalDeriver.Derive(darkObservation,AionClass.Chanter,t.AddSeconds(1))},chanterProvisional);
+    True(darkDecision.Next?.Skill!="Dark Crush"&&darkDecision.Alternatives.All(o=>o.Skill!="Dark Crush"),
+        $"{darkOpener} availability cannot bypass an observed recovering base cooldown");
 }
 Console.WriteLine($"PASS: {checks} regression assertions");

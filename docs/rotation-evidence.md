@@ -14,8 +14,8 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Ranger
 - Confirmed Global captures observe Tempest Shot, Concentrated Fire, Drill Dart, Griffon Arrow and Hunter's Soul.
-- This live naming/evidence set does not currently align cleanly with the provisional Ranger profile centered on Marking Shot, Deadshot, Snipe, Rupture Arrow and Destruction Trap.
-- Until names/mechanics are reconciled against current Global references, do not promote the Ranger profile to validated and do not derive speculative chain signals from these captures.
+- The October 5 full-log review also observes Marking Shot, Deadshot, Snipe, Rapid Fire and Spiral Arrow in confirmed-class Ranger records. Both vocabulary sets coexist; do not alias Tempest Shot or Concentrated Fire to a different skill.
+- Skill occurrence does not prove Precision state, charge level, priority quality or readiness. Ranger remains provisional; no new inferred Precision/charge signal is added.
 
 ### Cleric
 - Confirmed Global captures directly observe Earth Punishment, Divine Aura, Chain of Torment, Condemnation, Judgment Thunder and Earth's Retribution.
@@ -52,7 +52,9 @@ This file records sanitized observations used to challenge or corroborate provis
 ### Chanter
 - Confirmed Global captures directly observe Rushing Smash, Bursting Blow, Fracturing Blow, Incandescent Blow, Onslaught and Impactful Crush.
 - Repeated sequences include Incandescent Blow followed by Onslaught and Bursting Blow, but repetition alone does not prove a mandatory chain. Keep these as sustained priority skills unless current Global mechanics corroborate a deterministic transition.
-- Impactful Crush remains the evidence-backed passive trigger for the short Dark Crush opportunity.
+- Current Global client-derived skill data version 2.0.5.0 (checked October 5) explicitly grants Dark Crush for **2s** after Impactful Crush (18060000) or Spinning Strike (18290000). This supersedes the older three-second estimate. Dark Crush retains its 5s base cooldown; cooldown-removal specialty is excluded.
+- Sources: https://aion2.gaming.tools/skills/18060000 and https://aion2.gaming.tools/skills/18290000 ; cooldown https://aion2.gaming.tools/skills/18100000 .
+- October 5 confirmed-class damage records include both setup/follow-up pairs, but they are observational corroboration, not direct proc decoding or proof of optimal ordering. Other ranged triggers remain excluded.
 
 ## Evidence policy
 - Captures are observational evidence, not proof of optimal rotation.

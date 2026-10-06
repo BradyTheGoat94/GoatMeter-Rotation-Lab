@@ -35,7 +35,8 @@ public sealed class CaptureIdentityBridge
             // exact selfInfo binding for this same entity and capture scope.
             if(names.TryGetValue((keyScope,e.SourceId),out var previous) && previous.Event.SourceIsLocal)
                 e=e with {SourceIsLocal=true,SourceIdentityConfirmed=true,
-                    SourceClass=e.SourceClass=="Unknown"?previous.Event.SourceClass:e.SourceClass};
+                    SourceClass=previous.Event.SourceClass!="Unknown" && !(e.SourceIsLocal && e.SourceIdentityConfirmed)
+                        ?previous.Event.SourceClass:e.SourceClass=="Unknown"?previous.Event.SourceClass:e.SourceClass};
             names[(keyScope,e.SourceId)]=new(e,e.Utc);
             if(names.Count>4096)names.Remove(names.MinBy(x=>x.Value.Seen).Key);
             return;
@@ -78,7 +79,7 @@ public sealed class CaptureIdentityBridge
         // selfInfo is the local-player evidence. A resolved party name is not.
         if(e.SourceId!=0 && names.TryGetValue((keyScope,e.SourceId),out var local) && local.Event.SourceIsLocal)
             e=e with {SourceIsLocal=true,SourceIdentityConfirmed=true,
-                SourceClass=e.SourceClass=="Unknown"?local.Event.SourceClass:e.SourceClass};
+                SourceClass=local.Event.SourceClass!="Unknown"?local.Event.SourceClass:e.SourceClass};
         return e;
     }
     private void Prune(DateTime utc)

@@ -15,6 +15,8 @@ Settings, fight history, and validation logs are stored under `%LOCALAPPDATA%\Go
 ## Focused checks
 
 - **Solo:** Confirm your class and entity remain the rotation actor. Use each supported opener and follow-up once. The used follow-up must stop being recommended from that same opener.
+- **Chanter:** Test Impactful Crush and Spinning Strike separately. Each opens Dark Crush for two seconds, only when its observed base cooldown is ready. Generic ranged activity must not open the window.
+- **Identity refresh:** Later conflicting combat class labels must not switch the local profile. Fresh confirmed selfInfo proving a new class must reset prior history.
 - **Party:** A party member joining, casting, or changing targets must not replace your local rotation identity or inject their skill history.
 - **Two targets:** Apply Chain of Torment / Earth Punishment / Corrode / Fire Mark to target A, then attack B. A's reconstructed effects must not enable B's recommendations. Player cooldowns should continue counting down.
 - **Effects:** If an explicit effect-removal event is decoded, the predicted base duration must not resurrect that removed effect. A fresh proven application may re-enable it.

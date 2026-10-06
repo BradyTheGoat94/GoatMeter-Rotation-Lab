@@ -3,6 +3,8 @@
 ## Improvements in this development run
 
 - One observed opener now grants one pending continuation across 18 existing short chains in six class profiles; an observed Judgment consumes its shield opportunity.
+- Exact known selfInfo class takes precedence over conflicting later combat/non-local identity class labels; fresh confirmed selfInfo may prove a class change and reset history.
+- Chanter Dark Crush now supports observed Spinning Strike and Impactful Crush using the current Global two-second availability window; base cooldown remains enforced.
 - All eight classes bind rotation state to explicit selfInfo local-player proof. Confirmed party names do not prove local identity.
 - Capture reconnect, zone reset, self despawn, and local-entity changes invalidate previous rotation state.
 - Sorcerer Fire Mark reconstruction requires observed positive target damage; cast attempts cannot create or extend a landed-hit mark.
@@ -28,11 +30,13 @@ The prior project's planning estimates are retained only for checkpoint continui
 | Templar | ~93% | Not measured | Four short chain continuations; Judgment consumption; self and target lifecycle |
 | Gladiator | ~81% | Not measured | Five short chain continuations; identity and cooldown preservation |
 | Assassin | ~87% | Not measured | Four short chain continuations; party exclusion; hidden Insignia/position state still unavailable |
-| Ranger | ~84% | Not measured | Two short chain continuations; party exclusion; vocabulary/Precision coverage remains provisional |
+| Ranger | ~84% | Not measured | Two short chain continuations; party exclusion; both Ranger vocabulary sets observed, Precision/charge state still unproven |
 | Sorcerer | ~84% | Not measured | Cold Wave consumption; Fire Mark target scope and explicit removal |
 | Spiritmaster | ~83% | Not measured | Corrode target scope/removal; player cooldown history survives switches |
 | Cleric | ~80% | Not measured | Chain of Torment and Earth Punishment target scope/removal; recipient-aware buffs |
-| Chanter | ~82% | Not measured | Two short chain continuations; uncorroborated Dark Crush triggers remain excluded |
+| Chanter | ~82% | Not measured | Two short chain continuations; two documented Dark Crush openers and two-second expiry |
+
+The October 5 full-log review improves evidence breadth but contains class-attribution anomalies. SelfInfo precedence is a bounded software fix; it does not establish the cause of every party/summon class mismatch or validate all eight profiles.
 
 ## Outstanding gameplay validation
 
