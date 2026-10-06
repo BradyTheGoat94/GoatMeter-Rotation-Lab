@@ -38,12 +38,12 @@ public static class PassiveRotationSignalDeriver
         {
             // Current Global main attack chain. Each continuation requires the
             // immediately preceding cast to be observed; no chain state is guessed.
-            if(observed.UsedRecently("Vicious Strike",now,3))signals.Add("TemplarDecisiveStrikeWindow");
-            if(observed.UsedRecently("Decisive Strike",now,3))signals.Add("TemplarDesperateStrikeWindow");
-            if(observed.UsedRecently("Desperate Strike",now,3))signals.Add("TemplarThreateningBlowWindow");
+            if(observed.PendingFollowUp("Vicious Strike","Decisive Strike",now,3))signals.Add("TemplarDecisiveStrikeWindow");
+            if(observed.PendingFollowUp("Decisive Strike","Desperate Strike",now,3))signals.Add("TemplarDesperateStrikeWindow");
+            if(observed.PendingFollowUp("Desperate Strike","Threatening Blow",now,3))signals.Add("TemplarThreateningBlowWindow");
 
             // Pummel has a guaranteed Punishing Strike chain activation for 3s.
-            if(observed.UsedRecently("Pummel",now,3))
+            if(observed.PendingFollowUp("Pummel","Punishing Strike",now,3))
                 signals.Add("TemplarPunishingStrikeWindow");
 
             // Empyrean Lord's Punishment is a stigma. Recommend later uses only
@@ -63,12 +63,12 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Gladiator)
         {
-            if(observed.UsedRecently("Rending Blow",now,3))signals.Add("GladiatorSmashingWindow");
-            if(observed.UsedRecently("Keen Strike",now,3))signals.Add("GladiatorRuptureWindow");
-            if(observed.UsedRecently("Rupture Strike",now,3))signals.Add("GladiatorWrathfulWindow");
+            if(observed.PendingFollowUp("Rending Blow","Smashing Blow",now,3))signals.Add("GladiatorSmashingWindow");
+            if(observed.PendingFollowUp("Keen Strike","Rupture Strike",now,3))signals.Add("GladiatorRuptureWindow");
+            if(observed.PendingFollowUp("Rupture Strike","Wrathful Strike",now,3))signals.Add("GladiatorWrathfulWindow");
             if(observed.UsedRecently("Rage Burst",now,10))signals.Add("GladiatorOverheadWindow");
-            if(observed.UsedRecently("Overhead Slam",now,3))signals.Add("GladiatorUpwardStrikeWindow");
-            if(observed.UsedRecently("Crushing Wave",now,3))signals.Add("GladiatorFrenziedWaveWindow");
+            if(observed.PendingFollowUp("Overhead Slam","Upward Strike",now,3))signals.Add("GladiatorUpwardStrikeWindow");
+            if(observed.PendingFollowUp("Crushing Wave","Frenzied Wave",now,3))signals.Add("GladiatorFrenziedWaveWindow");
 
             // Rage Burst is a loadout-dependent stigma. Recommend later uses only
             // after the current zone/session has directly observed it once.
@@ -82,10 +82,10 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Assassin)
         {
-            if(observed.UsedRecently("Quick Slice",now,3))signals.Add("AssassinBreakingSliceWindow");
-            if(observed.UsedRecently("Breaking Slice",now,3))signals.Add("AssassinSwiftSliceWindow");
-            if(observed.UsedRecently("Savage Roar",now,3))signals.Add("AssassinSavageBackKickWindow");
-            if(observed.UsedRecently("Savage Back Kick",now,3))signals.Add("AssassinSavageSmashWindow");
+            if(observed.PendingFollowUp("Quick Slice","Breaking Slice",now,3))signals.Add("AssassinBreakingSliceWindow");
+            if(observed.PendingFollowUp("Breaking Slice","Swift Slice",now,3))signals.Add("AssassinSwiftSliceWindow");
+            if(observed.PendingFollowUp("Savage Roar","Savage Back Kick",now,3))signals.Add("AssassinSavageBackKickWindow");
+            if(observed.PendingFollowUp("Savage Back Kick","Savage Smash",now,3))signals.Add("AssassinSavageSmashWindow");
             // Illusive Clone is a directly observed burst activation. Current Global
             // guidance gives it a 20s burst duration; do not infer specialty effects.
             if(observed.UsedRecently("Illusive Clone",now,20))signals.Add("AssassinBurstWindow");
@@ -100,9 +100,9 @@ public static class PassiveRotationSignalDeriver
             // Never infer crowd-control state from generic Ranger activity.
             if(observed.Debuffs.Contains("Slow")||observed.Debuffs.Contains("Root"))
                 signals.Add("RangerBurstArrowWindow");
-            if(observed.UsedRecently("Snipe",now,3))
+            if(observed.PendingFollowUp("Snipe","Rapid Fire",now,3))
                 signals.Add("RangerRapidFireWindow");
-            if(observed.UsedRecently("Rapid Fire",now,3))
+            if(observed.PendingFollowUp("Rapid Fire","Spiral Arrow",now,3))
                 signals.Add("RangerSpiralArrowWindow");
         }
         if(observedClass==AionClass.Sorcerer)
@@ -115,7 +115,7 @@ public static class PassiveRotationSignalDeriver
                 || observed.UsedRecently("Delayed Explosion",now,4))
                 signals.Add("SorcererBurstWindow");
 
-            if(observed.UsedRecently("Ice Chain",now,3))
+            if(observed.PendingFollowUp("Ice Chain","Cold Wave",now,3))
                 signals.Add("SorcererColdWaveWindow");
 
             // Stigmas are loadout-dependent. Future recommendations are enabled only
@@ -173,9 +173,9 @@ public static class PassiveRotationSignalDeriver
             // until their activation relationship is directly corroborated.
             if(observed.UsedRecently("Impactful Crush",now,3))
                 signals.Add("ChanterDarkCrushWindow");
-            if(observed.UsedRecently("Onslaught",now,3))
+            if(observed.PendingFollowUp("Onslaught","Resonance Crush",now,3))
                 signals.Add("ChanterResonanceCrushWindow");
-            if(observed.UsedRecently("Resonance Crush",now,3))
+            if(observed.PendingFollowUp("Resonance Crush","Bolt Crush",now,3))
                 signals.Add("ChanterBoltCrushWindow");
         }
         if(observedClass==AionClass.Spiritmaster)

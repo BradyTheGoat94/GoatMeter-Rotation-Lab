@@ -30,6 +30,12 @@ public sealed class PassiveRotationStateTracker
                 if(!string.IsNullOrWhiteSpace(e.Skill))
                 {
                     lastSkillUse[e.Skill]=e.Utc;
+                    // A directly observed Judgment consumes the shield opportunity.
+                    if(playerClass==AionClass.Templar && string.Equals(e.Skill,"Judgment",StringComparison.OrdinalIgnoreCase))
+                    {
+                        judgmentWindowUntil=null;
+                        judgmentTrigger="";
+                    }
                     if(playerClass==AionClass.Assassin && e.Kind==CombatKind.Damage && e.DamageFlags.HasFlag(DamageFlags.Critical))
                         criticalHitWindowUntil=e.Utc.AddSeconds(2);
                     if(playerClass==AionClass.Templar && JudgmentWindowSeconds.TryGetValue(e.Skill,out var seconds))
@@ -75,6 +81,12 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
 {
     public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until;
     public bool CriticalHitWindowActive(DateTime utc)=>CriticalHitWindowUntil is DateTime until && utc<=until;
+    /// <summary>One observed opener grants one continuation. Equal timestamps fail
+    /// closed because coarse capture clocks cannot prove a fresh activation.</summary>
+    public bool PendingFollowUp(string opener,string followUp,DateTime utc,double seconds)=>
+        UsedRecently(opener,utc,seconds)
+        && (!LastSkillUse.TryGetValue(followUp,out var consumed) || consumed<LastSkillUse[opener]);
+
     public bool UsedRecently(string skill,DateTime utc,double seconds)=>
         LastSkillUse.TryGetValue(skill,out var used) && utc-used>=TimeSpan.Zero && utc-used<=TimeSpan.FromSeconds(seconds);
 }

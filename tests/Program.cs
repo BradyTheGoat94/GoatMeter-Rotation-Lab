@@ -1121,4 +1121,71 @@ True(chanterImpactRecovering.Next?.Skill=="Incandescent Blow","recovering Impact
 True(clericProvisional.Validation==ProfileValidation.Provisional&&chanterProvisional.Validation==ProfileValidation.Provisional,
     "Cleric and Chanter fixtures remain provisional");
 
+
+// Every existing short deterministic chain consumes its observed follow-up once.
+// This is a lifecycle regression, not a new game mechanic or timing assumption.
+var consumptionCases=new (AionClass Class,string Opener,string FollowUp,string Signal)[]
+{
+    (AionClass.Templar,"Vicious Strike","Decisive Strike","TemplarDecisiveStrikeWindow"),
+    (AionClass.Templar,"Decisive Strike","Desperate Strike","TemplarDesperateStrikeWindow"),
+    (AionClass.Templar,"Desperate Strike","Threatening Blow","TemplarThreateningBlowWindow"),
+    (AionClass.Templar,"Pummel","Punishing Strike","TemplarPunishingStrikeWindow"),
+    (AionClass.Gladiator,"Rending Blow","Smashing Blow","GladiatorSmashingWindow"),
+    (AionClass.Gladiator,"Keen Strike","Rupture Strike","GladiatorRuptureWindow"),
+    (AionClass.Gladiator,"Rupture Strike","Wrathful Strike","GladiatorWrathfulWindow"),
+    (AionClass.Gladiator,"Overhead Slam","Upward Strike","GladiatorUpwardStrikeWindow"),
+    (AionClass.Gladiator,"Crushing Wave","Frenzied Wave","GladiatorFrenziedWaveWindow"),
+    (AionClass.Assassin,"Quick Slice","Breaking Slice","AssassinBreakingSliceWindow"),
+    (AionClass.Assassin,"Breaking Slice","Swift Slice","AssassinSwiftSliceWindow"),
+    (AionClass.Assassin,"Savage Roar","Savage Back Kick","AssassinSavageBackKickWindow"),
+    (AionClass.Assassin,"Savage Back Kick","Savage Smash","AssassinSavageSmashWindow"),
+    (AionClass.Ranger,"Snipe","Rapid Fire","RangerRapidFireWindow"),
+    (AionClass.Ranger,"Rapid Fire","Spiral Arrow","RangerSpiralArrowWindow"),
+    (AionClass.Sorcerer,"Ice Chain","Cold Wave","SorcererColdWaveWindow"),
+    (AionClass.Chanter,"Onslaught","Resonance Crush","ChanterResonanceCrushWindow"),
+    (AionClass.Chanter,"Resonance Crush","Bolt Crush","ChanterBoltCrushWindow"),
+};
+foreach(var chainCase in consumptionCases)
+{
+    var chainHistory=new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{chainCase.Opener,t}};
+    var chainObserved=new PassiveRotationObservation(700,chainCase.Class,chainHistory,new HashSet<string>(),new HashSet<string>());
+    True(PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(1)).Contains(chainCase.Signal),
+        $"{chainCase.Opener} opens {chainCase.FollowUp} before consumption");
+    chainHistory[chainCase.FollowUp]=t.AddSeconds(1);
+    var consumedSignals=PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(2));
+    True(!consumedSignals.Contains(chainCase.Signal),$"{chainCase.FollowUp} consumes its opener opportunity");
+    var consumedProfile=new RotationProfile(chainCase.Class,"consumption-regression",RotationMode.SingleTarget,ProfileValidation.Provisional,
+        new[]{new RotationRule(chainCase.FollowUp,100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,chainCase.Signal)})});
+    var consumedDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),chainCase.Class,"consumption-regression",RotationMode.SingleTarget,
+        new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+        {Signals=consumedSignals},consumedProfile);
+    True(consumedDecision.Next is null,$"{chainCase.FollowUp} is not recommended twice from one opener");
+    chainHistory[chainCase.FollowUp]=t;
+    True(!PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(1)).Contains(chainCase.Signal),
+        $"{chainCase.FollowUp} with equal timestamp fails closed");
+    chainHistory[chainCase.FollowUp]=t.AddSeconds(-1);
+    True(PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(1)).Contains(chainCase.Signal),
+        $"older {chainCase.FollowUp} does not consume a newer opener");
+    chainHistory[chainCase.FollowUp]=t.AddSeconds(1);
+    chainHistory[chainCase.Opener]=t.AddSeconds(2);
+    True(PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(2.5)).Contains(chainCase.Signal),
+        $"fresh {chainCase.Opener} rearms its continuation");
+    True(!PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(5.1)).Contains(chainCase.Signal),
+        $"{chainCase.Opener} still expires at the existing boundary");
+    True(!PassiveRotationSignalDeriver.Derive(chainObserved,chainCase.Class,t.AddSeconds(1.5)).Contains(chainCase.Signal),
+        $"future {chainCase.Opener} cannot manufacture a chain");
+}
+var consumedJudgmentTracker=new PassiveRotationStateTracker();
+consumedJudgmentTracker.Observe(new(t,CombatKind.PlayerName,701,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true));
+consumedJudgmentTracker.Observe(new(t,CombatKind.Cast,701,"Local",99,"Boss","Shield Smite"));
+True(consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(.5)),"shield cast opens Judgment before consumption");
+consumedJudgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,701,"Local",99,"Boss","Judgment"));
+True(!consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(1.5)),"observed Judgment consumes the shield window immediately");
+True(!PassiveRotationSignalDeriver.Derive(consumedJudgmentTracker.Snapshot(),AionClass.Templar,t.AddSeconds(1.5)).Contains("JudgmentWindow"),
+    "consumed Judgment cannot be recommended from stale shield state");
+consumedJudgmentTracker.Observe(new(t.AddSeconds(2),CombatKind.Cast,701,"Local",99,"Boss","Warding Strike"));
+True(consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.5)),"new shield cast rearms Judgment after consumption");
+consumedJudgmentTracker.Observe(new(t.AddSeconds(3),CombatKind.Zone));
+True(!consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),"zone reset clears consumed and rearmed chain state");
+
 Console.WriteLine($"PASS: {checks} regression assertions");
