@@ -41,7 +41,10 @@ public sealed class PassiveRotationStateTracker
             if(e.Kind==CombatKind.Despawn)
             {
                 if(e.SourceId==playerId)Reset();
-                else if(e.SourceId==targetId)ClearTarget();
+                else if(e.SourceId==targetId && e.Utc>=lastTargetActionUtc)
+                {
+                    ClearTarget();lastTargetActionUtc=e.Utc;
+                }
                 return;
             }
             // Buffs belong to their recipient; party buffs on self are observable,
@@ -59,7 +62,8 @@ public sealed class PassiveRotationStateTracker
             // Only local offensive actions establish the active target. Late events
             // cannot move the assistant back to a previous target.
             if(e.SourceId==playerId && (e.Kind is CombatKind.Damage or CombatKind.Cast)
-                && e.TargetId!=0 && e.TargetId!=playerId && e.Utc>=lastTargetActionUtc)
+                && e.TargetId!=0 && e.TargetId!=playerId
+                && (e.Utc>lastTargetActionUtc || (e.Utc==lastTargetActionUtc && e.TargetId==targetId)))
             {
                 if(targetId!=e.TargetId) {ClearTarget();targetId=e.TargetId;}
                 lastTargetActionUtc=e.Utc;
@@ -128,13 +132,13 @@ public sealed class PassiveRotationStateTracker
     {
         lock(gate)
         {
-            ClearTarget();selfEffectRemovals.Clear();selfEffectSeen.Clear();playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";criticalHitWindowUntil=null;
+            ClearTarget();lastTargetActionUtc=DateTime.MinValue;selfEffectRemovals.Clear();selfEffectSeen.Clear();playerId=0;playerClass=null;lastSkillUse.Clear();buffs.Clear();debuffs.Clear();judgmentWindowUntil=null;judgmentTrigger="";criticalHitWindowUntil=null;
         }
     }
 
     void ClearTarget()
     {
-        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();targetEffectSeen.Clear();debuffs.Clear();
+        target=null;targetId=0;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();targetEffectSeen.Clear();debuffs.Clear();
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =

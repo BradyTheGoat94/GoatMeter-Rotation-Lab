@@ -1473,4 +1473,27 @@ orderedShieldTracker.Observe(new(t.AddSeconds(3),CombatKind.Cast,2401,"Self",250
 orderedShieldTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,2401,"Self",2501,"Target","Shield Rush"));
 True(!orderedShieldTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),
     "delayed different-skill shield opener cannot revive a consumed Judgment");
+// Despawn must retain the target action ordering barrier across every class.
+foreach(var despawnClass in Enum.GetValues<AionClass>())
+{
+    var despawnOrderTracker=new PassiveRotationStateTracker();
+    despawnOrderTracker.Observe(new(t,CombatKind.PlayerName,2601,"Self",SourceClass:despawnClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    despawnOrderTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,2601,"Self",2701,"Target","Observed action",100));
+    despawnOrderTracker.Observe(new(t.AddSeconds(3),CombatKind.Despawn,2701,"Target"));
+    despawnOrderTracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,2601,"Self",2701,"Target","Late action",100));
+    despawnOrderTracker.Observe(new(t.AddSeconds(3),CombatKind.Damage,2601,"Self",2701,"Target","Same-time action",100));
+    True(despawnOrderTracker.Snapshot().TargetId==0,
+        $"{despawnClass} late or ambiguous same-time hit cannot resurrect a despawned target");
+    despawnOrderTracker.Observe(new(t.AddSeconds(4),CombatKind.Damage,2601,"Self",2801,"New target","New action",100));
+    True(despawnOrderTracker.Snapshot().TargetId==2801,
+        $"{despawnClass} newer observed action still establishes the next target");
+    despawnOrderTracker.Observe(new(t.AddSeconds(2),CombatKind.Despawn,2801,"New target"));
+    True(despawnOrderTracker.Snapshot().TargetId==2801,
+        $"{despawnClass} late despawn cannot clear a target established by newer evidence");
+    despawnOrderTracker.Reset();
+    despawnOrderTracker.Observe(new(t,CombatKind.PlayerName,2601,"Self",SourceClass:despawnClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    despawnOrderTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,2601,"Self",2901,"Session target","New session action",100));
+    True(despawnOrderTracker.Snapshot().TargetId==2901,
+        $"{despawnClass} full session reset also resets target ordering");
+}
 Console.WriteLine($"PASS: {checks} regression assertions");

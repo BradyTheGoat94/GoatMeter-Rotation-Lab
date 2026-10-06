@@ -10,6 +10,7 @@
 - Mismatched class or unbound actor observations cannot generate any recommendation signals.
 - Self buffs use their recipient; party buffs on self are accepted, while buffs cast on allies do not become self buffs.
 - Late different-skill critical and shield events cannot replace newer Assassin/Templar proc windows or revive consumed Judgment.
+- Target despawn retains action ordering: stale or same-time hits cannot resurrect the cleared target, and stale despawns cannot clear newer target evidence.
 - Late skill events cannot roll back player cooldown timestamps. Target switches preserve player cooldown/loadout history.
 - Lab settings, history, validation files, window title, and installer identity are separate from production.
 
