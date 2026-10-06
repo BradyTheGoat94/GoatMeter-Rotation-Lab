@@ -168,6 +168,10 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Impactful Crush",now,2)
                 || observed.UsedRecently("Spinning Strike",now,2))
                 signals.Add("ChanterDarkCrushWindow");
+            if(observed.PendingFollowUp("Incandescent Blow","Bursting Blow",now,3))
+                signals.Add("ChanterBurstingBlowWindow");
+            if(observed.LastSkillUse.ContainsKey("Fracturing Blow"))
+                signals.Add("ChanterFracturingKnownWindow");
             if(observed.PendingFollowUp("Onslaught","Resonance Crush",now,3))
                 signals.Add("ChanterResonanceCrushWindow");
             if(observed.PendingFollowUp("Resonance Crush","Bolt Crush",now,3))

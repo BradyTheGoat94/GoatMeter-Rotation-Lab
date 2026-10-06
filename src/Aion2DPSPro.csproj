@@ -24,5 +24,6 @@
   </ItemGroup>
   <ItemGroup><Resource Include="Assets\ClassIcons\*.png" /></ItemGroup>
   <ItemGroup><Resource Include="Assets\Brand\GoatHead.png" /></ItemGroup>
+  <ItemGroup><Resource Include="Assets\\SkillIcons\\*.png" /></ItemGroup>
 </Project>
 

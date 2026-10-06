@@ -24,10 +24,26 @@ public partial class OverlayWindow : Window
     bool clickThrough;
     bool showDetails = true;
     public OverlayWindow() { InitializeComponent(); CategoryPicker.ItemsSource=new[]{"Damage","Healing","Damage Taken","Deaths","Buffs","Debuffs","Interrupts","Dispels"}; CategoryPicker.SelectedIndex=0; FightHistory.ItemsSource=new[]{new HistoryChoice("Saved fights ▾",null)}; FightHistory.SelectedIndex=0; ApplyTheme(currentTheme); ApplyOverlayStyle(currentStyle); LoadPreferences(); }
+    public sealed record RotationOptionCard(string Skill,System.Windows.Media.ImageSource? Icon,string Fallback);
+
     public void RenderRotation(RotationDecision decision)
     {
         RotationNextSkill.Text=decision.Next?.Skill??"Waiting for observed state";
-        RotationConfidence.Text=decision.Next is null?"—":$"{decision.Next.Confidence:P0} confidence";
+        var icon=SkillIconImages.Find(decision.ClassName,decision.Next?.Skill);
+        RotationSkillImage.Source=icon;
+        RotationIconGlyph.Visibility=icon is null?Visibility.Visible:Visibility.Collapsed;
+        RotationIconState.Text=icon is null?"ICON UNVERIFIED":"NEXT SKILL";
+        RotationOptionCards.ItemsSource=decision.Alternatives.Select(option=>{
+            var optionIcon=SkillIconImages.Find(decision.ClassName,option.Skill);
+            return new RotationOptionCard(option.Skill,optionIcon,optionIcon is null?"?":"");
+        }).ToArray();
+        var anyOptions=decision.Alternatives.Count>0;
+        RotationQueue.Visibility=anyOptions?Visibility.Collapsed:Visibility.Visible;
+        RotationQueueIconGlyph.Visibility=anyOptions?Visibility.Collapsed:Visibility.Visible;
+        RotationQueueIconState.Text=anyOptions?"CURRENT CHOICES • NOT A SEQUENCE":"ICONS UNVERIFIED";
+        RotationLearningHint.Text=decision.LearningHint;
+        RotationLearningHint.Visibility=string.IsNullOrWhiteSpace(decision.LearningHint)?Visibility.Collapsed:Visibility.Visible;
+        RotationConfidence.Text=decision.Next is null?"—":decision.Next.Actionable?"Verified suggestion":"Passive suggestion";
         RotationStateText.Text=decision.Next is null?"PASSIVE • WAITING":decision.Next.Actionable?"VERIFIED":"INFORMATIONAL";
         RotationReason.Text=decision.Next is null?decision.Diagnostic:string.Join(" • ",decision.Next.Reasons.Take(2));
         RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join(" • ",decision.Alternatives.Select(x=>x.Skill));

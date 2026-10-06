@@ -85,4 +85,6 @@ public sealed record RotationDecision(
     string Diagnostic)
 {
     public string ReadinessContext { get; init; } = "";
+    public AionClass? ClassName { get; init; }
+    public string LearningHint { get; init; } = "";
 }

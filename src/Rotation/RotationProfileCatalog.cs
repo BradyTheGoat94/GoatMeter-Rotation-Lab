@@ -308,8 +308,11 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.CooldownReady,"Impactful Crush",Reason:"validated current Global 15s base cooldown is ready")
                 }),
                 new RotationRule("Incandescent Blow",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"core sustained damage while reaction/burst skills are unavailable")}),
-                new RotationRule("Bursting Blow",525,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"use the repeatedly observed Global sustained strike while stronger Chanter windows are unavailable")}),
-                new RotationRule("Fracturing Blow",510,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"continue the observed Global sustained strike sequence without inventing hidden proc state")}),
+                new RotationRule("Bursting Blow",750,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterBurstingBlowWindow",Reason:"consume the guaranteed 3s Global chain after observed Incandescent Blow")}),
+                new RotationRule("Fracturing Blow",510,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"use the proven Global stigma during observed combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFracturingKnownWindow",Reason:"current session has observed this stigma being used"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Fracturing Blow",Reason:"validated 45s Global base cooldown is ready; specialization reductions excluded")}),
                 new RotationRule("Onslaught",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"sustain damage and MP while higher priorities recover")}),
                 new RotationRule("Spinning Strike",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"fill downtime and support the reaction-damage loop")}),
                 new RotationRule("Healing Burst",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"interrupt damage priority only when healing state requires it")})

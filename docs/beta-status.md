@@ -1,5 +1,14 @@
 # Rotation Lab beta status
 
+## Live usability follow-up
+
+- Twenty embedded Templar/Chanter skill icons now appear on the next suggestion and each individual alternative. Other classes and unresolved names retain explicit fallbacks.
+- The next-skill tile is larger and long names wrap. Observation confidence is no longer shown as a prominent percentage that could be confused with DPS optimization.
+- Unknown first-use cooldowns are listed with manual observation guidance. A filler-only Templar cold start explicitly explains why Pummel alone cannot open Judgment.
+- Chanter Bursting Blow now requires an unconsumed 3s observed Incandescent Blow chain; it cannot appear as generic filler.
+- Chanter Fracturing Blow requires proven current-session stigma use and its observed 45s base cooldown; specialization reductions are excluded.
+- Icon identity and learning guidance cannot grant skill eligibility. All profiles remain provisional. Templar first-use readiness remains unknown until a manual observation; this batch explains that limitation rather than manufacturing readiness.
+
 ## Improvements in this development run
 
 - One observed opener now grants one pending continuation across 18 existing short chains in six class profiles; an observed Judgment consumes its shield opportunity.

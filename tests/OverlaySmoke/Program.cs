@@ -128,8 +128,32 @@ internal static class Program
   if(((TextBlock)window.FindName("RotationIconGlyph")).Text!="?")throw new Exception("Unverified skill icon fallback missing");
   if(((TextBlock)window.FindName("RotationIconState")).Text!="ICON UNVERIFIED")throw new Exception("Unverified skill icon was not labeled");
   if(((TextBlock)window.FindName("RotationQueueIconGlyph")).Text!="?")throw new Exception("Unverified planned-skill icon fallback missing");
-  if(((TextBlock)window.FindName("RotationQueueIconState")).Text!="ICONS UNVERIFIED")throw new Exception("Unverified planned-skill icons were not labeled");
+  if(((TextBlock)window.FindName("RotationQueueIconState")).Text!="CURRENT CHOICES • NOT A SEQUENCE")throw new Exception("Unverified planned-skill icons were not labeled");
   Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed primary/queue icon states");
+
+
+  foreach(var identity in SkillIconCatalog.Entries)
+  {
+   if(SkillIconImages.Find(identity.ClassName,identity.Skill) is not System.Windows.Media.Imaging.BitmapSource bmp || bmp.PixelWidth!=64 || bmp.PixelHeight!=64)
+    throw new Exception("Packaged icon missing or corrupt: "+identity.Skill);
+  }
+  var iconFixture=new RotationDecision(new SkillRecommendation("Pummel",500,.25,false,new[]{"observed filler"}),
+   new[]{new SkillRecommendation("Punishing Strike",875,.25,false,new[]{"chain"}),new SkillRecommendation("Punishment",800,.25,false,new[]{"ready"})},
+   "Informational"){ClassName=AionClass.Templar,LearningHint="Readiness unknown: Annihilate. Use learned skills manually once."};
+  window.RenderRotation(iconFixture);window.UpdateLayout();
+  if(((Image)window.FindName("RotationSkillImage")).Source is null || ((TextBlock)window.FindName("RotationIconGlyph")).Visibility!=Visibility.Collapsed)
+   throw new Exception("Templar main icon missing");
+  var optionCards=(ItemsControl)window.FindName("RotationOptionCards");
+  if(optionCards.Items.Count!=2 || optionCards.Items.Cast<OverlayWindow.RotationOptionCard>().Any(o=>o.Icon is null || o.Fallback!=""))
+   throw new Exception("Each alternative must have its own matching icon");
+  if(((TextBlock)window.FindName("RotationLearningHint")).Visibility!=Visibility.Visible)throw new Exception("First-use hint missing");
+  window.RenderRotation(iconFixture with {ClassName=AionClass.Chanter});window.UpdateLayout();
+  if(((Image)window.FindName("RotationSkillImage")).Source is not null || optionCards.Items.Cast<OverlayWindow.RotationOptionCard>().Any(o=>o.Icon is not null))
+   throw new Exception("Class switch retained stale Templar icons");
+  window.RenderRotation(new RotationDecision(null,Array.Empty<SkillRecommendation>(),"Waiting"));
+  if(((Image)window.FindName("RotationSkillImage")).Source is not null || optionCards.Items.Count!=0 || ((TextBlock)window.FindName("RotationLearningHint")).Visibility!=Visibility.Collapsed)
+   throw new Exception("Waiting state retained stale icons or learning guidance");
+  Console.WriteLine("PASS: all 20 embedded icons load; primary/alternatives/class switch/waiting lifecycle verified");
 
   var optionFixture=assistantFixture with {Alternatives=new[]{
    new SkillRecommendation("Option A",110,.94,true,new[]{"fixture"}),

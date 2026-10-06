@@ -80,7 +80,18 @@ public sealed class RotationEngine
             ? "Validated recommendation from sufficiently confident passive observations."
             : $"Recommendation is informational only: profile={profile.Validation}, observationConfidence={state.ObservationConfidence:0.00}.";
 
-        return new RotationDecision(ordered[0], ordered.Skip(1).Take(2).ToArray(), diagnostic);
+        var unknownCooldowns = profile.Rules
+            .OrderByDescending(rule => rule.BasePriority)
+            .SelectMany(rule => rule.Conditions.Where(c => c.Kind == RotationConditionKind.CooldownReady))
+            .Select(c => c.Key).Distinct(StringComparer.OrdinalIgnoreCase)
+            .Where(skill => double.IsPositiveInfinity(Lookup(state.CooldownSeconds, skill, double.PositiveInfinity)))
+            .ToArray();
+        var hint = unknownCooldowns.Length == 0 ? "" :
+            $"Readiness unknown: {string.Join(", ", unknownCooldowns)}. Use only skills you have learned/equipped manually once to establish passive timers; unknown does not mean ready.";
+        if (state.ClassName == AionClass.Templar && unknownCooldowns.Contains("Punishment"))
+            hint += " Pummel alone cannot open Judgment: manually use an available shield skill to observe its follow-up.";
+        return new RotationDecision(ordered[0], ordered.Skip(1).Take(2).ToArray(), diagnostic)
+        { ClassName = state.ClassName, LearningHint = hint };
     }
 
     private static RotationDecision Empty(string diagnostic) =>

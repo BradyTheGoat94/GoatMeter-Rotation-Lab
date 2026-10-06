@@ -1554,4 +1554,51 @@ var labBootstrapCache=(string)typeof(Aion2DPSPro.Protocol.PublicGameData)
     .GetField("CachePath",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)!.GetValue(null)!;
 True(labBootstrapCache==System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"GoatMeterRotationLab","meter-bootstrap.json"),
     "public skill-data cache cannot write into the production meter directory");
+
+foreach(var identity in SkillIconCatalog.Entries)
+{
+    True(SkillIconCatalog.Find(identity.ClassName,identity.Skill)?.SkillId==identity.SkillId,"exact class/skill icon mapping "+identity.Skill);
+    True(SkillIconCatalog.Find(identity.ClassName,identity.Skill.ToUpperInvariant())?.SkillId==identity.SkillId,"case-insensitive icon identity "+identity.Skill);
+    True(SkillIconCatalog.Find(identity.ClassName==AionClass.Templar?AionClass.Chanter:AionClass.Templar,identity.Skill) is null,"icon cannot cross class "+identity.Skill);
+}
+True(SkillIconCatalog.Find(null,"Pummel") is null&&SkillIconCatalog.Find(AionClass.Templar,"Unknown") is null,"unknown icon identity fails closed");
+var firstUseProfile=RotationProfileCatalog.CreateProvisionalTemplarSingleTarget();
+var firstUseState=new RotationState(t,AionClass.Templar,firstUseProfile.BuildId,RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>{"TemplarFillerWindow"}};
+var firstUseDecision=rotationEngine.Evaluate(firstUseState,firstUseProfile);
+True(firstUseDecision.Next?.Skill=="Pummel"&&firstUseDecision.LearningHint.Contains("Punishment")&&firstUseDecision.LearningHint.Contains("manually once"),"Templar filler-only cold start explains missing cooldown observations");
+True(firstUseDecision.ClassName==AionClass.Templar&&firstUseDecision.Next?.Actionable==false,"display identity does not promote provisional advice");
+var readyFirstUse=rotationEngine.Evaluate(firstUseState with {CooldownSeconds=new Dictionary<string,double>{{"Punishment",0}}},firstUseProfile);
+True(readyFirstUse.Next?.Skill=="Punishment"&&!readyFirstUse.LearningHint.Contains("Readiness unknown: Punishment"),"observed recovered Punishment displaces filler without invented readiness");
+var blockedFirstUse=rotationEngine.Evaluate(firstUseState with {CooldownSeconds=new Dictionary<string,double>{{"Punishment",5}}},firstUseProfile);
+True(blockedFirstUse.Next?.Skill=="Pummel","recovering Punishment remains excluded");
+var chanterIconProfile=RotationProfileCatalog.CreateProvisionalChanterSingleTarget();
+RotationState ChanterIconState(PassiveRotationObservation observation,DateTime utc)=>new(utc,AionClass.Chanter,chanterIconProfile.BuildId,RotationMode.SingleTarget,
+    ValidatedCooldownCatalog.Remaining(observation,AionClass.Chanter,utc),observation.Buffs,observation.Debuffs,100,100,1,false,true,.95)
+    {Signals=PassiveRotationSignalDeriver.Derive(observation,AionClass.Chanter,utc)};
+var burstIconObservation=new PassiveRotationObservation(501,AionClass.Chanter,new Dictionary<string,DateTime>{{"Incandescent Blow",t}},new HashSet<string>(),new HashSet<string>());
+var burstIconDecision=rotationEngine.Evaluate(ChanterIconState(burstIconObservation,t.AddSeconds(1)),chanterIconProfile);
+True(burstIconDecision.Next?.Skill=="Bursting Blow","Chanter prioritizes observed 3s Bursting chain before sustained filler");
+foreach(var when in new[]{t.AddMilliseconds(-1),t.AddSeconds(3.01)})
+{
+    var decision=rotationEngine.Evaluate(ChanterIconState(burstIconObservation,when),chanterIconProfile);
+    True(decision.Next?.Skill!="Bursting Blow"&&decision.Alternatives.All(o=>o.Skill!="Bursting Blow"),"future/expired Chanter chain cannot recommend Bursting Blow");
+}
+var consumedBurst=burstIconObservation with {LastSkillUse=new Dictionary<string,DateTime>{{"Incandescent Blow",t},{"Bursting Blow",t.AddSeconds(1)}}};
+var consumedBurstDecision=rotationEngine.Evaluate(ChanterIconState(consumedBurst,t.AddSeconds(2)),chanterIconProfile);
+True(consumedBurstDecision.Next?.Skill!="Bursting Blow"&&consumedBurstDecision.Alternatives.All(o=>o.Skill!="Bursting Blow"),"used Chanter chain is consumed");
+True(!burstIconDecision.Alternatives.Any(o=>o.Skill=="Fracturing Blow"),"unobserved stigma excluded");
+var stigmaIconObservation=burstIconObservation with {LastSkillUse=new Dictionary<string,DateTime>{{"Fracturing Blow",t},{"Incandescent Blow",t.AddSeconds(44)}}};
+foreach(var elapsed in new[]{44d,45d})
+{
+    var state=ChanterIconState(stigmaIconObservation,t.AddSeconds(elapsed));
+    var decision=rotationEngine.Evaluate(state,chanterIconProfile);
+    var candidates=decision.Alternatives.Select(o=>o.Skill).Prepend(decision.Next?.Skill);
+    True(candidates.Contains("Fracturing Blow")== (elapsed>=45),"observed stigma requires complete 45s base timer");
+}
+var wrongClassObservation=stigmaIconObservation with {ClassName=AionClass.Templar};
+True(!PassiveRotationSignalDeriver.Derive(wrongClassObservation,AionClass.Chanter,t.AddSeconds(45)).Contains("ChanterFracturingKnownWindow"),"wrong class cannot grant Chanter stigma");
+
+
 Console.WriteLine($"PASS: {checks} regression assertions");

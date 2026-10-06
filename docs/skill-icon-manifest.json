@@ -1,0 +1,188 @@
+{
+  "globalVersion": "2.0.5.0",
+  "checkedUtc": "2026-10-06",
+  "artworkOwner": "NCSOFT",
+  "processing": "Exact-source artwork converted to 64x64 RGBA PNG using Lanczos resampling; no generated or substituted images.",
+  "entries": [
+    {
+      "class": "Templar",
+      "skill": "Pummel",
+      "skillId": 12040000,
+      "evidence": "https://aion2.gaming.tools/skills/12040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_006.webp",
+      "resource": "Assets/SkillIcons/12040000.png",
+      "sha256": "17ae481b4a11d9404b6568376a930ee3fb4ddc78adad5f7a30d6999c48467d6b"
+    },
+    {
+      "class": "Templar",
+      "skill": "Punishing Strike",
+      "skillId": 12060000,
+      "evidence": "https://aion2.gaming.tools/skills/12060000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_014.webp",
+      "resource": "Assets/SkillIcons/12060000.png",
+      "sha256": "aa4e070accbdf57b3b614628be7b6bfdfeffea3dc3833f3dfa7869e9f9c947cf"
+    },
+    {
+      "class": "Templar",
+      "skill": "Punishment",
+      "skillId": 12090000,
+      "evidence": "https://aion2.gaming.tools/skills/12090000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_009.webp",
+      "resource": "Assets/SkillIcons/12090000.png",
+      "sha256": "d4ca1c33add26c91951272519512a85277f44ef268ba821095a1f73d9a729adc"
+    },
+    {
+      "class": "Templar",
+      "skill": "Judgment",
+      "skillId": 12240000,
+      "evidence": "https://aion2.gaming.tools/skills/12240000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_004.webp",
+      "resource": "Assets/SkillIcons/12240000.png",
+      "sha256": "e196686103136ef09d729b0d59d7e5abafc962e33dcca93eae1b4909f09efd27"
+    },
+    {
+      "class": "Templar",
+      "skill": "Decisive Strike",
+      "skillId": 12020000,
+      "evidence": "https://aion2.gaming.tools/skills/12020000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_002.webp",
+      "resource": "Assets/SkillIcons/12020000.png",
+      "sha256": "71dca48a3fb70ef40996058f904cc42108ae27c188881f9abb41f7b1efed29ff"
+    },
+    {
+      "class": "Templar",
+      "skill": "Desperate Strike",
+      "skillId": 12030000,
+      "evidence": "https://aion2.gaming.tools/skills/12030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_003.webp",
+      "resource": "Assets/SkillIcons/12030000.png",
+      "sha256": "dcb90c6f16c01270f3d0171d4594cc3a78355ddecd089e3c4599ecd4efeeb256"
+    },
+    {
+      "class": "Templar",
+      "skill": "Vicious Strike",
+      "skillId": 12010000,
+      "evidence": "https://aion2.gaming.tools/skills/12010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_001.webp",
+      "resource": "Assets/SkillIcons/12010000.png",
+      "sha256": "2a33392b67c8e4af6f06e97538ceb60cab40c291acf0049c78b9f57a451153ac"
+    },
+    {
+      "class": "Templar",
+      "skill": "Empyrean Lord's Punishment",
+      "skillId": 12310000,
+      "evidence": "https://aion2.gaming.tools/skills/12310000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_029.webp",
+      "resource": "Assets/SkillIcons/12310000.png",
+      "sha256": "c9ff39fcd26b1b31cce8334680a2661279c234cf2e390f415618a86f9337e711"
+    },
+    {
+      "class": "Templar",
+      "skill": "Annihilate",
+      "skillId": 12300000,
+      "evidence": "https://aion2.gaming.tools/skills/12300000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_te_skill_028.webp",
+      "resource": "Assets/SkillIcons/12300000.png",
+      "sha256": "dccd5c2f74d96c88c1d8ff0968682885d76c3bdce630afbfedac99f5fb402720"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Onslaught",
+      "skillId": 18010000,
+      "evidence": "https://aion2.gaming.tools/skills/18010000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_001.webp",
+      "resource": "Assets/SkillIcons/18010000.png",
+      "sha256": "a51cae93f313d671cb9c8045d59f96397beeec61e9d52ecdbc9edac91e67e33b"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Resonance Crush",
+      "skillId": 18020000,
+      "evidence": "https://aion2.gaming.tools/skills/18020000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_002.webp",
+      "resource": "Assets/SkillIcons/18020000.png",
+      "sha256": "19b7c2204fe40fb888d6c679d23ee3a93ba40afa6d42eb13cabda4b7e51ece91"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Bolt Crush",
+      "skillId": 18030000,
+      "evidence": "https://aion2.gaming.tools/skills/18030000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_003.webp",
+      "resource": "Assets/SkillIcons/18030000.png",
+      "sha256": "6ba6385bef81005e970615fb8a8885bdf7867812f1cb550dcce110bc11243292"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Incandescent Blow",
+      "skillId": 18040000,
+      "evidence": "https://aion2.gaming.tools/skills/18040000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_004.webp",
+      "resource": "Assets/SkillIcons/18040000.png",
+      "sha256": "d1fd60525c7fb1c24a712391014b636a3bc756548fbd5d85b397cbf4f907efd7"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Bursting Blow",
+      "skillId": 18050000,
+      "evidence": "https://aion2.gaming.tools/skills/18050000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_005.webp",
+      "resource": "Assets/SkillIcons/18050000.png",
+      "sha256": "c8758ad3526cf746ac16fb4c072323fdbf80e4a2220b729b6aeea135ce7c0af9"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Impactful Crush",
+      "skillId": 18060000,
+      "evidence": "https://aion2.gaming.tools/skills/18060000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_006.webp",
+      "resource": "Assets/SkillIcons/18060000.png",
+      "sha256": "a60ec9176f61d249c079e9bb55a8668fcee1d95f8ad85e7fcb2f620f1b149500"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Dark Crush",
+      "skillId": 18100000,
+      "evidence": "https://aion2.gaming.tools/skills/18100000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_010.webp",
+      "resource": "Assets/SkillIcons/18100000.png",
+      "sha256": "611509153ad5b86bb96f5edf44ad4f057bb948fe737905473b06c4c8561e8514"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Spinning Strike",
+      "skillId": 18290000,
+      "evidence": "https://aion2.gaming.tools/skills/18290000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_029.webp",
+      "resource": "Assets/SkillIcons/18290000.png",
+      "sha256": "5e8ad1297a38ec7446990161bbac6089a0b8b73bce0a24394cfc8f71364a4b76"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Wave Blow",
+      "skillId": 18080000,
+      "evidence": "https://aion2.gaming.tools/skills/18080000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_008.webp",
+      "resource": "Assets/SkillIcons/18080000.png",
+      "sha256": "981914b707cfd35dd8442734352350a7765e9406a619f0d2542bd56b8fba81ba"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Heat Wave Blow",
+      "skillId": 18150000,
+      "evidence": "https://aion2.gaming.tools/skills/18150000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_015.webp",
+      "resource": "Assets/SkillIcons/18150000.png",
+      "sha256": "3d4b26d7cf421c919f51ae84676ce24bd21b22bbb8e097f4eb605fac3ce011f3"
+    },
+    {
+      "class": "Chanter",
+      "skill": "Fracturing Blow",
+      "skillId": 18130000,
+      "evidence": "https://aion2.gaming.tools/skills/18130000",
+      "source": "https://cdn-hosted.gaming.tools/aion2/images/ui/resource/texture/skill/icon_ch_skill_043.webp",
+      "resource": "Assets/SkillIcons/18130000.png",
+      "sha256": "5f403b102fa7fed497cffc639e9a7df48d591f36942c344257d0f5e19e302420"
+    }
+  ]
+}
