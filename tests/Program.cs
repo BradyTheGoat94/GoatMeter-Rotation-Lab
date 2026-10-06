@@ -297,11 +297,23 @@ True(!corrodeExpiredSignals.Contains("SpiritmasterCorrodeActiveWindow")&&corrode
 var postSummonExpiredCorrodeObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Summon: Ancient Spirit",t.AddSeconds(15)},{"Jointstrike: Corrode",t.AddSeconds(-6)}},new HashSet<string>(),new HashSet<string>());
 var postSummonExpiredCorrodeSignals=PassiveRotationSignalDeriver.Derive(postSummonExpiredCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(15.5));
-var postSummonExpiredCorrodeDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(15.5),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+var postSummonExpiredCorrodeRecovering=rotationEngine.Evaluate(new RotationState(t.AddSeconds(15.5),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",23.5}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=new HashSet<string>(postSummonExpiredCorrodeSignals,StringComparer.OrdinalIgnoreCase)},spiritProfile);
-True(postSummonExpiredCorrodeDecision.Next?.Skill=="Jointstrike: Corrode",
-    "observed Ancient Spirit setup can recommend Corrode again only after the prior validated 20s base state has expired");
+True(postSummonExpiredCorrodeRecovering.Next?.Skill!="Jointstrike: Corrode",
+    "expired 20s Corrode target state cannot bypass the validated 45s Global skill cooldown");
+var postSummonExpiredCorrodeReady=rotationEngine.Evaluate(new RotationState(t.AddSeconds(15.5),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Jointstrike: Corrode",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(postSummonExpiredCorrodeSignals,StringComparer.OrdinalIgnoreCase)},spiritProfile);
+True(postSummonExpiredCorrodeReady.Next?.Skill=="Jointstrike: Corrode",
+    "observed Ancient Spirit setup recommends Corrode only when the prior base state is expired and the validated 45s cooldown is ready");
+var spiritCorrodeCooldownTracker=new PassiveRotationStateTracker();
+spiritCorrodeCooldownTracker.Observe(new(t,CombatKind.PlayerName,99,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true));
+spiritCorrodeCooldownTracker.Observe(new(t,CombatKind.Damage,99,"SpiritTester",100,"Dummy","Jointstrike: Corrode",100,SourceClass:"Spiritmaster"));
+Equal(ValidatedCooldownCatalog.Remaining(spiritCorrodeCooldownTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(20))["Jointstrike: Corrode"],25,
+    "Spiritmaster Corrode cooldown reconstruction preserves 25s recovery after the 20s base debuff expires");
+Equal(ValidatedCooldownCatalog.Remaining(spiritCorrodeCooldownTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(45))["Jointstrike: Corrode"],0,
+    "Spiritmaster Corrode becomes ready after its validated 45s Global base cooldown");
 var wardingTracker=new PassiveRotationStateTracker();
 wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
 wardingTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Warding Strike",100,SourceClass:"Templar"));
