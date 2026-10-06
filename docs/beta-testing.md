@@ -1,3 +1,7 @@
+## Healing Touch correction
+
+80 icons are embedded. Chanter uses the verified Global name Healing Touch, not the unsupported Healing Burst placeholder. It requires healing need, observed stigma use and a 30s cooldown; prior use alone never proves party HP or healing need. Disenchant remains unresolved with an explicit fallback.
+
 ## Reconciled Templar and Gladiator icons
 
 79 icons are embedded. Threatening Blow and Upward Strike now show exact Aion2 PB artwork verified in the Global selector; display identity does not grant specialization or readiness. Only Healing Burst and Disenchant remain unresolved names with explicit fallbacks.

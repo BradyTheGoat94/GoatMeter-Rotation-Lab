@@ -1629,14 +1629,25 @@ True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assas
 var iconCoverageProfiles=new[]{RotationProfileCatalog.CreateProvisionalTemplarSingleTarget(),RotationProfileCatalog.CreateProvisionalAssassinSingleTarget(),RotationProfileCatalog.CreateProvisionalGladiatorSingleTarget(),RotationProfileCatalog.CreateProvisionalRangerSingleTarget(),RotationProfileCatalog.CreateProvisionalSorcererSingleTarget(),RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget(),RotationProfileCatalog.CreateProvisionalClericSingleTarget(),RotationProfileCatalog.CreateProvisionalChanterSingleTarget()};
 var unresolvedIconMappings=new HashSet<string>(StringComparer.Ordinal)
 {
-    "Chanter:Healing Burst","Spiritmaster:Disenchant"
+    "Spiritmaster:Disenchant"
 };
 foreach(var iconCoverageProfile in iconCoverageProfiles)
 foreach(var rule in iconCoverageProfile.Rules)
     True(SkillIconCatalog.Find(iconCoverageProfile.ClassName,rule.Skill) is not null || unresolvedIconMappings.Contains(iconCoverageProfile.ClassName+":"+rule.Skill),
         "every recommended skill has a verified icon or explicitly documented unresolved identity: "+iconCoverageProfile.ClassName+":"+rule.Skill);
-True(SkillIconCatalog.Entries.Count==79,"all-class icon batch has 79 explicit identities");
+True(SkillIconCatalog.Entries.Count==80,"all-class icon batch has 80 explicit identities");
 True(SkillIconCatalog.Entries.GroupBy(x=>x.ClassName).Count()==8,"embedded skill icons cover all eight classes");
-True(SkillIconCatalog.Entries.Select(x=>x.SkillId).Distinct().Count()==79,"embedded resource identities are unique");
+True(SkillIconCatalog.Entries.Select(x=>x.SkillId).Distinct().Count()==80,"embedded resource identities are unique");
+
+
+True(!RotationProfileCatalog.CreateProvisionalChanterSingleTarget().Rules.Any(r=>r.Skill=="Healing Burst"),"unsupported original AION heal name is not a Global recommendation");
+var healingRule=RotationProfileCatalog.CreateProvisionalChanterSingleTarget().Rules.Single(r=>r.Skill=="Healing Touch");
+True(healingRule.Conditions.Any(c=>c.Kind==RotationConditionKind.CooldownReady && c.Key=="Healing Touch"),"Healing Touch requires observed cooldown");
+True(healingRule.Conditions.Count(c=>c.Kind==RotationConditionKind.SignalPresent)==2,"Healing Touch requires explicit healing need and proven stigma");
+var healingObservation=new PassiveRotationObservation(501,AionClass.Chanter,new Dictionary<string,DateTime>{{"Healing Touch",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(healingObservation,AionClass.Chanter,t.AddSeconds(1)).Contains("ChanterHealingTouchKnownWindow"),"local healing use proves current stigma");
+True(!PassiveRotationSignalDeriver.Derive(healingObservation,AionClass.Chanter,t.AddSeconds(-1)).Contains("ChanterHealingTouchKnownWindow"),"future heal cannot prove equipped stigma");
+True(!PassiveRotationSignalDeriver.Derive(healingObservation,AionClass.Templar,t.AddSeconds(1)).Contains("ChanterHealingTouchKnownWindow"),"heal proof cannot cross class");
+True(!PassiveRotationSignalDeriver.Derive(healingObservation,AionClass.Chanter,t.AddSeconds(31)).Contains("ChanterHealWindow"),"healing cast alone cannot infer party healing need");
 
 Console.WriteLine($"PASS: {checks} regression assertions");

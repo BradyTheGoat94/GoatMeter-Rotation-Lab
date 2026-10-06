@@ -11,6 +11,7 @@ public static class ValidatedCooldownCatalog
 {
     static readonly ValidatedCooldown[] entries =
     {
+        new(AionClass.Chanter,"Healing Touch",30,"Global Season 1","Aion2 PB Global skill 18170000; corroborated Global client dataset; stigma and healing need remain required"),
         new(AionClass.Templar,"Punishment",30,"1.0.21.0","AION 2 Global database skill 12090000"),
         new(AionClass.Templar,"Annihilate",20,"Global 1.0.21.0","AION 2 Global release skill 12300000; requires Stun or Knockdown, level-12 -10s specialization excluded"),
         new(AionClass.Templar,"Empyrean Lord's Punishment",60,"1.0.21.0","AION 2 Global database skill 12310000"),

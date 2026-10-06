@@ -317,7 +317,10 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.CooldownReady,"Fracturing Blow",Reason:"validated 45s Global base cooldown is ready; specialization reductions excluded")}),
                 new RotationRule("Onslaught",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"sustain damage and MP while higher priorities recover")}),
                 new RotationRule("Spinning Strike",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterFillerWindow",Reason:"fill downtime and support the reaction-damage loop")}),
-                new RotationRule("Healing Burst",100,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"interrupt damage priority only when healing state requires it")})
+                new RotationRule("Healing Touch",100,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealWindow",Reason:"healing need must be explicitly observed; party HP is not inferred"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"ChanterHealingTouchKnownWindow",Reason:"current local session must prove the healing stigma is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Healing Touch",Reason:"observed 30s Global base cooldown must be ready")})
             },
             "PROVISIONAL Global Season 1 fixture. Damage and healing decisions remain gated on passive signals; no recommendation is emitted until relevant state is proven.");
     }

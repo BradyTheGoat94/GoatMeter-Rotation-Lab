@@ -1,5 +1,11 @@
 # Rotation Lab beta status
 
+## Healing Touch reconciliation
+
+- 80 embedded icons now cover all eight classes. Healing Touch is the verified current Global Chanter stigma (18170000); the unsupported Healing Burst placeholder is retired rather than aliased as a historical rename.
+- Healing Touch requires explicit healing need, proven current-session local stigma use and an observed 30s base cooldown. Party HP/healing need decoding is unavailable, so the assistant cannot manufacture an automatic healing recommendation from a prior cast.
+- Only Disenchant remains an unresolved recommendation name. Global Aion2 PB searches returned no exact entry; original AION artwork is not substituted. All profiles remain provisional.
+
 ## Aion2 PB source reconciliation
 
 - 79 icons now embed exact mapped artwork across all eight classes. Threatening Blow (12440000) and Upward Strike (11440000) were verified on Aion2 PB with the visible Global selector, including the base/variant Upward identity. Upward uses ICON_TE_SKILL_016.webp as actually linked by the source; icon filenames cannot be inferred from class or ID.

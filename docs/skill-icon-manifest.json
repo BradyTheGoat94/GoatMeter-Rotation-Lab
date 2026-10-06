@@ -716,6 +716,16 @@
       "resource": "Assets/SkillIcons/11440000.png",
       "sha256": "6ad826db81874f5a637cfd082e13f753c219c20ce76016e3a4ddf744c318fb22",
       "verification": "Aion2 PB visible Global selector; base skill entry identity and image inspected in browser. Display artwork only; no mechanics imported."
+    },
+    {
+      "class": "Chanter",
+      "skill": "Healing Touch",
+      "skillId": 18170000,
+      "evidence": "https://www.aion2pb.com/skills/18170000",
+      "source": "https://cdn.aion2pb.com/game/UI/Resource/Texture/Skill/ICON_CH_SKILL_017.webp",
+      "resource": "Assets/SkillIcons/18170000.png",
+      "sha256": "0e70c664672246cd652d709e0bb5f888859a4a5bf8d160ea22cbefba8690d81f",
+      "verification": "Visible Global selector; exact base entry inspected. Identity and 30s base cooldown corroborated by Global client dataset."
     }
   ]
 }

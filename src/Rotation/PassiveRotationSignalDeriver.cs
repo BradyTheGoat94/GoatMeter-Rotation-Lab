@@ -159,6 +159,8 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Chanter)
         {
+            if(observed.LastSkillUse.TryGetValue("Healing Touch",out var healingTouchUse) && healingTouchUse<=now)
+                signals.Add("ChanterHealingTouchKnownWindow");
             // Current Global Wave Blow requires a stunned target. Only an observed
             // target status can open this path; generic Chanter activity cannot.
             if(observed.Debuffs.Contains("Stun"))
