@@ -44,6 +44,8 @@ internal static class Program
   using(var adapter=new Aion2DPSPro.Capture.LiveCaptureAdapter(new Aion2DPSPro.Protocol.CurrentClientDecoder(identityProfile)))
   {
    adapter.EventReceived+=captureEngine.Apply;
+   var localIdentityEvents=new List<CombatEvent>();
+   adapter.EventReceived+=evt=>localIdentityEvents.Add(evt);
    var process=typeof(Aion2DPSPro.Capture.LiveCaptureAdapter).GetMethod("Process",BindingFlags.NonPublic|BindingFlags.Instance)!;
    void Packet(ushort localPort,string hex)
    {
@@ -54,6 +56,10 @@ internal static class Program
    Packet(50001,"193336FD235F81C1283708546573744865726F000000");
    Packet(50002,"210438E3A0020400FD2340B7B70009020B95C34701000000D658E7020100");
    if(captureEngine.Snapshot().Players.Single().Name!="TestHero")throw new Exception("Identity-only connection did not resolve combat name");
+   if(!localIdentityEvents.Any(evt=>evt.Kind==CombatKind.PlayerName&&evt.SourceIsLocal&&evt.SourceIdentityConfirmed&&evt.SourceId==4605))
+    throw new Exception("Decoded selfInfo did not carry exact local-player proof");
+   if(!localIdentityEvents.Any(evt=>evt.Kind==CombatKind.Damage&&evt.SourceIsLocal&&evt.SourceId==4605))
+    throw new Exception("Identity-only socket did not bridge local-player proof to combat");
    // The latest captured self ID changes after reconnect; never carry a name across generations.
    t=t.AddSeconds(31);
    Packet(50003,"193336AD5F5F91C1283708546573744865726F000000");

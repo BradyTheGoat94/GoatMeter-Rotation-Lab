@@ -119,7 +119,7 @@ True(recommendation.Next?.Skill=="Fixture Strike"&&recommendation.Next.Actionabl
 var lowConfidence=rotationEngine.Evaluate(validatedState with {ObservationConfidence=.4},validatedProfile);
 True(lowConfidence.Next is not null&&!lowConfidence.Next.Actionable,"low-confidence observation is informational only");
 var tracker=new PassiveRotationStateTracker();
-tracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+tracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 tracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"Tester",Skill:"Observed Cast",SourceClass:"Templar"));
 tracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,77,"Tester",99,"Dummy","Observed Strike",100,SourceClass:"Templar"));
 tracker.Observe(new(t.AddSeconds(3),CombatKind.BuffApply,77,"Tester",77,"Tester",Effect:"Observed Buff",SourceClass:"Templar"));
@@ -153,19 +153,19 @@ True(!tracker.Snapshot().Buffs.Contains("Observed Buff"),"passive tracker remove
 tracker.Observe(new(t.AddSeconds(5),CombatKind.Zone));
 True(tracker.Snapshot().PlayerId==0&&tracker.Snapshot().LastSkillUse.Count==0,"passive tracker clears across zone");
 var cooldownTracker=new PassiveRotationStateTracker();
-cooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+cooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 cooldownTracker.Observe(new(t,CombatKind.Damage,77,"Tester",99,"Dummy","Punishment",100,SourceClass:"Templar"));
 var knownCooldowns=ValidatedCooldownCatalog.Remaining(cooldownTracker.Snapshot(),AionClass.Templar,t.AddSeconds(12));
 Equal(knownCooldowns["Punishment"],18,"validated Punishment cooldown reconstruction");
 var rangerCooldownTracker=new PassiveRotationStateTracker();
-rangerCooldownTracker.Observe(new(t,CombatKind.PlayerName,88,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true));
+rangerCooldownTracker.Observe(new(t,CombatKind.PlayerName,88,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true,SourceIsLocal:true));
 rangerCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"RangerTester",99,"Dummy","Drill Dart",100,SourceClass:"Ranger"));
 var rangerCooldowns=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(4));
 Equal(rangerCooldowns["Drill Dart"],2,"validated Drill Dart cooldown reconstruction");
 var rangerCooldownReady=ValidatedCooldownCatalog.Remaining(rangerCooldownTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(6));
 Equal(rangerCooldownReady["Drill Dart"],0,"validated Drill Dart becomes ready after 5s");
 var clericCooldownTracker=new PassiveRotationStateTracker();
-clericCooldownTracker.Observe(new(t,CombatKind.PlayerName,89,"ClericTester",SourceClass:"Cleric",SourceIdentityConfirmed:true));
+clericCooldownTracker.Observe(new(t,CombatKind.PlayerName,89,"ClericTester",SourceClass:"Cleric",SourceIdentityConfirmed:true,SourceIsLocal:true));
 clericCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,89,"ClericTester",99,"Dummy","Condemnation",100,SourceClass:"Cleric"));
 var clericCooldowns=ValidatedCooldownCatalog.Remaining(clericCooldownTracker.Snapshot(),AionClass.Cleric,t.AddSeconds(3));
 Equal(clericCooldowns["Condemnation"],1,"validated base Condemnation cooldown reconstruction excludes specialty resets");
@@ -186,7 +186,7 @@ var templarUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
 True(templarUnknown.Next is null,"provisional Templar fails closed when cooldown readiness is unknown");
 var judgmentTracker=new PassiveRotationStateTracker();
-judgmentTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+judgmentTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 judgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Shield Smite",100,SourceClass:"Templar"));
 var shieldWindow=judgmentTracker.Snapshot();
 True(shieldWindow.JudgmentTrigger=="Shield Smite"&&shieldWindow.JudgmentWindowActive(t.AddSeconds(2.9)),"Shield Smite opens observed Judgment window");
@@ -255,7 +255,7 @@ var templarKnownEmpyreanReady=rotationEngine.Evaluate(new RotationState(t,AionCl
     {Signals=new HashSet<string>(templarKnownEmpyreanSignals,StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(templarKnownEmpyreanReady.Next?.Skill=="Empyrean Lord's Punishment","proven ready Empyrean stigma becomes eligible during observed combat");
 var templarEmpyreanTracker=new PassiveRotationStateTracker();
-templarEmpyreanTracker.Observe(new(t,CombatKind.PlayerName,277,"TemplarStigmaTester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+templarEmpyreanTracker.Observe(new(t,CombatKind.PlayerName,277,"TemplarStigmaTester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 templarEmpyreanTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,277,"TemplarStigmaTester",Skill:"Empyrean Lord's Punishment",SourceClass:"Templar"));
 Equal(ValidatedCooldownCatalog.Remaining(templarEmpyreanTracker.Snapshot(),AionClass.Templar,t.AddSeconds(31))["Empyrean Lord's Punishment"],30,
     "Empyrean Lord's Punishment reconstructs its validated 60s Global base cooldown");
@@ -350,18 +350,18 @@ var postSummonExpiredCorrodeReady=rotationEngine.Evaluate(new RotationState(t.Ad
 True(postSummonExpiredCorrodeReady.Next?.Skill=="Jointstrike: Corrode",
     "observed Ancient Spirit setup recommends Corrode only when the prior base state is expired and the validated 45s cooldown is ready");
 var spiritCorrodeCooldownTracker=new PassiveRotationStateTracker();
-spiritCorrodeCooldownTracker.Observe(new(t,CombatKind.PlayerName,99,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true));
+spiritCorrodeCooldownTracker.Observe(new(t,CombatKind.PlayerName,99,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true,SourceIsLocal:true));
 spiritCorrodeCooldownTracker.Observe(new(t,CombatKind.Damage,99,"SpiritTester",100,"Dummy","Jointstrike: Corrode",100,SourceClass:"Spiritmaster"));
 Equal(ValidatedCooldownCatalog.Remaining(spiritCorrodeCooldownTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(20))["Jointstrike: Corrode"],25,
     "Spiritmaster Corrode cooldown reconstruction preserves 25s recovery after the 20s base debuff expires");
 Equal(ValidatedCooldownCatalog.Remaining(spiritCorrodeCooldownTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(45))["Jointstrike: Corrode"],0,
     "Spiritmaster Corrode becomes ready after its validated 45s Global base cooldown");
 var wardingTracker=new PassiveRotationStateTracker();
-wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+wardingTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 wardingTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Warding Strike",100,SourceClass:"Templar"));
 True(wardingTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),"Warding Strike opens observed 2s Judgment window");
 var rushTracker=new PassiveRotationStateTracker();
-rushTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+rushTracker.Observe(new(t,CombatKind.PlayerName,77,"Tester",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 rushTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"Tester",99,"Dummy","Shield Rush",100,SourceClass:"Templar"));
 True(rushTracker.Snapshot().JudgmentTrigger=="Shield Rush"&&rushTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.9)),
     "current Global Shield Rush opens its documented 2s Judgment window");
@@ -429,7 +429,7 @@ var assassinHeartRecovering=rotationEngine.Evaluate(new RotationState(t,AionClas
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow","AssassinFillerWindow"}},assassinProvisional);
 True(assassinHeartRecovering.Next?.Skill!="Heart Gore","Assassin does not recommend Heart Gore while validated base cooldown is recovering");
 var assassinCooldownTracker=new PassiveRotationStateTracker();
-assassinCooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+assassinCooldownTracker.Observe(new(t,CombatKind.PlayerName,77,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
 assassinCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,77,"AssassinTester",99,"Dummy","Insignia Explosion",100,SourceClass:"Assassin"));
 Equal(ValidatedCooldownCatalog.Remaining(assassinCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(5))["Insignia Explosion"],6,"validated Assassin Insignia Explosion base cooldown reconstruction");
 var assassinFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
@@ -437,7 +437,7 @@ var assassinFiller=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassi
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinFillerWindow"}},assassinProvisional);
 True(assassinFiller.Next?.Skill=="Savage Roar"&&!assassinFiller.Next.Actionable,"expanded observed Assassin sustained skills remain below the existing priority filler");
 var assassinTracker=new PassiveRotationStateTracker();
-assassinTracker.Observe(new(t,CombatKind.PlayerName,88,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+assassinTracker.Observe(new(t,CombatKind.PlayerName,88,"AssassinTester",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
 assassinTracker.Observe(new(t.AddSeconds(1),CombatKind.Damage,88,"AssassinTester",99,"Dummy","Observed Crit",100,
     SourceClass:"Assassin",DamageFlags:DamageFlags.Critical));
 var cloneObservation=new PassiveRotationObservation(88,AionClass.Assassin,
@@ -468,14 +468,14 @@ True(assassinShadowRecovering.Next?.Skill!="Shadowstrike","Assassin burst cannot
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
 var cloneCooldownTracker=new PassiveRotationStateTracker();
-cloneCooldownTracker.Observe(new(t,CombatKind.PlayerName,188,"AssassinCloneTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+cloneCooldownTracker.Observe(new(t,CombatKind.PlayerName,188,"AssassinCloneTester",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
 cloneCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,188,"AssassinCloneTester",Skill:"Illusive Clone",SourceClass:"Assassin"));
 Equal(ValidatedCooldownCatalog.Remaining(cloneCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(31))["Illusive Clone"],60,
     "validated Illusive Clone base cooldown reconstructs 60s remaining after 30s");
 Equal(ValidatedCooldownCatalog.Remaining(cloneCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(91))["Illusive Clone"],0,
     "Illusive Clone returns after validated current-Global 90s base cooldown");
 var identityTracker=new PassiveRotationStateTracker();
-identityTracker.Observe(new(t,CombatKind.PlayerName,101,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true));
+identityTracker.Observe(new(t,CombatKind.PlayerName,101,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 identityTracker.Observe(new(t.AddMilliseconds(10),CombatKind.PlayerName,202,"Ally",SourceClass:"Sorcerer",SourceIdentityConfirmed:false));
 var identitySnapshot=identityTracker.Snapshot();
 True(identitySnapshot.PlayerId==101&&identitySnapshot.ClassName==AionClass.Templar,
@@ -546,7 +546,7 @@ True(PassiveRotationSignalDeriver.Derive(gladiatorRuinousObservation,AionClass.G
 True(!PassiveRotationSignalDeriver.Derive(gladiatorRuinousObservation,AionClass.Gladiator,t.AddSeconds(20.1)).Contains("GladiatorPrepareForBattleWindow"),
     "Gladiator Prepare for Battle cast-derived window expires after 20s");
 var gladiatorCooldownTracker=new PassiveRotationStateTracker();
-gladiatorCooldownTracker.Observe(new(t,CombatKind.PlayerName,177,"GladiatorTester",SourceClass:"Gladiator",SourceIdentityConfirmed:true));
+gladiatorCooldownTracker.Observe(new(t,CombatKind.PlayerName,177,"GladiatorTester",SourceClass:"Gladiator",SourceIdentityConfirmed:true,SourceIsLocal:true));
 gladiatorCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,177,"GladiatorTester",Skill:"Ruinous Blow",SourceClass:"Gladiator"));
 gladiatorCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,177,"GladiatorTester",Skill:"Rage Burst",SourceClass:"Gladiator"));
 Equal(ValidatedCooldownCatalog.Remaining(gladiatorCooldownTracker.Snapshot(),AionClass.Gladiator,t.AddSeconds(21))["Ruinous Blow"],25,
@@ -652,7 +652,7 @@ var rangerMarkRecovering=rotationEngine.Evaluate(new RotationState(t.AddSeconds(
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"RangerMarkWindow"}},rangerMarkGateProfile);
 True(rangerMarkRecovering.Next is null,"Ranger Marking Shot refresh fails closed while validated cooldown is recovering");
 var rangerMarkTracker=new PassiveRotationStateTracker();
-rangerMarkTracker.Observe(new(t,CombatKind.PlayerName,77,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true));
+rangerMarkTracker.Observe(new(t,CombatKind.PlayerName,77,"RangerTester",SourceClass:"Ranger",SourceIdentityConfirmed:true,SourceIsLocal:true));
 rangerMarkTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,77,"RangerTester",Skill:"Marking Shot",SourceClass:"Ranger"));
 Equal(ValidatedCooldownCatalog.Remaining(rangerMarkTracker.Snapshot(),AionClass.Ranger,t.AddSeconds(6))["Marking Shot"],5,
     "validated Ranger Marking Shot base cooldown reconstructs remaining readiness");
@@ -803,7 +803,7 @@ True(PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer
 True(!PassiveRotationSignalDeriver.Derive(sorcererObservedFire,AionClass.Sorcerer,t.AddSeconds(5.1)).Contains("SorcererFireMarkWindow"),
     "Sorcerer reconstructed Fire Mark expires after the documented 5s duration");
 var sorcererWishTracker=new PassiveRotationStateTracker();
-sorcererWishTracker.Observe(new(t,CombatKind.PlayerName,66,"SorcererTester",SourceClass:"Sorcerer",SourceIdentityConfirmed:true));
+sorcererWishTracker.Observe(new(t,CombatKind.PlayerName,66,"SorcererTester",SourceClass:"Sorcerer",SourceIdentityConfirmed:true,SourceIsLocal:true));
 sorcererWishTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,66,"SorcererTester",Skill:"Wish of Concentration",SourceClass:"Sorcerer"));
 Equal(ValidatedCooldownCatalog.Remaining(sorcererWishTracker.Snapshot(),AionClass.Sorcerer,t.AddSeconds(31))["Wish of Concentration"],30,
     "validated Sorcerer Wish base cooldown reconstruction excludes specialty reductions");
@@ -889,7 +889,7 @@ var spiritmasterAncientRecovering=rotationEngine.Evaluate(new RotationState(t,Ai
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterAncientWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
 True(spiritmasterAncientRecovering.Next?.Skill!="Summon: Ancient Spirit","observed opener buffs cannot bypass Ancient Spirit's validated Global cooldown");
 var spiritmasterAncientTracker=new PassiveRotationStateTracker();
-spiritmasterAncientTracker.Observe(new(t,CombatKind.PlayerName,88,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true));
+spiritmasterAncientTracker.Observe(new(t,CombatKind.PlayerName,88,"SpiritTester",SourceClass:"Spiritmaster",SourceIdentityConfirmed:true,SourceIsLocal:true));
 spiritmasterAncientTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,88,"SpiritTester",Skill:"Summon: Ancient Spirit",SourceClass:"Spiritmaster"));
 Equal(ValidatedCooldownCatalog.Remaining(spiritmasterAncientTracker.Snapshot(),AionClass.Spiritmaster,t.AddSeconds(46))["Summon: Ancient Spirit"],45,
     "validated Ancient Spirit base cooldown reconstructs remaining readiness");
@@ -1040,7 +1040,7 @@ var clericObservedChainDebuff=new PassiveRotationObservation(88,AionClass.Cleric
 True(PassiveRotationSignalDeriver.Derive(clericObservedChainDebuff,AionClass.Cleric,t.AddSeconds(30)).Contains("ClericCondemnationWindow"),
     "directly observed Chain of Torment debuff remains authoritative beyond cast-derived base duration");
 var clericEarthCooldownTracker=new PassiveRotationStateTracker();
-clericEarthCooldownTracker.Observe(new(t,CombatKind.PlayerName,188,"ClericTester",SourceClass:"Cleric",SourceIdentityConfirmed:true));
+clericEarthCooldownTracker.Observe(new(t,CombatKind.PlayerName,188,"ClericTester",SourceClass:"Cleric",SourceIdentityConfirmed:true,SourceIsLocal:true));
 clericEarthCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,188,"ClericTester",Skill:"Earth Punishment",SourceClass:"Cleric"));
 Equal(ValidatedCooldownCatalog.Remaining(clericEarthCooldownTracker.Snapshot(),AionClass.Cleric,t.AddSeconds(13))["Earth Punishment"],18,
     "validated Earth Punishment base cooldown reconstructs remaining readiness");
@@ -1176,7 +1176,7 @@ foreach(var chainCase in consumptionCases)
         $"future {chainCase.Opener} cannot manufacture a chain");
 }
 var consumedJudgmentTracker=new PassiveRotationStateTracker();
-consumedJudgmentTracker.Observe(new(t,CombatKind.PlayerName,701,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true));
+consumedJudgmentTracker.Observe(new(t,CombatKind.PlayerName,701,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
 consumedJudgmentTracker.Observe(new(t,CombatKind.Cast,701,"Local",99,"Boss","Shield Smite"));
 True(consumedJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(.5)),"shield cast opens Judgment before consumption");
 consumedJudgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,701,"Local",99,"Boss","Judgment"));
@@ -1196,7 +1196,7 @@ True(labHistoryFolder==System.IO.Path.Combine(Environment.GetFolderPath(Environm
 foreach(var resetClass in Enum.GetValues<AionClass>())
 {
     var resetTracker=new PassiveRotationStateTracker();
-    resetTracker.Observe(new(t,CombatKind.PlayerName,801,"Local",SourceClass:resetClass.ToString(),SourceIdentityConfirmed:true));
+    resetTracker.Observe(new(t,CombatKind.PlayerName,801,"Local",SourceClass:resetClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
     resetTracker.Observe(new(t,CombatKind.Cast,801,"Local",99,"Boss","Known Skill"));
     resetTracker.Observe(new(t,CombatKind.BuffApply,801,"Local",801,"Local",Effect:"Known Buff"));
     resetTracker.Observe(new(t,CombatKind.DebuffApply,801,"Local",99,"Boss",Effect:"Known Debuff"));
@@ -1207,4 +1207,42 @@ foreach(var resetClass in Enum.GetValues<AionClass>())
     True(PassiveRotationSignalDeriver.Derive(cleared,resetClass,t.AddSeconds(1)).All(signal=>signal=="SpiritmasterCorrodeMissingWindow"),
         $"{resetClass} reconnect cannot retain actionable rotation windows");
 }
+
+foreach(var localClass in Enum.GetValues<AionClass>())
+{
+    var localOnlyTracker=new PassiveRotationStateTracker();
+    localOnlyTracker.Observe(new(t,CombatKind.PlayerName,901,"Self",SourceClass:localClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    localOnlyTracker.Observe(new(t,CombatKind.Cast,901,"Self",99,"Boss","Local Skill"));
+    localOnlyTracker.Observe(new(t,CombatKind.PlayerName,902,"Party",SourceClass:"Sorcerer",SourceIdentityConfirmed:true));
+    localOnlyTracker.Observe(new(t,CombatKind.Cast,902,"Party",99,"Boss","Party Skill"));
+    True(localOnlyTracker.Snapshot().PlayerId==901&&localOnlyTracker.Snapshot().ClassName==localClass,
+        $"{localClass} confirmed party identity cannot replace passively proven self");
+    True(!localOnlyTracker.Snapshot().LastSkillUse.ContainsKey("Party Skill"),
+        $"{localClass} party casts never feed local rotation state");
+    localOnlyTracker.Observe(new(t.AddSeconds(1),CombatKind.PlayerName,903,"New Self",SourceClass:localClass.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    True(localOnlyTracker.Snapshot().PlayerId==903&&localOnlyTracker.Snapshot().LastSkillUse.Count==0,
+        $"{localClass} new local entity clears previous character cooldown and chain history");
+}
+var noSelfTracker=new PassiveRotationStateTracker();
+noSelfTracker.Observe(new(t,CombatKind.PlayerName,910,"Party",SourceClass:"Templar",SourceIdentityConfirmed:true));
+True(noSelfTracker.Snapshot().PlayerId==0,"confirmed name alone does not prove a local rotation actor");
+var localBridge=new Aion2DPSPro.Capture.CaptureIdentityBridge();
+localBridge.Observe("adapter|local|server",new(t,CombatKind.PlayerName,911,"Self",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
+var bridgedLocal=localBridge.Resolve("adapter|local|server",new(t,CombatKind.Damage,911,"Self",99,"Boss","Pummel",100));
+True(bridgedLocal.SourceIsLocal&&bridgedLocal.SourceIdentityConfirmed&&bridgedLocal.SourceClass=="Templar",
+    "exact self identity propagates even when damage already has a resolved name");
+True(!localBridge.Resolve("adapter|other|server",new(t,CombatKind.Damage,911,"Self",99,"Boss","Pummel",100)).SourceIsLocal,
+    "local-player proof never crosses endpoint scopes");
+localBridge.Observe("adapter|local|server",new(t,CombatKind.PlayerName,911,"Self",SourceClass:"Templar"));
+True(localBridge.Identities("adapter|local|server",t).Single().SourceIsLocal,"same-entity identity refresh preserves observed self binding");
+localBridge.Clear();
+True(!localBridge.Resolve("adapter|local|server",new(t,CombatKind.Damage,911,"Self",99,"Boss","Pummel",100)).SourceIsLocal,
+    "reconnect clears bridged self proof");
+
+localBridge.Observe("adapter|local|server",new(t,CombatKind.PlayerName,920,"Old Self",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
+localBridge.Observe("adapter|local|server",new(t.AddSeconds(1),CombatKind.PlayerName,921,"New Self",SourceClass:"Cleric",SourceIdentityConfirmed:true,SourceIsLocal:true));
+True(!localBridge.Resolve("adapter|local|server",new(t.AddSeconds(2),CombatKind.Damage,920,"Old Self",99,"Boss","Pummel",100)).SourceIsLocal,
+    "a new selfInfo entity retires prior local-player proof within its exact scope");
+True(localBridge.Resolve("adapter|local|server",new(t.AddSeconds(2),CombatKind.Damage,921,"New Self",99,"Boss","Bolt",100)).SourceIsLocal,
+    "new selfInfo entity remains the only proven local actor");
 Console.WriteLine($"PASS: {checks} regression assertions");

@@ -28,6 +28,14 @@ public sealed class CaptureIdentityBridge
 
         if(e.Kind==CombatKind.PlayerName && e.SourceId>0 && !string.IsNullOrWhiteSpace(e.Source) && !e.Source.StartsWith("Actor "))
         {
+            if(e.SourceIsLocal)
+                foreach(var otherKey in names.Keys.Where(key=>key.Scope==keyScope && key.Id!=e.SourceId && names[key].Event.SourceIsLocal).ToArray())
+                    names[otherKey]=names[otherKey] with {Event=names[otherKey].Event with {SourceIsLocal=false}};
+            // Later identity updates may add class data, but cannot erase an
+            // exact selfInfo binding for this same entity and capture scope.
+            if(names.TryGetValue((keyScope,e.SourceId),out var previous) && previous.Event.SourceIsLocal)
+                e=e with {SourceIsLocal=true,SourceIdentityConfirmed=true,
+                    SourceClass=e.SourceClass=="Unknown"?previous.Event.SourceClass:e.SourceClass};
             names[(keyScope,e.SourceId)]=new(e,e.Utc);
             if(names.Count>4096)names.Remove(names.MinBy(x=>x.Value.Seen).Key);
             return;
@@ -67,6 +75,10 @@ public sealed class CaptureIdentityBridge
             else if(npcs.TryGetValue((keyScope,e.TargetId),out var npcTarget))
                 e=e with {Target=npcTarget.Name};
         }
+        // selfInfo is the local-player evidence. A resolved party name is not.
+        if(e.SourceId!=0 && names.TryGetValue((keyScope,e.SourceId),out var local) && local.Event.SourceIsLocal)
+            e=e with {SourceIsLocal=true,SourceIdentityConfirmed=true,
+                SourceClass=e.SourceClass=="Unknown"?local.Event.SourceClass:e.SourceClass};
         return e;
     }
     private void Prune(DateTime utc)

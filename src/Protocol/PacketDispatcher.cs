@@ -1086,7 +1086,7 @@ public sealed class PacketDispatcher
         Diagnostic?.Invoke(new(utc,"identity-map",$"Mapped self entity {id} -> {best} class={className} job={jobCode} server={serverId}",d.Length));
         ValidationRecord?.Invoke($"{utc:O}|tag=selfIdentity|entity={id}|name={best}|class={className}|jobCode={jobCode}|server={serverId}|extra={extra}|nameOffset={nameOffset}|raw={Convert.ToHexString(d)}");
         ValidationRecord?.Invoke($"{utc:O}|tag=identityMap|entity={id}|name={best}|class={className}|jobCode={jobCode}|server={serverId}|source=selfInfo");
-        return new(CombatKind.PlayerName, id, best, 0, "", "", 0, DamageType.Unknown, 0,0,"",0,className);
+        return new(CombatKind.PlayerName, id, best, 0, "", "", 0, DamageType.Unknown, 0,0,"",0,className,SourceIdentityConfirmed:true,SourceIsLocal:true);
     }
 
     private IEnumerable<Aion2Decoded> TryObservePartyIdentities(byte[] d, int start, DateTime utc, byte opcode)
