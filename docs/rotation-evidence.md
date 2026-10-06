@@ -16,8 +16,9 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Cleric
 - Confirmed Global captures directly observe Earth Punishment, Divine Aura, Chain of Torment, Condemnation, Judgment Thunder and Earth's Retribution.
-- Observed sequences include Chain of Torment followed by Judgment Thunder and Earth's Retribution, plus Chain of Torment active immediately before Condemnation.
-- These observations corroborate the current profile's skill vocabulary, but they do not prove hidden mark/debuff state. Keep Condemnation and mark-dependent decisions signal-gated until passive debuff state is decoded reliably.
+- Current Global base data used by the lab: Earth Punishment 30s cooldown / 10s base effect, Chain of Torment 20s cooldown / 10s base effect, Condemnation 3s, Divine Aura 30s and Bolt 45s. Specialty cooldown resets/reductions are excluded unless directly observed.
+- Chain of Torment and Earth Punishment may preserve their base active windows from observed local casts when a separate debuff event is unavailable; a directly observed debuff remains authoritative beyond the base duration without assuming the +3s/+10s specialties.
+- Earth Punishment is a stigma and is not proactively recommended until the current session has passively observed the player use it at least once. The single-target damage profile does not emit healing recommendations because party-health state is not decoded by the passive rotation tracker.
 
 ### Spiritmaster
 - Confirmed Global captures directly observe Combustion, Earth Tremor, Spirit's Descent, Corrode, Jointstrike: Curse and summon-owned attacks.
