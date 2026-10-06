@@ -82,17 +82,32 @@ public static class PassiveRotationSignalDeriver
         }
         if(observedClass==AionClass.Sorcerer)
         {
-            // Current Global Wish of Concentration grants its self-buff for 10s.
-            // Build-dependent cooldown effects remain excluded.
-            if(observed.UsedRecently("Wish of Concentration",now,10))
+            // Current Global Wish and Element Enhancement each create a 10s personal
+            // burst window. Delayed Explosion proves a shorter 4s self-damage-amplification
+            // window. Specialty cooldown reductions are never inferred.
+            if(observed.UsedRecently("Wish of Concentration",now,10)
+                || observed.UsedRecently("Element Enhancement",now,10)
+                || observed.UsedRecently("Delayed Explosion",now,4))
                 signals.Add("SorcererBurstWindow");
+
             if(observed.UsedRecently("Ice Chain",now,3))
                 signals.Add("SorcererColdWaveWindow");
 
-            // Current Global Fire Mark lasts 5s after a Fire hit. Reconstruct only
-            // from named fire skills with current evidence; never treat generic combat
-            // or specialty-dependent cooldown behavior as proof of the target mark.
-            string[] fireMarkSources={"Flame Arrow","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"};
+            // Stigmas are loadout-dependent. Future recommendations are enabled only
+            // after the current session has directly observed that stigma being used.
+            if(observed.LastSkillUse.ContainsKey("Element Enhancement"))
+                signals.Add("SorcererElementEnhancementKnownWindow");
+            if(observed.LastSkillUse.ContainsKey("Delayed Explosion"))
+                signals.Add("SorcererDelayedExplosionKnownWindow");
+            if(observed.LastSkillUse.ContainsKey("Fire Wall"))
+                signals.Add("SorcererFireWallKnownWindow");
+            if(observed.LastSkillUse.ContainsKey("Cold Storm"))
+                signals.Add("SorcererColdStormKnownWindow");
+
+            // Since the Sep-16 Global change, every landed Fire attack applies Fire Mark
+            // for 5s and Blaze no longer consumes it. Reconstruct only from named Fire
+            // actions; generic combat still cannot manufacture the target mark.
+            string[] fireMarkSources={"Flame Arrow","Burst","Pyroclasm","Flame Harpoon","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"};
             if(fireMarkSources.Any(skill=>observed.UsedRecently(skill,now,5)))
                 signals.Add("SorcererFireMarkWindow");
         }
