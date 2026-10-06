@@ -1631,10 +1631,10 @@ var unresolvedIconMappings=new HashSet<string>(StringComparer.Ordinal)
 {
     "Templar:Threatening Blow","Gladiator:Upward Strike","Chanter:Healing Burst","Spiritmaster:Disenchant"
 };
-foreach(var profile in iconCoverageProfiles)
-foreach(var rule in profile.Rules)
-    True(SkillIconCatalog.Find(profile.ClassName,rule.Skill) is not null || unresolvedIconMappings.Contains(profile.ClassName+":"+rule.Skill),
-        "every recommended skill has a verified icon or explicitly documented unresolved identity: "+profile.ClassName+":"+rule.Skill);
+foreach(var iconCoverageProfile in iconCoverageProfiles)
+foreach(var rule in iconCoverageProfile.Rules)
+    True(SkillIconCatalog.Find(iconCoverageProfile.ClassName,rule.Skill) is not null || unresolvedIconMappings.Contains(iconCoverageProfile.ClassName+":"+rule.Skill),
+        "every recommended skill has a verified icon or explicitly documented unresolved identity: "+iconCoverageProfile.ClassName+":"+rule.Skill);
 True(SkillIconCatalog.Entries.Count==77,"all-class icon batch has 77 explicit identities");
 True(SkillIconCatalog.Entries.GroupBy(x=>x.ClassName).Count()==8,"embedded skill icons cover all eight classes");
 True(SkillIconCatalog.Entries.Select(x=>x.SkillId).Distinct().Count()==77,"embedded resource identities are unique");
