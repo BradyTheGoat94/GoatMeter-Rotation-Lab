@@ -24,6 +24,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Ranger,"Deadshot",20,"Global release","AION 2 Global release database skill 14010000; charge level and specialization modifiers excluded"),
         new(AionClass.Ranger,"Drill Dart",5,"1.0.21.0","AION 2 Global database skill 14050000"),
         new(AionClass.Ranger,"Burst Arrow",20,"Global Season 1","current Global April balance; base cooldown reduced from 30s to 20s"),
+        new(AionClass.Cleric,"Earth Punishment",30,"Global Season 1","current Global stigma skill; 10s base effect, +10s duration specialization excluded"),
         new(AionClass.Cleric,"Chain of Torment",20,"Global Season 1","AION 2 Global database skill 17070000"),
         new(AionClass.Cleric,"Condemnation",3,"Global Season 1","AION 2 Global database skill 17350000"),
         new(AionClass.Cleric,"Divine Aura",30,"Global 1.0.21.0","current Global skill data; level-16 -10s cooldown specialization excluded"),
