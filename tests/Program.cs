@@ -460,7 +460,7 @@ var gladiatorUnknownRage=rotationEngine.Evaluate(new RotationState(t,AionClass.G
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow"}},gladiatorProvisional);
 True(gladiatorUnknownRage.Next?.Skill!="Rage Burst","unproven Rage Burst stigma loadout remains fail-closed even when a synthetic cooldown is ready");
 var gladiatorKnownRageObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
-    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",t.AddSeconds(-46)},{"Rending Blow",t}},
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",t.AddSeconds(-46)},{"Observed Gladiator Action",t}},
     new HashSet<string>(),new HashSet<string>());
 var gladiatorKnownRageSignals=PassiveRotationSignalDeriver.Derive(gladiatorKnownRageObservation,AionClass.Gladiator,t);
 True(gladiatorKnownRageSignals.Contains("GladiatorRageBurstKnownWindow")&&!gladiatorKnownRageSignals.Contains("GladiatorOverheadWindow"),
