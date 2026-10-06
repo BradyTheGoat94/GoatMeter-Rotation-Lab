@@ -172,7 +172,7 @@ public sealed class CombatEngine
         {
             encounter.TargetId=e.TargetId;
             encounter.TargetDamage.TryGetValue(e.TargetId,out var damage);
-            encounter.Target=new(e.Target,e.CurrentHp,e.MaxHp,Math.Clamp(e.CurrentHp*100.0/e.MaxHp,0,100),damage);
+            encounter.Target=new(e.Target,e.CurrentHp,e.MaxHp,Math.Clamp(e.CurrentHp*100.0/e.MaxHp,0,100),damage) {EntityId=e.TargetId};
             encounter.Boss |= e.IsBoss;
         }
         if (e.Kind is CombatKind.BuffApply or CombatKind.BuffRemove or CombatKind.DebuffApply or CombatKind.DebuffRemove)

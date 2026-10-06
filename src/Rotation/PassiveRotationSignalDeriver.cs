@@ -133,7 +133,7 @@ public static class PassiveRotationSignalDeriver
             // for 5s and Blaze no longer consumes it. Reconstruct only from named Fire
             // actions; generic combat still cannot manufacture the target mark.
             string[] fireMarkSources={"Flame Arrow","Burst","Pyroclasm","Flame Harpoon","Blaze","Hellfire","Firestorm","Fire Wall","Delayed Explosion"};
-            if(fireMarkSources.Any(skill=>observed.UsedRecently(skill,now,5)))
+            if(fireMarkSources.Any(skill=>observed.UsedRecentlyOnTarget(skill,now,5,"Fire Mark")))
                 signals.Add("SorcererFireMarkWindow");
         }
         if(observedClass==AionClass.Cleric)
@@ -141,7 +141,7 @@ public static class PassiveRotationSignalDeriver
             // Base Chain of Torment lasts 10s. A directly observed debuff remains
             // authoritative beyond that window (for example a specialization extension),
             // but the +3s specialization is never inferred from the cast alone.
-            if(observed.Debuffs.Contains("Chain of Torment") || observed.UsedRecently("Chain of Torment",now,10))
+            if(observed.Debuffs.Contains("Chain of Torment") || observed.UsedRecentlyOnTarget("Chain of Torment",now,10,"Chain of Torment"))
                 signals.Add("ClericCondemnationWindow");
 
             // Earth Punishment is a stigma, so only recommend future casts after this
@@ -152,7 +152,7 @@ public static class PassiveRotationSignalDeriver
             // Base Earth Punishment lasts 10s. Preserve that state from an observed
             // local cast when a separate debuff event is unavailable. A longer directly
             // observed debuff is honored, but the +10s specialization is not inferred.
-            if(observed.Debuffs.Contains("Earth Punishment") || observed.UsedRecently("Earth Punishment",now,10))
+            if(observed.Debuffs.Contains("Earth Punishment") || observed.UsedRecentlyOnTarget("Earth Punishment",now,10,"Earth Punishment"))
                 signals.Add("ClericEarthPunishmentWindow");
         }
         if(observedClass==AionClass.Chanter)
@@ -188,7 +188,7 @@ public static class PassiveRotationSignalDeriver
             // Current Global base Corrode lasts 20s. Preserve that target state from
             // an observed local Corrode cast when a separate debuff event is unavailable.
             // The specialization extension to 30s is intentionally not inferred.
-            if(observed.Debuffs.Contains("Corrode") || observed.UsedRecently("Jointstrike: Corrode",now,20))
+            if(observed.Debuffs.Contains("Corrode") || observed.UsedRecentlyOnTarget("Jointstrike: Corrode",now,20,"Corrode"))
                 signals.Add("SpiritmasterCorrodeActiveWindow");
             else
                 signals.Add("SpiritmasterCorrodeMissingWindow");

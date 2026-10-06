@@ -1245,4 +1245,60 @@ True(!localBridge.Resolve("adapter|local|server",new(t.AddSeconds(2),CombatKind.
     "a new selfInfo entity retires prior local-player proof within its exact scope");
 True(localBridge.Resolve("adapter|local|server",new(t.AddSeconds(2),CombatKind.Damage,921,"New Self",99,"Boss","Bolt",100)).SourceIsLocal,
     "new selfInfo entity remains the only proven local actor");
+
+var targetStateCases=new (AionClass Class,string Skill,string Effect,string Signal,double Duration)[]
+{
+    (AionClass.Cleric,"Chain of Torment","Chain of Torment","ClericCondemnationWindow",10),
+    (AionClass.Cleric,"Earth Punishment","Earth Punishment","ClericEarthPunishmentWindow",10),
+    (AionClass.Spiritmaster,"Jointstrike: Corrode","Corrode","SpiritmasterCorrodeActiveWindow",20),
+    (AionClass.Sorcerer,"Flame Arrow","Fire Mark","SorcererFireMarkWindow",5)
+};
+foreach(var targetCase in targetStateCases)
+{
+    var scopedTracker=new PassiveRotationStateTracker();
+    scopedTracker.Observe(new(t,CombatKind.PlayerName,1001,"Self",SourceClass:targetCase.Class.ToString(),SourceIdentityConfirmed:true,SourceIsLocal:true));
+    scopedTracker.Observe(new(t,CombatKind.Damage,1001,"Self",1101,"First target",targetCase.Skill,100));
+    True(PassiveRotationSignalDeriver.Derive(scopedTracker.Snapshot(),targetCase.Class,t.AddSeconds(1)).Contains(targetCase.Signal),
+        $"{targetCase.Skill} reconstructs state only on its observed target");
+    scopedTracker.Observe(new(t.AddSeconds(1),CombatKind.DebuffRemove,1001,"Self",1101,"First target",Effect:targetCase.Effect));
+    True(!PassiveRotationSignalDeriver.Derive(scopedTracker.Snapshot(),targetCase.Class,t.AddSeconds(1.5)).Contains(targetCase.Signal),
+        $"explicit {targetCase.Effect} removal overrides the estimated base duration");
+    scopedTracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,1001,"Self",1101,"First target",targetCase.Skill,100));
+    True(PassiveRotationSignalDeriver.Derive(scopedTracker.Snapshot(),targetCase.Class,t.AddSeconds(2.5)).Contains(targetCase.Signal),
+        $"new {targetCase.Skill} reestablishes target state after removal");
+    scopedTracker.Observe(new(t.AddSeconds(3),CombatKind.DebuffApply,1001,"Self",1101,"First target",Effect:targetCase.Effect));
+    scopedTracker.Observe(new(t.AddSeconds(4),CombatKind.Damage,1001,"Self",1102,"Second target","Other local attack",100));
+    var switchedTarget=scopedTracker.Snapshot();
+    True(switchedTarget.TargetId==1102&&switchedTarget.Debuffs.Count==0,
+        $"{targetCase.Class} target switch clears old target debuffs");
+    True(!PassiveRotationSignalDeriver.Derive(switchedTarget,targetCase.Class,t.AddSeconds(4.5)).Contains(targetCase.Signal),
+        $"{targetCase.Skill} from the old target cannot enable a recommendation on the new target");
+    True(switchedTarget.LastSkillUse.ContainsKey(targetCase.Skill),
+        $"{targetCase.Skill} cooldown and equipped-loadout evidence survive target switching");
+    scopedTracker.Observe(new(t.AddSeconds(3.5),CombatKind.Damage,1001,"Self",1101,"First target",targetCase.Skill,100));
+    True(scopedTracker.Snapshot().TargetId==1102,
+        $"{targetCase.Class} late old-target damage cannot revert the active target");
+    scopedTracker.Observe(new(t.AddSeconds(5),CombatKind.DebuffApply,1001,"Self",1101,"First target",Effect:targetCase.Effect));
+    True(scopedTracker.Snapshot().Debuffs.Count==0,
+        $"{targetCase.Class} old-target effect events do not leak into the current target");
+    scopedTracker.Observe(new(t.AddSeconds(5),CombatKind.Damage,1002,"Party",1101,"First target",targetCase.Skill,100));
+    True(scopedTracker.Snapshot().TargetId==1102,
+        $"{targetCase.Class} party attacks never select the local rotation target");
+    scopedTracker.Observe(new(t.AddSeconds(6),CombatKind.Despawn,1102,"Second target"));
+    True(scopedTracker.Snapshot().TargetId==0&&scopedTracker.Snapshot().TargetSkillUse!.Count==0,
+        $"{targetCase.Class} target removal invalidates reconstructed target state");
+}
+var recipientTracker=new PassiveRotationStateTracker();
+recipientTracker.Observe(new(t,CombatKind.PlayerName,1201,"Self",SourceClass:"Sorcerer",SourceIdentityConfirmed:true,SourceIsLocal:true));
+recipientTracker.Observe(new(t,CombatKind.BuffApply,1201,"Self",1202,"Ally",Effect:"Four Elements"));
+True(!recipientTracker.Snapshot().Buffs.Contains("Four Elements"),"a local buff on an ally does not prove a self buff");
+recipientTracker.Observe(new(t,CombatKind.BuffApply,1202,"Ally",1201,"Self",Effect:"Observed Party Buff"));
+True(recipientTracker.Snapshot().Buffs.Contains("Observed Party Buff"),"a passively observed party buff on self is retained");
+recipientTracker.Observe(new(t,CombatKind.BuffRemove,1202,"Ally",1201,"Self",Effect:"Observed Party Buff"));
+True(!recipientTracker.Snapshot().Buffs.Contains("Observed Party Buff"),"party buff removal uses its recipient");
+recipientTracker.Observe(new(t.AddSeconds(3),CombatKind.Cast,1201,"Self",Skill:"Wish of Concentration"));
+recipientTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,1201,"Self",Skill:"Wish of Concentration"));
+True(recipientTracker.Snapshot().LastSkillUse["Wish of Concentration"]==t.AddSeconds(3),"late skill events cannot roll back observed cooldown timestamps");
+recipientTracker.Observe(new(t.AddSeconds(4),CombatKind.Despawn,1201,"Self"));
+True(recipientTracker.Snapshot().PlayerId==0,"local entity removal clears rotation identity");
 Console.WriteLine($"PASS: {checks} regression assertions");

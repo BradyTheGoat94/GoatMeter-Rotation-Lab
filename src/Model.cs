@@ -19,7 +19,10 @@ public sealed record SkillStats(string Name, long Damage, long Hits, double Dps,
     public IReadOnlyDictionary<DamageFlags,long> FlagHits {get;init;} = new Dictionary<DamageFlags,long>();
 }
 public sealed record BuffStats(string Name, double Uptime, int MaxStacks, long SourceId = 0, long TargetId = 0, bool IsDebuff = false, double ActiveSeconds = 0);
-public sealed record TargetStats(string Name, long CurrentHp, long MaxHp, double Percent, long DamageTaken);
+public sealed record TargetStats(string Name, long CurrentHp, long MaxHp, double Percent, long DamageTaken)
+{
+    public long EntityId {get;init;}
+}
 public sealed record ActorTargetStats(long ActorId,long TargetId,string Name,long Damage,double Share);
 public sealed record CategorySnapshot(IReadOnlyList<PlayerStats> Players,IReadOnlyList<SkillStats> Skills,string MetricLabel);
 public sealed record MeterSnapshot(bool InFight, bool PreviewMode, double FightSeconds, long FightDamage, double FightDps,
