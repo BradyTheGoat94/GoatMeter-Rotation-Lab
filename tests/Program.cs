@@ -443,10 +443,10 @@ True(gladiatorProvisional.Validation==ProfileValidation.Provisional,"Gladiator f
 var gladiatorUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),gladiatorProvisional);
 True(gladiatorUnknown.Next is null,"Gladiator fails closed without passively proven chain state");
-var gladiatorFinisher=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
-    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFinisherWindow"}},gladiatorProvisional);
-True(gladiatorFinisher.Next?.Skill=="Seismic Crash"&&!gladiatorFinisher.Next.Actionable,"observed Gladiator finisher signal yields informational Seismic Crash");
+True(!gladiatorProvisional.Rules.SelectMany(r=>r.Conditions).Any(x=>x.Key=="GladiatorDamageWindow"||x.Key=="GladiatorFinisherWindow"),
+    "Gladiator profile contains no unreachable legacy damage/finisher signal gates");
+True(!gladiatorProvisional.Rules.Any(r=>r.Skill=="Seismic Crash"),
+    "unreconciled Seismic Crash vocabulary remains outside the current-Global Gladiator profile");
 var gladiatorSmashing=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorSmashingWindow","GladiatorFillerWindow"}},gladiatorProvisional);
@@ -455,6 +455,20 @@ var gladiatorRupture=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladi
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorRuptureWindow","GladiatorFillerWindow"}},gladiatorProvisional);
 True(gladiatorRupture.Next?.Skill=="Rupture Strike","observed Keen Strike chain advances to the current Global Rupture Strike name");
+var gladiatorUnknownRage=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorUnknownRage.Next?.Skill!="Rage Burst","unproven Rage Burst stigma loadout remains fail-closed even when a synthetic cooldown is ready");
+var gladiatorKnownRageObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",t.AddSeconds(-46)},{"Rending Blow",t}},
+    new HashSet<string>(),new HashSet<string>());
+var gladiatorKnownRageSignals=PassiveRotationSignalDeriver.Derive(gladiatorKnownRageObservation,AionClass.Gladiator,t);
+True(gladiatorKnownRageSignals.Contains("GladiatorRageBurstKnownWindow")&&!gladiatorKnownRageSignals.Contains("GladiatorOverheadWindow"),
+    "previously observed Rage Burst proves loadout availability after its 10s activation window expires");
+var gladiatorKnownRageReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",0},{"Ruinous Blow",20}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=gladiatorKnownRageSignals},gladiatorProvisional);
+True(gladiatorKnownRageReady.Next?.Skill=="Rage Burst","proven Rage Burst stigma is recommended when ready and higher cooldown actions are unavailable");
 var gladiatorRageObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Rage Burst",t}},new HashSet<string>(),new HashSet<string>());
 var gladiatorRageSignals=PassiveRotationSignalDeriver.Derive(gladiatorRageObservation,AionClass.Gladiator,t.AddSeconds(9.9));
@@ -475,6 +489,28 @@ True(gladiatorUpwardSignals.Contains("GladiatorUpwardStrikeWindow"),"observed Ov
 var gladiatorUpward=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=gladiatorUpwardSignals},gladiatorProvisional);
 True(gladiatorUpward.Next?.Skill=="Upward Strike","observed Overhead Slam immediately prioritizes Upward Strike");
+var gladiatorRuinousReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Ruinous Blow",0},{"Rage Burst",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow","GladiatorRageBurstKnownWindow"}},gladiatorProvisional);
+True(gladiatorRuinousReady.Next?.Skill=="Ruinous Blow","ready Ruinous Blow establishes Prepare for Battle before a ready Rage Burst");
+var gladiatorRuinousRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Ruinous Blow",12},{"Rage Burst",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow","GladiatorRageBurstKnownWindow"}},gladiatorProvisional);
+True(gladiatorRuinousRecovering.Next?.Skill=="Rage Burst","recovering Ruinous Blow falls through to proven ready Rage Burst");
+var gladiatorRuinousObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Ruinous Blow",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(gladiatorRuinousObservation,AionClass.Gladiator,t.AddSeconds(19.9)).Contains("GladiatorPrepareForBattleWindow"),
+    "observed Ruinous Blow reconstructs Prepare for Battle through its 20s base duration");
+True(!PassiveRotationSignalDeriver.Derive(gladiatorRuinousObservation,AionClass.Gladiator,t.AddSeconds(20.1)).Contains("GladiatorPrepareForBattleWindow"),
+    "Gladiator Prepare for Battle cast-derived window expires after 20s");
+var gladiatorCooldownTracker=new PassiveRotationStateTracker();
+gladiatorCooldownTracker.Observe(new(t,CombatKind.PlayerName,177,"GladiatorTester",SourceClass:"Gladiator",SourceIdentityConfirmed:true));
+gladiatorCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,177,"GladiatorTester",Skill:"Ruinous Blow",SourceClass:"Gladiator"));
+gladiatorCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,177,"GladiatorTester",Skill:"Rage Burst",SourceClass:"Gladiator"));
+Equal(ValidatedCooldownCatalog.Remaining(gladiatorCooldownTracker.Snapshot(),AionClass.Gladiator,t.AddSeconds(21))["Ruinous Blow"],25,
+    "Ruinous Blow reconstructs its validated 45s Global base cooldown");
+Equal(ValidatedCooldownCatalog.Remaining(gladiatorCooldownTracker.Snapshot(),AionClass.Gladiator,t.AddSeconds(21))["Rage Burst"],25,
+    "Rage Burst reconstructs its validated 45s Global base cooldown without assuming the 30s specialization");
 var gladiatorCrushingObservation=new PassiveRotationObservation(77,AionClass.Gladiator,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Crushing Wave",t}},new HashSet<string>(),new HashSet<string>());
 var gladiatorFrenziedSignals=PassiveRotationSignalDeriver.Derive(gladiatorCrushingObservation,AionClass.Gladiator,t.AddSeconds(2.9));
@@ -484,6 +520,10 @@ var gladiatorFrenzied=rotationEngine.Evaluate(new RotationState(t,AionClass.Glad
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=gladiatorFrenziedSignals},gladiatorProvisional);
 True(gladiatorFrenzied.Next?.Skill=="Frenzied Wave","observed Crushing Wave immediately prioritizes current-Global Frenzied Wave");
+var gladiatorChainVsCooldown=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Ruinous Blow",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFrenziedWaveWindow","GladiatorFillerWindow"}},gladiatorProvisional);
+True(gladiatorChainVsCooldown.Next?.Skill=="Frenzied Wave","brief Frenzied Wave continuation outranks ready Ruinous Blow so the observed chain is not dropped");
 var gladiatorCrushingReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Gladiator,"global-gladiator-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Crushing Wave",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"GladiatorFillerWindow"}},gladiatorProvisional);
