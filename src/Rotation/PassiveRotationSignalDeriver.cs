@@ -41,6 +41,21 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Vicious Strike",now,3))signals.Add("TemplarDecisiveStrikeWindow");
             if(observed.UsedRecently("Decisive Strike",now,3))signals.Add("TemplarDesperateStrikeWindow");
             if(observed.UsedRecently("Desperate Strike",now,3))signals.Add("TemplarThreateningBlowWindow");
+
+            // Pummel has a guaranteed Punishing Strike chain activation for 3s.
+            if(observed.UsedRecently("Pummel",now,3))
+                signals.Add("TemplarPunishingStrikeWindow");
+
+            // Empyrean Lord's Punishment is a stigma. Recommend later uses only
+            // after the current zone/session has directly observed it once.
+            if(observed.LastSkillUse.ContainsKey("Empyrean Lord's Punishment"))
+                signals.Add("TemplarEmpyreanKnownWindow");
+
+            // Current Global Punishment grants Executor for 20s. Reconstruct only
+            // the base duration from a directly observed local cast.
+            if(observed.UsedRecently("Punishment",now,20))
+                signals.Add("TemplarExecutorWindow");
+
             // Current Global Annihilate is enabled by observed target Stun or Knockdown.
             // Do not infer its low-chance Incapacitated-Immunity activation.
             if(observed.Debuffs.Contains("Stun") || observed.Debuffs.Contains("Knockdown"))
