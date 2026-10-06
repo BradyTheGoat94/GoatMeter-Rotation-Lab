@@ -28,7 +28,10 @@ This file records sanitized observations used to challenge or corroborate provis
 
 ### Gladiator
 - Confirmed Global captures directly observe Rending Blow, Keen Strike, Wrathful Strike, Smashing Blow, Rupture Strike and Murderous Burst.
-- Repeated observations corroborate the sustained chain vocabulary. Passive timing windows are used only where current Global mechanics also support the transition; no hidden proc state is inferred.
+- Current Global Ruinous Blow has a 45s base cooldown and grants Prepare for Battle for 20s (+20% PvE damage plus offensive stats). The lab recommends it during proven combat on its base cooldown and reconstructs only the observed 20s base buff window.
+- Rage Burst is a loadout-dependent stigma with a 45s base cooldown and a 10s Overhead Slam activation window. The assistant recommends later uses only after the current session has directly observed Rage Burst; the 30s specialization cooldown is excluded.
+- Brief observed chain continuations (Smashing, Rupture/Wrathful, Frenzied Wave, Upward Strike) outrank longer cooldown actions so the passive chain window is not dropped.
+- Unreconciled Seismic Crash vocabulary is excluded from the current-Global Gladiator profile rather than treated as a hidden finisher.
 
 ### Assassin
 - Confirmed Global captures directly observe Heart Gore, Insignia Explosion, Exploit Weakness, Savage Fang, Ambush Stance and Doppelganger Attack.
