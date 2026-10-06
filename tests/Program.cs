@@ -179,7 +179,8 @@ var templarProvisional=RotationProfileCatalog.CreateProvisionalTemplarSingleTarg
 True(templarProvisional.Validation==ProfileValidation.Provisional,"Templar fixture remains provisional");
 True(templarProvisional.Rules.Single(x=>x.Skill=="Judgment").Conditions.Any(x=>x.Kind==RotationConditionKind.SignalPresent&&x.Key=="JudgmentWindow"),"Judgment requires observed trigger signal");
 var templarReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
-    new Dictionary<string,double>{{"Punishment",0},{"Empyrean Lord's Punishment",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
+    new Dictionary<string,double>{{"Punishment",0},{"Empyrean Lord's Punishment",12}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(templarReady.Next?.Skill=="Punishment"&&!templarReady.Next.Actionable,"provisional Templar emits informational Punishment when observed ready");
 var templarUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),templarProvisional);
@@ -202,6 +203,12 @@ var punishmentWithoutJudgment=rotationEngine.Evaluate(new RotationState(t.AddSec
     new Dictionary<string,double>{{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(punishmentWithoutJudgment.Next?.Skill=="Punishment","ready Punishment remains Templar priority when no observed Judgment window exists");
+var templarPunishmentObservation=new PassiveRotationObservation(42,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Punishment",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(templarPunishmentObservation,AionClass.Templar,t.AddSeconds(19.9)).Contains("TemplarExecutorWindow"),
+    "observed Punishment reconstructs Executor through its 20s base duration");
+True(!PassiveRotationSignalDeriver.Derive(templarPunishmentObservation,AionClass.Templar,t.AddSeconds(20.1)).Contains("TemplarExecutorWindow"),
+    "Templar Executor cast-derived window expires after 20s");
 var templarStunObservation=new PassiveRotationObservation(42,AionClass.Templar,new Dictionary<string,DateTime>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"});
 var templarAnnihilateSignals=PassiveRotationSignalDeriver.Derive(templarStunObservation,AionClass.Templar,t);
 True(templarAnnihilateSignals.Contains("TemplarAnnihilateWindow"),"observed target Stun opens current-Global Templar Annihilate window");
@@ -209,6 +216,10 @@ var templarAnnihilateReady=rotationEngine.Evaluate(new RotationState(t,AionClass
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",8},{"Annihilate",0}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
     {Signals=templarAnnihilateSignals},templarProvisional);
 True(templarAnnihilateReady.Next?.Skill=="Annihilate","ready Annihilate consumes observed current-Global Stun opportunity");
+var templarAnnihilateVsPunishment=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",0},{"Annihilate",0}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(templarAnnihilateSignals,StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
+True(templarAnnihilateVsPunishment.Next?.Skill=="Annihilate","brief observed Annihilate opportunity is consumed before ready Punishment");
 var templarAnnihilateRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",8},{"Annihilate",6}},new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Stun"},100,100,1,false,true,.95)
     {Signals=templarAnnihilateSignals},templarProvisional);
@@ -219,6 +230,37 @@ var templarFillerOnly=rotationEngine.Evaluate(new RotationState(t,AionClass.Temp
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
 True(templarFillerOnly.Next?.Skill=="Pummel","confirmed combat activity uses Pummel as priority filler without inventing a fixed combo");
+var templarPummelObservation=new PassiveRotationObservation(77,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Pummel",t}},new HashSet<string>(),new HashSet<string>());
+var templarPunishingSignals=PassiveRotationSignalDeriver.Derive(templarPummelObservation,AionClass.Templar,t.AddSeconds(2.9));
+True(templarPunishingSignals.Contains("TemplarPunishingStrikeWindow"),"observed Pummel opens guaranteed Punishing Strike chain window");
+True(!PassiveRotationSignalDeriver.Derive(templarPummelObservation,AionClass.Templar,t.AddSeconds(3.1)).Contains("TemplarPunishingStrikeWindow"),
+    "Templar Punishing Strike chain window expires after 3s");
+var templarPunishingDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=templarPunishingSignals},templarProvisional);
+True(templarPunishingDecision.Next?.Skill=="Punishing Strike","brief Punishing Strike continuation outranks ready Punishment");
+var templarUnknownEmpyrean=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Empyrean Lord's Punishment",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
+True(templarUnknownEmpyrean.Next?.Skill!="Empyrean Lord's Punishment","unproven Empyrean stigma loadout remains fail-closed even if a synthetic cooldown is ready");
+var templarKnownEmpyreanObservation=new PassiveRotationObservation(77,AionClass.Templar,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Empyrean Lord's Punishment",t.AddSeconds(-61)},{"Pummel",t.AddSeconds(-4)}},
+    new HashSet<string>(),new HashSet<string>());
+var templarKnownEmpyreanSignals=PassiveRotationSignalDeriver.Derive(templarKnownEmpyreanObservation,AionClass.Templar,t);
+True(templarKnownEmpyreanSignals.Contains("TemplarEmpyreanKnownWindow")&&!templarKnownEmpyreanSignals.Contains("TemplarPunishingStrikeWindow"),
+    "previously observed Empyrean stigma remains loadout-known after short chain states expire");
+var templarKnownEmpyreanReady=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"global-templar-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Punishment",10},{"Empyrean Lord's Punishment",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(templarKnownEmpyreanSignals,StringComparer.OrdinalIgnoreCase){"TemplarFillerWindow"}},templarProvisional);
+True(templarKnownEmpyreanReady.Next?.Skill=="Empyrean Lord's Punishment","proven ready Empyrean stigma becomes eligible during observed combat");
+var templarEmpyreanTracker=new PassiveRotationStateTracker();
+templarEmpyreanTracker.Observe(new(t,CombatKind.PlayerName,277,"TemplarStigmaTester",SourceClass:"Templar",SourceIdentityConfirmed:true));
+templarEmpyreanTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,277,"TemplarStigmaTester",Skill:"Empyrean Lord's Punishment",SourceClass:"Templar"));
+Equal(ValidatedCooldownCatalog.Remaining(templarEmpyreanTracker.Snapshot(),AionClass.Templar,t.AddSeconds(31))["Empyrean Lord's Punishment"],30,
+    "Empyrean Lord's Punishment reconstructs its validated 60s Global base cooldown");
+Equal(ValidatedCooldownCatalog.Remaining(templarEmpyreanTracker.Snapshot(),AionClass.Templar,t.AddSeconds(61))["Empyrean Lord's Punishment"],0,
+    "Empyrean Lord's Punishment returns after its validated 60s base cooldown");
 var templarViciousObservation=new PassiveRotationObservation(77,AionClass.Templar,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Vicious Strike",t}},new HashSet<string>(),new HashSet<string>());
 var templarDecisiveSignals=PassiveRotationSignalDeriver.Derive(templarViciousObservation,AionClass.Templar,t.AddSeconds(2.9));
