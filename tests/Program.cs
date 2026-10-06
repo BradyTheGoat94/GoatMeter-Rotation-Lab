@@ -334,6 +334,8 @@ var noJudgmentSignal=rotationEngine.Evaluate(judgmentState with {Signals=new Has
 True(noJudgmentSignal.Next is null,"Judgment remains ineligible without observed trigger signal");
 var assassinProvisional=RotationProfileCatalog.CreateProvisionalAssassinSingleTarget();
 True(assassinProvisional.Validation==ProfileValidation.Provisional,"Assassin fixture remains provisional");
+True(!assassinProvisional.Rules.Any(r=>r.Skill=="Ambush Stance"||r.Skill=="Doppelganger Attack"),
+    "Assassin passive Ambush/Doppelganger effects are not emitted as player actions");
 var assassinQuickObservation=new PassiveRotationObservation(77,AionClass.Assassin,
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Quick Slice",t}},new HashSet<string>(),new HashSet<string>());
 var assassinQuickSignals=PassiveRotationSignalDeriver.Derive(assassinQuickObservation,AionClass.Assassin,t.AddSeconds(2.9));
@@ -355,6 +357,7 @@ var assassinSavageObservation=new PassiveRotationObservation(77,AionClass.Assass
     new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Savage Roar",t}},new HashSet<string>(),new HashSet<string>());
 var assassinSavageSignals=PassiveRotationSignalDeriver.Derive(assassinSavageObservation,AionClass.Assassin,t.AddSeconds(2.9));
 True(assassinSavageSignals.Contains("AssassinSavageBackKickWindow"),"observed Savage Roar opens Savage Back Kick chain window");
+True(!assassinSavageSignals.Contains("InsigniaReady"),"observed Savage Roar does not invent maximum Insignia stack readiness");
 True(!PassiveRotationSignalDeriver.Derive(assassinSavageObservation,AionClass.Assassin,t.AddSeconds(3.1)).Contains("AssassinSavageBackKickWindow"),"Savage Back Kick chain window expires after 3s");
 var assassinSavageKick=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
@@ -403,12 +406,32 @@ True(!PassiveRotationSignalDeriver.Derive(cloneObservation,AionClass.Assassin,t.
 var cloneDecision=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Shadowstrike",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95){Signals=cloneSignals},assassinProvisional);
 True(cloneDecision.Next?.Skill=="Shadowstrike","observed Illusive Clone exposes Assassin burst recommendation");
+var cloneCritSignals=new HashSet<string>(cloneSignals,StringComparer.OrdinalIgnoreCase){"CriticalHitWindow","AssassinFillerWindow"};
+var cloneHeartGore=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heart Gore",4},{"Shadowstrike",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=cloneCritSignals},assassinProvisional);
+True(cloneHeartGore.Next?.Skill=="Heart Gore","observed critical inside Illusive Clone prioritizes Heart Gore even while its normal cooldown would be recovering");
+var cloneNoCrit=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heart Gore",4},{"Shadowstrike",0}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(cloneSignals,StringComparer.OrdinalIgnoreCase)},assassinProvisional);
+True(cloneNoCrit.Next?.Skill=="Shadowstrike","Illusive Clone alone does not manufacture Heart Gore without an observed critical");
+var expiredCloneCrit=rotationEngine.Evaluate(new RotationState(t.AddSeconds(20.1),AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
+    new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Heart Gore",4}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
+    {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow","AssassinFillerWindow"}},assassinProvisional);
+True(expiredCloneCrit.Next?.Skill!="Heart Gore","after Illusive Clone expires, Heart Gore again obeys its validated normal cooldown");
 var assassinShadowRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass.Assassin,"global-assassin-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(StringComparer.OrdinalIgnoreCase){{"Shadowstrike",5}},new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"AssassinBurstWindow","AssassinFillerWindow"}},assassinProvisional);
 True(assassinShadowRecovering.Next?.Skill!="Shadowstrike","Assassin burst cannot recommend Shadowstrike while its validated cooldown is recovering");
 True(assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(2.9)),"observed Assassin critical opens passive 2s Heart Gore window");
 True(!assassinTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(3.1)),"Assassin critical window expires after 2s");
+var cloneCooldownTracker=new PassiveRotationStateTracker();
+cloneCooldownTracker.Observe(new(t,CombatKind.PlayerName,188,"AssassinCloneTester",SourceClass:"Assassin",SourceIdentityConfirmed:true));
+cloneCooldownTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,188,"AssassinCloneTester",Skill:"Illusive Clone",SourceClass:"Assassin"));
+Equal(ValidatedCooldownCatalog.Remaining(cloneCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(31))["Illusive Clone"],60,
+    "validated Illusive Clone base cooldown reconstructs 60s remaining after 30s");
+Equal(ValidatedCooldownCatalog.Remaining(cloneCooldownTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(91))["Illusive Clone"],0,
+    "Illusive Clone returns after validated current-Global 90s base cooldown");
 var identityTracker=new PassiveRotationStateTracker();
 identityTracker.Observe(new(t,CombatKind.PlayerName,101,"Local",SourceClass:"Templar",SourceIdentityConfirmed:true));
 identityTracker.Observe(new(t.AddMilliseconds(10),CombatKind.PlayerName,202,"Ally",SourceClass:"Sorcerer",SourceIdentityConfirmed:false));
