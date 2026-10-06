@@ -1622,7 +1622,7 @@ fangTracker.Observe(new(t,CombatKind.Cast,602,"Party",699,"Target","Savage Fang"
 True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t).Contains("AssassinSavageFangKnownWindow"),"party stigma cannot prove local loadout");
 fangTracker.Observe(new(t,CombatKind.Cast,601,"Self",699,"Target","Savage Fang",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
 True(PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(1)).Contains("AssassinSavageFangKnownWindow"),"exact local stigma use proves current session loadout");
-fangTracker.Observe(new(t.AddSeconds(2),CombatKind.ZoneReset,0,""));
+fangTracker.Observe(new(t.AddSeconds(2),CombatKind.Zone,0,""));
 True(!PassiveRotationSignalDeriver.Derive(fangTracker.Snapshot(),AionClass.Assassin,t.AddSeconds(61)).Contains("AssassinSavageFangKnownWindow"),"zone reset invalidates equipped stigma observation");
 
 Console.WriteLine($"PASS: {checks} regression assertions");
