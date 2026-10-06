@@ -1171,7 +1171,9 @@ public sealed class PacketDispatcher
             if (evt is not null)
             {
                 ValidationRecord?.Invoke($"{utc:O}|tag=embeddedIdentity|packet={kind}|entity={evt.SourceId}|name={evt.Source}|offset={i}|raw={Convert.ToHexString(d)}");
-                return evt;
+                // An incidental byte sequence is identity metadata, not proof of
+                // the local actor. Only a real selfInfo frame can establish self.
+                return evt with {SourceIsLocal=false};
             }
         }
         return null;

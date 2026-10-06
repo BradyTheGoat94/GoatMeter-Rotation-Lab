@@ -16,6 +16,7 @@ public sealed class PassiveRotationStateTracker
     TargetStats? target;
     long targetId;
     DateTime lastTargetActionUtc=DateTime.MinValue;
+    DateTime lastTargetHpUtc=DateTime.MinValue;
     long playerId;
     AionClass? playerClass;
     DateTime? judgmentWindowUntil;
@@ -64,8 +65,11 @@ public sealed class PassiveRotationStateTracker
                     targetEffectRemovals[e.Effect]=e.Utc;
                 }
             }
-            if(e.Kind==CombatKind.TargetHp && e.TargetId==targetId && targetId!=0 && e.MaxHp>0)
+            if(e.Kind==CombatKind.TargetHp && e.TargetId==targetId && targetId!=0 && e.MaxHp>0 && e.Utc>=lastTargetHpUtc)
+            {
+                lastTargetHpUtc=e.Utc;
                 target=new(e.Target,e.CurrentHp,e.MaxHp,Math.Clamp(e.CurrentHp*100.0/e.MaxHp,0,100),0) {EntityId=targetId};
+            }
             if(e.SourceId!=playerId)return;
             if(e.Kind is CombatKind.Damage or CombatKind.Heal or CombatKind.Cast)
                 if(!string.IsNullOrWhiteSpace(e.Skill))
@@ -118,7 +122,7 @@ public sealed class PassiveRotationStateTracker
 
     void ClearTarget()
     {
-        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();debuffs.Clear();
+        target=null;targetId=0;lastTargetActionUtc=DateTime.MinValue;lastTargetHpUtc=DateTime.MinValue;targetSkillUse.Clear();targetEffectRemovals.Clear();debuffs.Clear();
     }
 
     static readonly IReadOnlyDictionary<string,double> JudgmentWindowSeconds =
@@ -148,8 +152,10 @@ public sealed record PassiveRotationObservation(long PlayerId,AionClass? ClassNa
             && (!TargetEffectRemovals.TryGetValue(effect,out var removed) || removed<used);
     }
 
-    public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until;
-    public bool CriticalHitWindowActive(DateTime utc)=>CriticalHitWindowUntil is DateTime until && utc<=until;
+    public bool JudgmentWindowActive(DateTime utc)=>JudgmentWindowUntil is DateTime until && utc<=until
+        && LastSkillUse.TryGetValue(JudgmentTrigger,out var opened) && utc>=opened
+        && (!LastSkillUse.TryGetValue("Judgment",out var consumed) || consumed<opened);
+    public bool CriticalHitWindowActive(DateTime utc)=>CriticalHitWindowUntil is DateTime until && utc>=until.AddSeconds(-2) && utc<=until;
     /// <summary>One observed opener grants one continuation. Equal timestamps fail
     /// closed because coarse capture clocks cannot prove a fresh activation.</summary>
     public bool PendingFollowUp(string opener,string followUp,DateTime utc,double seconds)=>

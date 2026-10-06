@@ -1317,4 +1317,34 @@ hpScopeTracker.Observe(new(t.AddSeconds(3),CombatKind.Damage,1301,"Self",1403,"N
 True(hpScopeTracker.Snapshot().Target is null,"new local target waits for its own HP evidence");
 hpScopeTracker.Observe(new(t.AddSeconds(4),CombatKind.Zone));
 True(hpScopeTracker.Snapshot().TargetId==0&&hpScopeTracker.Snapshot().Target is null,"zone reset clears exact target HP");
+
+var exactSelfParser=new PacketDispatcher(ProtocolProfile.SafeGlobalScaffold());
+var exactSelfFrame=Convert.FromHexString("193336FD235F81C1283708546573744865726F000000");
+True(exactSelfParser.Dispatch(exactSelfFrame,t).Any(evt=>evt.Kind==CombatKind.PlayerName&&evt.SourceIsLocal&&evt.SourceIdentityConfirmed),
+    "real selfInfo opcode carries exact local actor proof");
+var incidentalSelfParser=new PacketDispatcher(ProtocolProfile.SafeGlobalScaffold());
+var incidentalSelfFrame=Convert.FromHexString("1977883336FD235F81C1283708546573744865726F000000");
+var incidentalSelfEvents=incidentalSelfParser.Dispatch(incidentalSelfFrame,t).ToArray();
+True(incidentalSelfEvents.Any(evt=>evt.Kind==CombatKind.PlayerName)&&incidentalSelfEvents.All(evt=>!evt.SourceIsLocal),
+    "embedded selfInfo-like bytes cannot establish a local rotation actor");
+var replayJudgmentTracker=new PassiveRotationStateTracker();
+replayJudgmentTracker.Observe(new(t,CombatKind.PlayerName,1501,"Self",SourceClass:"Templar",SourceIdentityConfirmed:true,SourceIsLocal:true));
+replayJudgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,1501,"Self",Skill:"Shield Smite"));
+True(!replayJudgmentTracker.Snapshot().JudgmentWindowActive(t),"future shield trigger does not open an earlier Judgment window");
+replayJudgmentTracker.Observe(new(t.AddSeconds(2),CombatKind.Cast,1501,"Self",Skill:"Judgment"));
+replayJudgmentTracker.Observe(new(t.AddSeconds(1),CombatKind.Cast,1501,"Self",Skill:"Shield Smite"));
+True(!replayJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(2.5)),
+    "duplicate delayed shield event cannot resurrect a consumed Judgment opportunity");
+replayJudgmentTracker.Observe(new(t.AddSeconds(3),CombatKind.Cast,1501,"Self",Skill:"Shield Smite"));
+True(replayJudgmentTracker.Snapshot().JudgmentWindowActive(t.AddSeconds(3.5)),"a newer shield event legitimately rearms Judgment after consumption");
+var futureCritTracker=new PassiveRotationStateTracker();
+futureCritTracker.Observe(new(t,CombatKind.PlayerName,1502,"Self",SourceClass:"Assassin",SourceIdentityConfirmed:true,SourceIsLocal:true));
+futureCritTracker.Observe(new(t.AddSeconds(2),CombatKind.Damage,1502,"Self",99,"Boss","Critical attack",100,DamageFlags:DamageFlags.Critical));
+True(!futureCritTracker.Snapshot().CriticalHitWindowActive(t.AddSeconds(1)),"future critical evidence cannot activate Heart Gore early");
+var lateHpTracker=new PassiveRotationStateTracker();
+lateHpTracker.Observe(new(t,CombatKind.PlayerName,1503,"Self",SourceClass:"Cleric",SourceIdentityConfirmed:true,SourceIsLocal:true));
+lateHpTracker.Observe(new(t,CombatKind.Damage,1503,"Self",1601,"Target","Judgment Thunder",100));
+lateHpTracker.Observe(new(t.AddSeconds(2),CombatKind.TargetHp,TargetId:1601,Target:"Target",CurrentHp:0,MaxHp:1000));
+lateHpTracker.Observe(new(t.AddSeconds(1),CombatKind.TargetHp,TargetId:1601,Target:"Target",CurrentHp:900,MaxHp:1000));
+True(lateHpTracker.Snapshot().Target?.CurrentHp==0,"late positive HP cannot resurrect an observed dead target");
 Console.WriteLine($"PASS: {checks} regression assertions");
