@@ -144,16 +144,30 @@ public static class RotationProfileCatalog
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"current Global self-buff grants +10% Attack and +100 Accuracy for 10s"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Wish of Concentration",Reason:"validated 60s Global base cooldown is ready; level-16 all-skill cooldown reduction specialization excluded")
                 }),
-                new RotationRule("Element Enhancement",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"establish the primary damage enhancement before the burst sequence")}),
-                new RotationRule("Delayed Explosion",700,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererOpenerWindow",Reason:"apply delayed burst early in the damage sequence")}),
+                new RotationRule("Element Enhancement",800,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"align the proven stigma buff with active combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererElementEnhancementKnownWindow",Reason:"the current loadout has passively proven Element Enhancement is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Element Enhancement",Reason:"validated 60s Global base cooldown is ready")
+                }),
+                new RotationRule("Delayed Explosion",700,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"apply the 4s self-damage-amplification effect inside a proven Sorcerer burst"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDelayedExplosionKnownWindow",Reason:"the current loadout has passively proven Delayed Explosion is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Delayed Explosion",Reason:"validated 30s Global base cooldown is ready; -10s specialization excluded")
+                }),
                 new RotationRule("Hellfire",650,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Hellfire during a proven burst window"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Hellfire",Reason:"validated 45s Global base cooldown is ready; charge choice remains situational")
                 }),
-                new RotationRule("Fire Wall",600,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"maintain high-value fire damage during burst")}),
-                new RotationRule("Cold Storm",550,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Cold Storm in the sustained burst sequence")}),
-                new RotationRule("Flame Harpoon",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"passively observed Sorcerer burst state supports Flame Harpoon")}),
-                new RotationRule("Flame Cage",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererDotWindow",Reason:"refresh damage-over-time state when proven necessary")}),
+                new RotationRule("Fire Wall",600,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"maintain high-value fire damage during burst"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFireWallKnownWindow",Reason:"the current loadout has passively proven Fire Wall is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Fire Wall",Reason:"validated 60s Global base cooldown is ready")
+                }),
+                new RotationRule("Cold Storm",550,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererBurstWindow",Reason:"use Cold Storm in the sustained burst sequence"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdStormKnownWindow",Reason:"the current loadout has passively proven Cold Storm is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Cold Storm",Reason:"validated 60s Global base cooldown is ready")
+                }),
                 new RotationRule("Cold Wave",375,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererColdWaveWindow",Reason:"consume the explicit 3s Global chain opportunity after observed Ice Chain")}),
                 new RotationRule("Firestorm",565,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"current Global sustained APL places Firestorm above basic filler"),
@@ -176,7 +190,7 @@ public static class RotationProfileCatalog
                 new RotationRule("Ice Chain",325,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"continue with the repeatedly observed Global sustained spell without inferring hidden burst state")}),
                 new RotationRule("Flame Arrow",200,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SorcererFillerWindow",Reason:"basic damage/MP filler while higher priorities are unavailable")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Burst and damage-over-time decisions are represented only behind passive state signals; no recommendation is emitted until those states are proven.");
+            "PROVISIONAL Global Season 1 single-target fixture. Current-Global Fire Mark and burst windows are reconstructed only from observed actions. Loadout-dependent stigmas are not recommended until observed in the current session; unreconciled Flame Cage/Flame Harpoon hooks are excluded rather than guessed.");
     }
 
     public static RotationProfile CreateProvisionalSpiritmasterSingleTarget()
