@@ -188,8 +188,6 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Flame Blessing",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"buff before Ancient Spirit so the summon snapshots the damage state")}),
-                new RotationRule("Spirit's Benediction",800,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterOpenerWindow",Reason:"apply spirit damage buff before Ancient Spirit")}),
                 new RotationRule("Summon: Ancient Spirit",750,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterAncientWindow",Reason:"summon Ancient Spirit after observed opener buffs so the summon snapshots the damage state"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Summon: Ancient Spirit",Reason:"validated 90s current-Global base cooldown is ready; specialization effects excluded")
@@ -210,7 +208,7 @@ public static class RotationProfileCatalog
                 new RotationRule("Earth Tremor",450,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterFillerWindow",Reason:"maintain basic-attack buff stacks during sustained damage")}),
                 new RotationRule("Disenchant",400,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"SpiritmasterDispelWindow",Reason:"passively observed target state supports Disenchant")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Dispel and spirit-burst decisions remain gated on passive signals; no recommendation is emitted until the relevant state is proven.");
+            "PROVISIONAL Global Season 1 single-target fixture. Ancient Spirit may react to directly observed opener buffs, but unsupported pre-buff recommendations are not invented. Corrode, dispel and spirit-burst decisions remain gated on passive signals; no recommendation is emitted until the relevant state is proven.");
     }
 
     public static RotationProfile CreateProvisionalClericSingleTarget()
