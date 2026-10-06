@@ -54,6 +54,16 @@ public static class PassiveRotationSignalDeriver
             if(observed.UsedRecently("Rage Burst",now,10))signals.Add("GladiatorOverheadWindow");
             if(observed.UsedRecently("Overhead Slam",now,3))signals.Add("GladiatorUpwardStrikeWindow");
             if(observed.UsedRecently("Crushing Wave",now,3))signals.Add("GladiatorFrenziedWaveWindow");
+
+            // Rage Burst is a loadout-dependent stigma. Recommend later uses only
+            // after the current zone/session has directly observed it once.
+            if(observed.LastSkillUse.ContainsKey("Rage Burst"))
+                signals.Add("GladiatorRageBurstKnownWindow");
+
+            // Current Global Ruinous Blow grants Prepare for Battle for 20s.
+            // Preserve only the base window from a directly observed local cast.
+            if(observed.UsedRecently("Ruinous Blow",now,20))
+                signals.Add("GladiatorPrepareForBattleWindow");
         }
         if(observedClass==AionClass.Assassin)
         {
