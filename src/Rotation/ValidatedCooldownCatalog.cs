@@ -31,6 +31,7 @@ public static class ValidatedCooldownCatalog
         new(AionClass.Assassin,"Illusive Clone",90,"Global Season 1","current Global Season 1 guide; base cooldown only"),
         new(AionClass.Assassin,"Shadowstrike",20,"Global 0.0.4387.0","current Global client extraction; 10s Critical Damage buff, positional safety remains player-controlled"),
         new(AionClass.Spiritmaster,"Summon: Ancient Spirit",90,"Global 1.0.21.0","current Global release skill 16250000; 30s summon duration, specialization effects excluded"),
+        new(AionClass.Spiritmaster,"Jointstrike: Corrode",45,"Global 1.0.21.0","current Global release skill 16150000; 20s base Corrode duration, +10s duration specialization excluded"),
         new(AionClass.Spiritmaster,"Jointstrike: Curse",10,"Global 1.0.21.0","current Global skill database; base cooldown only"),
         new(AionClass.Sorcerer,"Firestorm",5,"1.0.21.0","Global client skill data; specialty Hellfire reduction excluded"),
         new(AionClass.Sorcerer,"Bittercold Wind",15,"1.0.21.0","Global client skill data; base cooldown only"),
