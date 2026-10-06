@@ -130,6 +130,15 @@ internal static class Program
   if(((TextBlock)window.FindName("RotationQueueIconGlyph")).Text!="?")throw new Exception("Unverified planned-skill icon fallback missing");
   if(((TextBlock)window.FindName("RotationQueueIconState")).Text!="ICONS UNVERIFIED")throw new Exception("Unverified planned-skill icons were not labeled");
   Console.WriteLine("PASS: assistant panel renders fixture decision and fail-closed primary/queue icon states");
+
+  var optionFixture=assistantFixture with {Alternatives=new[]{
+   new SkillRecommendation("Option A",110,.94,true,new[]{"fixture"}),
+   new SkillRecommendation("Option B",100,.94,true,new[]{"fixture"})}};
+  window.RenderRotation(optionFixture);
+  if(((TextBlock)window.FindName("RotationOptionsLabel")).Text!="OTHER OPTIONS")
+   throw new Exception("Alternatives must not be labeled as a predicted future cast sequence");
+  if(((TextBlock)window.FindName("RotationQueue")).Text!="Option A • Option B")
+   throw new Exception("Distinct alternatives must render as choices without sequence arrows");
   var liveProfile=RotationProfileCatalog.CreateUnvalidatedGlobalStubs().Single(p=>p.ClassName==AionClass.Templar);
   var liveState=new RotationState(t,AionClass.Templar,liveProfile.BuildId,liveProfile.Mode,
    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.25);

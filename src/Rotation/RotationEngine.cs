@@ -64,7 +64,11 @@ public sealed class RotationEngine
             candidates.Add(new SkillRecommendation(rule.Skill, score, confidence, actionable, reasons));
         }
 
+        // Multiple conditional rules may legitimately describe the same skill.
+        // Keep its strongest eligible rule once so alternatives remain distinct.
         var ordered = candidates
+            .GroupBy(x => x.Skill, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.OrderByDescending(x => x.Score).First())
             .OrderByDescending(x => x.Score)
             .ThenBy(x => x.Skill, StringComparer.OrdinalIgnoreCase)
             .ToArray();

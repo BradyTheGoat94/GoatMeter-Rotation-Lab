@@ -30,7 +30,7 @@ public partial class OverlayWindow : Window
         RotationConfidence.Text=decision.Next is null?"—":$"{decision.Next.Confidence:P0} confidence";
         RotationStateText.Text=decision.Next is null?"PASSIVE • WAITING":decision.Next.Actionable?"VERIFIED":"INFORMATIONAL";
         RotationReason.Text=decision.Next is null?decision.Diagnostic:string.Join(" • ",decision.Next.Reasons.Take(2));
-        RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join("  →  ",decision.Alternatives.Select(x=>x.Skill));
+        RotationQueue.Text=decision.Alternatives.Count==0?"—":string.Join(" • ",decision.Alternatives.Select(x=>x.Skill));
         RotationDiagnostic.Text=string.IsNullOrWhiteSpace(decision.ReadinessContext)?decision.Diagnostic:$"{decision.ReadinessContext} • {decision.Diagnostic}";
     }
 

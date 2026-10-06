@@ -12,6 +12,8 @@
 - Late skill events cannot roll back player cooldown timestamps. Target switches preserve player cooldown/loadout history.
 - Lab settings, history, validation files, window title, and installer identity are separate from production.
 
+- Duplicate conditional rules retain one strongest candidate per skill, preserving distinct alternatives. The overlay labels these as other current choices rather than a predicted future sequence.
+
 ## Class percentages
 
 **Optimized DPS % is not measured for any class.** No validated theoretical-DPS reference, fixed build/gear scenario, or controlled DPS comparison exists in the current project. Test counts and modeled priority rules cannot be converted into percentage of optimal DPS.

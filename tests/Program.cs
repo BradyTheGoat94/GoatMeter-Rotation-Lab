@@ -1422,4 +1422,34 @@ True(PassiveRotationSignalDeriver.Derive(orderedTargetEffects.Snapshot(),AionCla
 orderedTargetEffects.Observe(new(t.AddSeconds(4),CombatKind.DebuffRemove,2002,"Ally",2101,"Target",Effect:"Chain of Torment"));
 True(!PassiveRotationSignalDeriver.Derive(orderedTargetEffects.Snapshot(),AionClass.Cleric,t.AddSeconds(4.5)).Contains("ClericCondemnationWindow"),
     "new target removal suppresses both decoded and reconstructed prerequisite state");
+
+// Real multi-rule profiles must expose distinct alternatives, not repeated skills.
+var duplicateOptionCases=new (RotationProfile Profile,Dictionary<string,double> Cooldowns,HashSet<string> Signals,HashSet<string> Debuffs,string ExpectedNext,string ExpectedOption)[]
+{
+    (assassinProvisional,new(StringComparer.OrdinalIgnoreCase){{"Heart Gore",0},{"Shadowstrike",0},{"Insignia Explosion",0}},
+        new(StringComparer.OrdinalIgnoreCase){"CriticalHitWindow","AssassinBurstWindow","AssassinFillerWindow","InsigniaReady"},new(),"Heart Gore","Insignia Explosion"),
+    (clericProvisional,new(StringComparer.OrdinalIgnoreCase){{"Earth Punishment",0},{"Condemnation",0},{"Chain of Torment",0},{"Divine Aura",0},{"Bolt",0}},
+        new(StringComparer.OrdinalIgnoreCase){"ClericEarthPunishmentKnownWindow","ClericEarthPunishmentWindow","ClericCondemnationWindow","ClericFillerWindow"},new(),"Condemnation","Chain of Torment"),
+    (sorcererProvisional,new(StringComparer.OrdinalIgnoreCase){{"Blaze",0},{"Hellfire",0},{"Firestorm",0},{"Bittercold Wind",0}},
+        new(StringComparer.OrdinalIgnoreCase){"SorcererBurstWindow","SorcererFillerWindow","SorcererFireMarkWindow"},new(StringComparer.OrdinalIgnoreCase){"Fire Mark"},"Hellfire","Firestorm")
+};
+foreach(var optionCase in duplicateOptionCases)
+{
+    var optionDecision=rotationEngine.Evaluate(new RotationState(t,optionCase.Profile.ClassName,optionCase.Profile.BuildId,RotationMode.SingleTarget,
+        optionCase.Cooldowns,new HashSet<string>(),optionCase.Debuffs,100,100,1,false,true,.95){Signals=optionCase.Signals},optionCase.Profile);
+    True(optionDecision.Next?.Skill==optionCase.ExpectedNext,$"{optionCase.Profile.ClassName} deduplication preserves the strongest eligible priority");
+    var optionNames=optionDecision.Alternatives.Select(option=>option.Skill).Prepend(optionDecision.Next!.Skill).ToArray();
+    True(optionNames.Distinct(StringComparer.OrdinalIgnoreCase).Count()==optionNames.Length,
+        $"{optionCase.Profile.ClassName} primary and alternatives never repeat the same skill");
+    True(optionDecision.Alternatives.Any(option=>option.Skill==optionCase.ExpectedOption),
+        $"{optionCase.Profile.ClassName} duplicate rules cannot crowd out another eligible option");
+}
+var caseDuplicateProfile=new RotationProfile(AionClass.Templar,"case-dedup",RotationMode.SingleTarget,ProfileValidation.Provisional,
+    new[]{new RotationRule("Same Skill",100,Array.Empty<RotationCondition>()),
+        new RotationRule("same SKILL",200,Array.Empty<RotationCondition>()),
+        new RotationRule("Other Skill",150,Array.Empty<RotationCondition>())});
+var caseDuplicateDecision=rotationEngine.Evaluate(new RotationState(t,AionClass.Templar,"case-dedup",RotationMode.SingleTarget,
+    new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95),caseDuplicateProfile);
+True(caseDuplicateDecision.Next?.Score==200&&caseDuplicateDecision.Alternatives.Single().Skill=="Other Skill",
+    "skill deduplication is case-insensitive and preserves the highest eligible score");
 Console.WriteLine($"PASS: {checks} regression assertions");
