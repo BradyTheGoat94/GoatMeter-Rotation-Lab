@@ -11,7 +11,7 @@ internal static class PublicGameData
     private static Dictionary<int,string>? mobs;
     private static Dictionary<int,string>? englishMobs;
     private static bool attempted;
-    private static readonly string CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aion2DPSPro", "meter-bootstrap.json");
+    private static readonly string CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GoatMeterRotationLab", "meter-bootstrap.json");
 
     private static readonly Dictionary<string,string> EnglishNames = new(StringComparer.Ordinal)
     {

@@ -15,7 +15,7 @@
 - Late different-skill critical and shield events cannot replace newer Assassin/Templar proc windows or revive consumed Judgment.
 - Target despawn retains action ordering: stale or same-time hits cannot resurrect the cleared target, and stale despawns cannot clear newer target evidence.
 - Late skill events cannot roll back player cooldown timestamps. Target switches preserve player cooldown/loadout history.
-- Lab settings, history, validation files, window title, and installer identity are separate from production.
+- Lab settings, history, validation files, public skill-data cache, window title, and installer identity are separate from production. Earlier beta builds through e72bb806 retained a shared meter-bootstrap.json cache; the safety audit isolated it without modifying the existing production cache.
 
 - Duplicate conditional rules retain one strongest candidate per skill, preserving distinct alternatives. The overlay labels these as other current choices rather than a predicted future sequence.
 

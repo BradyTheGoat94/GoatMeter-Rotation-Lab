@@ -1550,4 +1550,8 @@ foreach(var darkOpener in new[]{"Impactful Crush","Spinning Strike"})
     True(darkDecision.Next?.Skill!="Dark Crush"&&darkDecision.Alternatives.All(o=>o.Skill!="Dark Crush"),
         $"{darkOpener} availability cannot bypass an observed recovering base cooldown");
 }
+var labBootstrapCache=(string)typeof(Aion2DPSPro.Protocol.PublicGameData)
+    .GetField("CachePath",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)!.GetValue(null)!;
+True(labBootstrapCache==System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"GoatMeterRotationLab","meter-bootstrap.json"),
+    "public skill-data cache cannot write into the production meter directory");
 Console.WriteLine($"PASS: {checks} regression assertions");
