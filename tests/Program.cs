@@ -626,6 +626,22 @@ var sorcererWishRecovering=rotationEngine.Evaluate(new RotationState(t,AionClass
 True(sorcererWishRecovering.Next?.Skill!="Wish of Concentration","Sorcerer cannot recommend Wish while its validated Global cooldown is recovering");
 var spiritmasterProvisional=RotationProfileCatalog.CreateProvisionalSpiritmasterSingleTarget();
 True(spiritmasterProvisional.Validation==ProfileValidation.Provisional,"Spiritmaster fixture remains provisional");
+True(!spiritmasterProvisional.Rules.Any(r=>r.Skill=="Flame Blessing"||r.Skill=="Spirit's Benediction"),
+    "Spiritmaster profile does not expose unreachable pre-buff recommendations without a passive opener signal");
+var spiritmasterFlameOpenerObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Flame Blessing",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(spiritmasterFlameOpenerObservation,AionClass.Spiritmaster,t.AddSeconds(7.9)).Contains("SpiritmasterAncientWindow"),
+    "observed Flame Blessing opens bounded Ancient Spirit reaction window");
+True(!PassiveRotationSignalDeriver.Derive(spiritmasterFlameOpenerObservation,AionClass.Spiritmaster,t.AddSeconds(8.1)).Contains("SpiritmasterAncientWindow"),
+    "Spiritmaster Ancient reaction window expires after 8s");
+var spiritmasterBenedictionObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Spirit's Benediction",t}},new HashSet<string>(),new HashSet<string>());
+True(PassiveRotationSignalDeriver.Derive(spiritmasterBenedictionObservation,AionClass.Spiritmaster,t.AddSeconds(7.9)).Contains("SpiritmasterAncientWindow"),
+    "observed Spirit's Benediction opens bounded Ancient Spirit reaction window");
+var spiritmasterNoOpenerObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{"Combustion",t}},new HashSet<string>(),new HashSet<string>());
+True(!PassiveRotationSignalDeriver.Derive(spiritmasterNoOpenerObservation,AionClass.Spiritmaster,t.AddSeconds(1)).Contains("SpiritmasterAncientWindow"),
+    "generic Spiritmaster activity cannot manufacture Ancient Spirit opener state");
 var spiritmasterUnknown=rotationEngine.Evaluate(new RotationState(t,AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95),spiritmasterProvisional);
 True(spiritmasterUnknown.Next is null,"Spiritmaster fails closed without passively proven target/spirit state");
@@ -652,6 +668,13 @@ True(spiritmasterControlSignals.Contains("SpiritmasterDimensionalControlWindow")
     "observed normal spirit summon opens bounded Dimensional Control window");
 True(!PassiveRotationSignalDeriver.Derive(spiritmasterSummonObservation,AionClass.Spiritmaster,t.AddSeconds(3.1)).Contains("SpiritmasterDimensionalControlWindow"),
     "Spiritmaster Dimensional Control window expires after 3s");
+foreach(var summonSkill in new[]{"Summon: Fire Spirit","Summon: Water Spirit","Summon: Earth Spirit","Summon: Wind Spirit"})
+{
+    var summonMatrixObservation=new PassiveRotationObservation(99,AionClass.Spiritmaster,
+        new Dictionary<string,DateTime>(StringComparer.OrdinalIgnoreCase){{summonSkill,t}},new HashSet<string>(),new HashSet<string>());
+    True(PassiveRotationSignalDeriver.Derive(summonMatrixObservation,AionClass.Spiritmaster,t.AddSeconds(2.9)).Contains("SpiritmasterDimensionalControlWindow"),
+        $"observed {summonSkill} opens Dimensional Control window");
+}
 var spiritmasterControl=rotationEngine.Evaluate(new RotationState(t.AddSeconds(2),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),100,100,1,false,true,.95)
     {Signals=spiritmasterControlSignals},spiritmasterProvisional);
@@ -691,6 +714,11 @@ True(spiritmasterCorrodeActiveSignals.Contains("SpiritmasterCorrodeActiveWindow"
 var spiritmasterCorrodeExpiredSignals=PassiveRotationSignalDeriver.Derive(spiritmasterCorrodeObservation,AionClass.Spiritmaster,t.AddSeconds(20.1));
 True(!spiritmasterCorrodeExpiredSignals.Contains("SpiritmasterCorrodeActiveWindow")&&spiritmasterCorrodeExpiredSignals.Contains("SpiritmasterCorrodeMissingWindow"),
     "base Corrode expires after 20s without assuming the 30s specialization");
+var spiritmasterObservedCorrodeDebuff=new PassiveRotationObservation(88,AionClass.Spiritmaster,
+    new Dictionary<string,DateTime>(),new HashSet<string>(),new HashSet<string>(StringComparer.OrdinalIgnoreCase){"Corrode"});
+var spiritmasterObservedCorrodeSignals=PassiveRotationSignalDeriver.Derive(spiritmasterObservedCorrodeDebuff,AionClass.Spiritmaster,t.AddSeconds(60));
+True(spiritmasterObservedCorrodeSignals.Contains("SpiritmasterCorrodeActiveWindow")&&!spiritmasterObservedCorrodeSignals.Contains("SpiritmasterCorrodeMissingWindow"),
+    "directly observed Corrode target state remains authoritative without inferring specialization duration");
 var spiritmasterNoEarlyRefresh=rotationEngine.Evaluate(new RotationState(t.AddSeconds(19.9),AionClass.Spiritmaster,"global-spiritmaster-provisional",RotationMode.SingleTarget,
     new Dictionary<string,double>(),new HashSet<string>(),new HashSet<string>(),0,100,1,false,true,.95)
     {Signals=new HashSet<string>(StringComparer.OrdinalIgnoreCase){"SpiritmasterCorrodeWindow","SpiritmasterCorrodeActiveWindow","SpiritmasterFillerWindow"}},spiritmasterProvisional);
