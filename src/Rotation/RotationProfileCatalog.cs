@@ -16,20 +16,30 @@ public static class RotationProfileCatalog
             ProfileValidation.Provisional,
             new[]
             {
-                new RotationRule("Punishment",800,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready; current Global guidance prioritizes Punishment")}),
+                new RotationRule("Punishment",800,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"use Punishment during passively observed combat"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Punishment",Reason:"validated 30s base cooldown is ready; current Global guidance prioritizes Punishment")
+                }),
                 new RotationRule("Judgment",850,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"JudgmentWindow",Reason:"observed shield skill opened the Judgment damage window")}),
-                new RotationRule("Annihilate",775,new[]{
+                new RotationRule("Annihilate",840,new[]{
                     new RotationCondition(RotationConditionKind.SignalPresent,"TemplarAnnihilateWindow",Reason:"current Global Annihilate requires an observed Stun or Knockdown target"),
                     new RotationCondition(RotationConditionKind.CooldownReady,"Annihilate",Reason:"validated 20s base cooldown is ready; level-12 -10s specialization excluded")
                 }),
-                new RotationRule("Empyrean Lord's Punishment",650,new[]{new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s base cooldown is ready")}),
+                new RotationRule("Empyrean Lord's Punishment",650,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"use the proven stigma during observed combat"),
+                    new RotationCondition(RotationConditionKind.SignalPresent,"TemplarEmpyreanKnownWindow",Reason:"the current loadout has passively proven Empyrean Lord's Punishment is equipped"),
+                    new RotationCondition(RotationConditionKind.CooldownReady,"Empyrean Lord's Punishment",Reason:"validated 60s Global base cooldown is ready")
+                }),
+                new RotationRule("Punishing Strike",875,new[]{
+                    new RotationCondition(RotationConditionKind.SignalPresent,"TemplarPunishingStrikeWindow",Reason:"consume the guaranteed 3s current-Global chain activation after observed Pummel")
+                }),
                 new RotationRule("Decisive Strike",575,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDecisiveStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
                 new RotationRule("Desperate Strike",570,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarDesperateStrikeWindow",Reason:"continue the observed Global Vicious Strike chain")}),
                 new RotationRule("Threatening Blow",565,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarThreateningBlowWindow",Reason:"finish the observed Global Vicious Strike chain")}),
                 new RotationRule("Pummel",500,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"weave Pummel between Judgment/Punishment opportunities")}),
                 new RotationRule("Vicious Strike",300,new[]{new RotationCondition(RotationConditionKind.SignalPresent,"TemplarFillerWindow",Reason:"start the Global main attack chain while higher priorities recover")})
             },
-            "PROVISIONAL Global Season 1 single-target fixture. Current guides prioritize Punishment and Judgment; only evidence-gated cooldown-ready skills are emitted here. Judgment is emitted only inside an evidence-backed passively observed shield-skill window; specialization/build modifiers remain unproven.");
+            "PROVISIONAL Global Season 1 single-target fixture. Judgment and Punishing Strike consume short observed chain windows before longer cooldown actions; Annihilate requires observed Stun/Knockdown, Punishment uses its validated base cooldown during combat, and Empyrean Lord's Punishment is loadout-gated after first passive observation. Specialization/build modifiers remain excluded.");
     }
 
     public static RotationProfile CreateProvisionalAssassinSingleTarget()
