@@ -22,6 +22,8 @@ This file records sanitized observations used to challenge or corroborate provis
 ### Spiritmaster
 - Confirmed Global captures directly observe Combustion, Earth Tremor, Spirit's Descent, Corrode, Jointstrike: Curse and summon-owned attacks.
 - Combustion is included as provisional sustained coverage; summon/buff state remains fail-closed where not directly observed.
+- Ancient Spirit may react to directly observed Flame Blessing or Spirit's Benediction casts inside the bounded passive window, but the Rotation Lab does not proactively recommend those buffs until a passive opener trigger is independently proven.
+- Base Corrode state is preserved for 20s from a directly observed local cast when a separate debuff event is unavailable. The 30s specialization extension is intentionally excluded unless it becomes directly observable.
 
 ### Gladiator
 - Confirmed Global captures directly observe Rending Blow, Keen Strike, Wrathful Strike, Smashing Blow, Rupture Strike and Murderous Burst.
