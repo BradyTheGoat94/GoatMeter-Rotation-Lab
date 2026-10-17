@@ -10,9 +10,9 @@ from .prototype import simulate, Profile, Skill
 
 def estimate_dps(profile: Profile, skills: list[Skill], duration_ms: int,
                  trials: int = 200, seed: int = 0) -> dict:
-    if not isinstance(trials, int) or not 2 <= trials <= 10000:
+    if isinstance(trials, bool) or not isinstance(trials, int) or not 2 <= trials <= 10000:
         raise ValueError("trials must be an integer between 2 and 10000")
-    if not isinstance(seed, int):
+    if isinstance(seed, bool) or not isinstance(seed, int):
         raise ValueError("seed must be an integer")
     # Use separate reproducible random streams per trial.
     values = sorted(simulate(profile, skills, duration_ms, seed + i)["dps"]
