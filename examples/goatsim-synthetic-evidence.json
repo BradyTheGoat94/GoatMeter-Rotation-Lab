@@ -1,0 +1,41 @@
+{
+  "schema": "goatsim-export-v1",
+  "character": {
+    "class": "Templar",
+    "level": 45,
+    "stats": {}
+  },
+  "encounters": [
+    {
+      "id": "SYNTHETIC-ONLY",
+      "start": "2026-10-17T10:00:00Z",
+      "end": "2026-10-17T10:00:03Z",
+      "events": [
+        {
+          "timestamp": "2026-10-17T10:00:00Z",
+          "skill": "Example Strike",
+          "damage": 100,
+          "damage_kind": "direct",
+          "source_role": "self",
+          "target_role": "other"
+        },
+        {
+          "timestamp": "2026-10-17T10:00:01Z",
+          "skill": "Example Strike",
+          "damage": 120,
+          "damage_kind": "direct",
+          "source_role": "self",
+          "target_role": "other"
+        },
+        {
+          "timestamp": "2026-10-17T10:00:02Z",
+          "skill": "Example Strike",
+          "damage": 999,
+          "damage_kind": "direct",
+          "source_role": "other",
+          "target_role": "other"
+        }
+      ]
+    }
+  ]
+}
