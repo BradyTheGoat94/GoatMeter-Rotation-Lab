@@ -85,10 +85,19 @@ def build_export(profile, encounters, *, consent=False):
             role = event.get("source_role")
             if role not in ("self", "other"):
                 raise ExportError("source_role must be self or other")
+            timestamp = _utc(event.get("timestamp"))
+            if not start <= timestamp <= end:
+                raise ExportError("event timestamp outside encounter")
+            # Never infer damage type. Legacy input without this field stays unknown,
+            # so a downstream simulator cannot silently treat DoTs as direct hits.
+            damage_kind = event.get("damage_kind", "unknown")
+            if damage_kind not in ("direct", "dot", "unknown"):
+                damage_kind = "unknown"
             clean_events.append({
-                "timestamp": _utc(event.get("timestamp")),
+                "timestamp": timestamp,
                 "skill": skill,
                 "damage": _nonnegative_number(event.get("damage"), "damage"),
+                "damage_kind": damage_kind,
                 "source_role": role,
                 "target_role": "boss" if event.get("target_role") == "boss" else "other",
             })
