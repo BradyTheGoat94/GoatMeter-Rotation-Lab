@@ -1,0 +1,30 @@
+name: GoatSim Python Prototype Tests
+
+on:
+  push:
+    branches: [goatsim-character-import-spike]
+    paths:
+      - 'goatsim/**'
+      - 'tests/test_goatsim_*.py'
+      - '.github/workflows/goatsim-python-tests.yml'
+  pull_request:
+    paths:
+      - 'goatsim/**'
+      - 'tests/test_goatsim_*.py'
+      - '.github/workflows/goatsim-python-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prototype-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run GoatSim reference tests
+        run: python -m unittest discover -s tests -p 'test_goatsim_*.py' -v
