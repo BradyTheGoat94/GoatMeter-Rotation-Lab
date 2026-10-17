@@ -34,7 +34,7 @@ def _utc(value):
         raise ExportError("invalid ISO timestamp") from exc
     if dt.tzinfo is None:
         raise ExportError("timestamp must include timezone")
-    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    return dt.astimezone(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
 
 
 def build_export(profile, encounters, *, consent=False):
